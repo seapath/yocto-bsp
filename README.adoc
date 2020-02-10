@@ -1,0 +1,209 @@
+rte Yocto BSP Platform Developer Guide
+=======================================
+:toc:
+:icons:
+:iconsdir: ./doc/icons/
+:sectnumlevels: 1
+
+The Yocto firmware generation has been tested on Ubuntu 18.04. You can either
+use your host machine's tools, or use
+https://github.com/savoirfairelinux/cqfd[cqfd] to build. More details are given
+in the next sections of this document.
+
+== Release Notes
+
+=== Version 0.1.0 (June 20 2019)
+
+* Generates a default Yocto image
+* Supports installation using <fixme>
+* Console is limited to <fixme>
+
+:numbered:
+
+== Environment setup
+
+=== SSH keys
+
+The firmware source code is fetched from several git repositories. Some
+of them are public and require no credentials.
+
+The part specific to rte's product is stored on a private git server, provided
+by SFL at the moment.
+
+If you don't already have a set of SSH keys in the `~/.ssh` directory of your
+build machine, you can create them by running:
+
+  $ ssh-keygen -t rsa -C <your_email@youremail.com>
+
+Then, connect to https://g1.sfl.team[gerrit] and authenticate using your
+provided user and password.
+
+In the top right corner:
+
+* Click on "Settings"
+* Go to the "SSH Public Keys" section.
+* Add the contents of your public SSH key (with the .pub extension). The default
+  SSH public key path should be `~/.ssh/id_rsa.pub`.
+
+=== Git defaults
+
+If you want to fetch the source code from SFL's Git server, add these default
+`User` and `Port` directives to your `~/.ssh/config`:
+
+```
+Host g1.sfl.team
+    Port 29419
+    User your_username
+```
+
+NOTE: Specify the SFL username that was provided to you.
+
+== Fetching the source using Git
+
+We are using `repo` to synchronize the source code using a manifest (an XML
+file) which describes all git repositories required to build a firmware. The
+manifest file is hosted in a git repository named `repo-manifest`.
+
+First initialize `repo`:
+
+  $ cd my_project_dir/
+  $ repo init -u <manifest_repo_url>
+  $ repo sync
+
+For instance, for rte's yocto-bsp project:
+
+  $ cd my_project_dir/
+  $ repo init -u ssh://g1.sfl.team:29419/rte/yocto-bsp/repo-manifest
+  $ repo sync
+
+Once the sync is completed, you should see a git repository named `yocto-bsp`,
+within which all the Yocto layers were fetched under the `yocto-bsp/sources`
+sub-directory.
+
+  $ cd yocto-bsp/
+
+NOTE: The initial build process takes approximately 4 to 5 hours on a current
+developer machine and will produce approximately 50GB of data.
+
+== Building a firmware using cqfd
+
+`cqfd` is a quick and convenient way to run commands in the current directory,
+but within a pre-defined Docker container. Using `cqfd` allows you to avoid
+installing anything else than Docker and `repo` on your development machine.
+
+NOTE: We recommend using this method as it greatly simplifies the build
+configuration management process.
+
+=== Prerequisites
+
+* Install repo and docker if it is not already done.
+
+On Ubuntu, please run:
+
+  $ sudo apt-get install repo docker.io
+
+* Install cqfd:
+
+```
+$ git clone https://github.com/savoirfairelinux/cqfd.git
+$ cd cqfd
+$ sudo make install
+```
+
+The project page on https://github.com/savoirfairelinux/cqfd[Github] contains
+detailed information on usage and installation.
+
+* Make sure that docker does not require sudo
+
+Please use the following commands to add your user account to the `docker`
+group:
+
+```
+$ sudo groupadd docker
+$ sudo usermod -aG docker $USER
+```
+
+Log out and log back in, so that your group membership can be re-evaluated.
+
+=== Building the firmware
+
+The first step with `cqfd` is to create the build container. For this, use the
+`cqfd init` command:
+
+  $ cd yocto-bsp/
+  $ cqfd init
+
+NOTE: The step above is only required once, as once the container image has been
+created on your machine, it will become persistent. Further calls to `cqfd init`
+will do nothing, unless the container definition (`.cqfd/docker/Dockerfile`) has
+changed in the source tree.
+
+You can then start the build using:
+
+  $ cqfd run
+
+== Building the firmware manually
+
+This method relies on the manual installation of all the tools and dependencies
+required on the host machine.
+
+=== Prerequisites on Ubuntu
+
+The following packages need to be installed:
+
+  $ sudo apt-get update && apt-get install -y ca-certificates build-essential
+
+  $ sudo apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib \
+     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+     xz-utils debianutils iputils-ping libsdl1.2-dev xterm repo
+
+=== Building the firmware
+
+The build is started by running the following command:
+
+  $ ./build.sh -i rte-image -m boardname
+
+You can also pass custom BitBake commands using the `--` separator:
+
+  $ ./build.sh -i rte-image -m boardname -- bitbake -c clean package_name
+
+== Building an SDK Installer
+
+You can create an SDK matching your system's configuration using with the
+following command:
+
+  $ ./build.sh -i rte -m boardname --sdk
+
+NOTE: prefix this command with `cqfd run` if using cqfd.
+
+When the bitbake command completes, the toolchain installer will be in
+`tmp/deploy/sdk/` under your build directory.
+
+== Flashing the firmware to an SD Card
+
+On a Linux system, you can use the `dd` command. For instance, if the SD Card
+device is /dev/sdx:
+
+  $ sudo umount /dev/sdx*
+  $ sudo dd if=build/tmp/deploy/image/boardname/rte-image-boardname.img \
+      of=/dev/sdx bs=64k conv=fsync
+
+== About this documentation
+
+This documentation uses the AsciiDoc documentation generator. It is a convenient
+format that allows using plain-text formatted writing that can later be
+converted to various output formats such as HTML and PDF.
+
+In order to generate an HTML version of this documentation, use the following
+command (the asciidoc package will need to be installed in your Linux
+distribution):
+
+  $ asciidoc README.adoc
+
+This will result in a README.html file being generated in the current directory.
+
+If you prefer a PDF version of the documentation instead, use the following
+command (the dblatex package will need to be installed on your Linux
+distribution):
+
+  $ asciidoctor-pdf README.adoc

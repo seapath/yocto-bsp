@@ -1,0 +1,20 @@
+[project]
+org='rte'
+name='yocto-bsp'
+
+[build]
+command='./build.sh -v'
+files='build/tmp/deploy/images/genericx86-64/bzImage
+    build/tmp/deploy/images/genericx86-64/grub-efi-bootx64.efi
+    build/tmp/deploy/images/genericx86-64/rte-image-genericx86-64.ext4
+    build/tmp/deploy/images/genericx86-64/core-image-minimal-initramfs-genericx86-64.cpio.gz
+    build/tmp/deploy/images/README.pdf'
+archive='%Po-%Pn-$(scripts/get-version).tar.gz'
+tar_options='-h'
+tar_transform='yes'
+flavors='sfl_ci'
+
+[sfl_ci]
+command='./build.sh -v \
+	--dl-dir /mnt/dldir \
+	--sstate-dir /mnt/sstate'

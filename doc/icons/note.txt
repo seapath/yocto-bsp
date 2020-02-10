@@ -1,0 +1,3 @@
+Origin: PICOL, PIctorial COmmunication Language
+URL: http://picol.org/
+Licence: Creative Commons Attribution 3.0
