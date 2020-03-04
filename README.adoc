@@ -73,7 +73,7 @@ First initialize `repo`:
 For instance, for rte's yocto-bsp project:
 
   $ cd my_project_dir/
-  $ repo init -u ssh://g1.sfl.team:29419/rte/yocto-bsp/repo-manifest
+  $ repo init -u ssh://g1.sfl.team:29419/rte/votp/repo-manifest
   $ repo sync
 
 Once the sync is completed, you should see a git repository named `yocto-bsp`,
