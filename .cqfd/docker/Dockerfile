@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	git \
 	git-core \
 	iputils-ping \
+	libelf-dev \
 	libncurses5-dev \
 	libsdl1.2-dev \
 	libssl-dev \
@@ -42,6 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	subversion \
 	swig \
 	texinfo \
+	tmux \
 	unzip \
 	wget \
 	xterm \
