@@ -167,6 +167,12 @@ You can also pass custom BitBake commands using the `--` separator:
 
   $ ./build.sh -i rte-image -m boardname -- bitbake -c clean package_name
 
+Three Yocto images are available:
+
+* rte-image: production image
+* rte-dbg-image: rte production image with debug tools
+* rte-test-image: rte production image with test tools
+
 == Building an SDK Installer
 
 You can create an SDK matching your system's configuration using with the
@@ -187,6 +193,31 @@ device is /dev/sdx:
   $ sudo umount /dev/sdx*
   $ sudo dd if=build/tmp/deploy/image/boardname/rte-image-boardname.img \
       of=/dev/sdx bs=64k conv=fsync
+
+== Tests
+
+=== Cukinia tests
+
+Here is the list of tests done so far.
+
+.Tests
+[width="100%",cols="20%,40%,40%",frame="topbot",options="header"]
+|====================================================================================================================
+|Name                           | Description                               | Command
+|00-cukinia-installation.conf   | Check that Cukinia is installed           | _cukinia /etc/cukinia/tests.d/00-cukinia-installation.conf_
+|01-sw-versions.conf            | Check that Kernel version is at least
+                                  4.19.106                                  | _cukinia /etc/cukinia/tests.d/01-sw_versions.conf_
+
+|02-preempt-rt.conf             | Check that the running Kernel is preempt
+                                  RT                                        | _cukinia /etc/cukinia/tests.d/02-preempt-rt.conf
+
+|03-no-kernel-errors.conf       | Check that the running Kernel does not
+                                  raise any warnings and errors             | _cukinia /etc/cukinia/tests.d/03-no-Kernel-errors.conf
+|====================================================================================================================
+
+*Note:* All Cukinia tests can be executed in a row running:
+
+  $ cukinia
 
 == About this documentation
 
