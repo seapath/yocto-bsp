@@ -213,6 +213,7 @@ Here is the list of tests done so far.
 
 |03-no-kernel-errors.conf       | Check that the running Kernel does not
                                   raise any warnings and errors             | _cukinia /etc/cukinia/tests.d/03-no-Kernel-errors.conf
+|04-virtualization.conf         | Check virtulization minimal requirements  | _cukinia /etc/cukinia/tests.d/04-virtulization.conf
 |====================================================================================================================
 
 *Note:* All Cukinia tests can be executed in a row running:
@@ -233,6 +234,14 @@ Then generate the graphics:
  $ ./yocto-bsp/tools/gen_cyclic_test.sh -i output -n 28 -o rte.png
 
 *Note:* we reused OSADL http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html[tools].
+
+=== KVM unit tests
+
+The Yocto image _rte-test-image_ includes https://www.linux-kvm.org/page/KVM-unit-tests[kvm-unit-tests].
+
+On the target, call:
+
+ $ run_tests.sh
 
 == About this documentation
 
