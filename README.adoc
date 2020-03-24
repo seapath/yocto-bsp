@@ -235,13 +235,34 @@ Then generate the graphics:
 
 *Note:* we reused OSADL http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html[tools].
 
-=== KVM unit tests
+=== Virtualization tests
+
+==== KVM unit tests
 
 The Yocto image _rte-test-image_ includes https://www.linux-kvm.org/page/KVM-unit-tests[kvm-unit-tests].
 
 On the target, call:
 
  $ run_tests.sh
+
+==== KVM/Qemu guest tests
+
+All RTE Yocto images include the ability to run guest Virtual Machines (VMs).
+
+We used KVM and Qemu to run them. As we do not have any window manager on the host system,
+VMs should be launched in console mode and their console output must be correctly set.
+
+For testing purpose, we can run our Yocto image as a guest machine.
+We do not use the _.wic_ image which includes the Linux Kernel and the rootfs because
+we need to set the console output.
+We use two distinct files to modify the Linux Kernel command line:
+
+- _bzImage_: the Linux Kernel image
+- _rte-test-image-votp.ext4_: the rte rootfs
+
+Then run:
+
+ $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda rte-test-image-votp.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
 
 == About this documentation
 
