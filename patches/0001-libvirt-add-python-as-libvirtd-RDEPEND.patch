@@ -1,0 +1,27 @@
+From bb6e91e8db202afcd030bcd5a36cc02a71762c8a Mon Sep 17 00:00:00 2001
+From: Eloi Bail <eloi.bail@savoirfairelinux.com>
+Date: Thu, 26 Mar 2020 11:39:45 +0100
+Subject: [PATCH] libvirt: add python as libvirtd RDEPEND
+
+Python is required to launch livirt daemon.
+Add it as RDEPEND.
+---
+ recipes-extended/libvirt/libvirt_5.5.0.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sources/meta-virtulization/recipes-extended/libvirt/libvirt_5.5.0.bb b/sources/meta-virtulization/recipes-extended/libvirt/libvirt_5.5.0.bb
+index 53f4b3e..ed785fb 100644
+--- a/sources/meta-virtualization/recipes-extended/libvirt/libvirt_5.5.0.bb
++++ b/sources/meta-virtualization/recipes-extended/libvirt/libvirt_5.5.0.bb
+@@ -17,7 +17,7 @@ RDEPENDS_${PN} = "gettext-runtime"
+ 
+ RDEPENDS_${PN}-ptest += "make gawk perl bash"
+ 
+-RDEPENDS_libvirt-libvirtd += "bridge-utils iptables pm-utils dnsmasq netcat-openbsd"
++RDEPENDS_libvirt-libvirtd += "bridge-utils iptables pm-utils dnsmasq netcat-openbsd python"
+ RDEPENDS_libvirt-libvirtd_append_x86-64 = " dmidecode"
+ RDEPENDS_libvirt-libvirtd_append_x86 = " dmidecode"
+ 
+-- 
+2.17.1
+
