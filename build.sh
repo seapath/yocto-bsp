@@ -24,6 +24,17 @@ Options:
         "
 }
 
+# Name:       apply_patch
+# Brief:      Test and apply a patch file if needed
+# Param[in]:  Patch file
+apply_patch()
+{
+  if patch --dry-run --silent --strip=1 --force --input ${1} >/dev/null
+  then
+    patch --strip=1 --force --input ${1}
+  fi
+}
+
 # Name:       parse_options
 # Brief:      Parse options from command line
 # Param[in]:  Command line parameters
@@ -200,6 +211,12 @@ echo "SSTATE_DIR = '$SSTATE_DIR'"
 
 # Init display
 init_output $VERBOSE build
+
+# Apply patches
+for patch in patches/*
+do
+  apply_patch ${patch}
+done
 
 # Set variable readable from command line
 export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
