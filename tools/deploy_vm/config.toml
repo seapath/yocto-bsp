@@ -1,0 +1,60 @@
+[[hosts]]
+ip = "192.168.1.21"
+password = ""
+name = "host1"
+
+[[guests]]
+name = "guest1"
+host = "host1"
+kernel_img = "images/bzImage"
+rootfs_img = "images/rte-guest-test-image-votp.ext4"
+memory = 2048
+cpuset = 1
+
+[[guests]]
+name = "guest2"
+host = "host1"
+kernel_img = "images/bzImage"
+rootfs_img = "images/rte-guest-test-image-votp.ext4"
+memory = 2048
+cpuset = 2
+
+[[guests]]
+name = "guest3"
+host = "host1"
+kernel_img = "images/bzImage"
+rootfs_img = "images/rte-guest-test-image-votp.ext4"
+memory = 2048
+cpuset = 3
+
+[[guests]]
+name = "guest4"
+host = "host1"
+kernel_img = "images/bzImage"
+rootfs_img = "images/rte-guest-test-image-votp.ext4"
+memory = 2048
+cpuset = 4
+
+[[tests]]
+name = "cyclictest_guest1"
+guest = "guest1"
+cmd = "cyclictest -l100000 -m -Sp90 -i200 -h400 -q"
+output_name = "cyclictest_guest1"
+
+[[tests]]
+name = "cyclictest_guest2"
+guest = "guest2"
+cmd = "cyclictest -l100000 -m -Sp90 -i200 -h400 -q"
+output_name = "cyclictest_guest2"
+
+[[tests]]
+name = "cyclictest_guest3"
+guest = "guest3"
+cmd = "cyclictest -l100000 -m -Sp90 -i200 -h400 -q"
+output_name = "cyclictest_guest3"
+
+[[tests]]
+name = "cyclictest_guest4"
+guest = "guest4"
+cmd = "cyclictest -l100000 -m -Sp90 -i200 -h400 -q"
+output_name = "cyclictest_guest4"

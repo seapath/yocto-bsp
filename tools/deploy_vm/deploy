@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import sys
+import toml
+from install_guest import HostInstaller
+
+
+def _parse_toml(filename):
+    config = toml.load(filename)
+    return config
+
+
+def run(config, output):
+
+    for host_config in config["hosts"]:
+        try:
+            host_name = host_config.get("name")
+        except:
+            print("missing host name in configuration file")
+            sys.exit(1)
+
+        host_installer = HostInstaller(host_config, output)
+        list_guest = filter_vm(config["guests"], host_name)
+        list_guest_name = [g.get("name") for g in list_guest]
+
+        # Install all VMs
+        host_installer.add_vm_configs(list_guest)
+        host_installer.install_all_vms()
+        # Run tests on VMs
+        list_test = filter_test(config["tests"], list_guest_name)
+        host_installer.run_all_tests(list_test)
+        # Dowload test results
+        host_installer.download_all_results(list_test)
+        # Destroy all VMs
+        host_installer.destroy_all_vms()
+
+
+def filter_vm(config, host_name):
+    ret = []
+    for c in config:
+        if c.get("host") == host_name:
+            ret.append(c)
+    return ret
+
+
+def filter_test(config, list_guest):
+    ret = []
+    for c in config:
+        if c.get("guest") in list_guest:
+            ret.append(c)
+    return ret
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Test VMs")
+    parser.add_argument("--config", help="the configuration file to use", required=True)
+
+    parser.add_argument("--output", help="the output directory", required=True)
+
+    args = parser.parse_args()
+    os.makedirs(args.output)
+
+    config = _parse_toml(args.config)
+    try:
+        run(config, args.output)
+    except Exception as e:
+        print("Error: {}".format(e))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
