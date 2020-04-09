@@ -214,6 +214,8 @@ Here is the list of tests done so far.
 |03-no-kernel-errors.conf       | Check that the running Kernel does not
                                   raise any warnings and errors             | _cukinia /etc/cukinia/tests.d/03-no-Kernel-errors.conf
 |04-virtualization.conf         | Check virtulization minimal requirements  | _cukinia /etc/cukinia/tests.d/04-virtulization.conf
+|05-container.conf              | Check that container daemon is running    | _cukinia /etc/cukinia/tests.d/05-container.conf
+|06-ovs.conf                    | Check that ovs/dpdk runs correctly        | _cukinia /etc/cukinia/tests.d/06-ovs.conf
 |====================================================================================================================
 
 *Note:* All Cukinia tests can be executed in a row running:
