@@ -288,6 +288,22 @@ Then run:
 
  $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda rte-test-image-votp.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
 
+=== Yocto ptests
+
+Ptest (package test) is a concept for building, installing and running the test suites
+that are included in many upstream packages, and producing a consistent output format
+for the results.
+
+ptest-runner is included in _rte_test_image_ and allows to run those tests.
+
+For instance:
+
+ $ ptest-runner openvswitch libvirt qemu rt-tests
+
+The usage for the ptest-runner is as follows:
+
+    $ Usage: ptest-runner [-d directory] [-l list] [-t timeout] [-h] [ptest1 ptest2 ...]
+
 == About this documentation
 
 This documentation uses the AsciiDoc documentation generator. It is a convenient
