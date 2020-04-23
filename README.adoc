@@ -12,11 +12,33 @@ in the next sections of this document.
 
 == Release Notes
 
-=== Version 0.1.0 (June 20 2019)
+=== Version 0.1 (March 6 2020)
 
 * Generates a default Yocto image
-* Supports installation using <fixme>
-* Console is limited to <fixme>
+* Supports UEFI legacy
+
+=== Version 0.2 (March 16 2020)
+
+* Use preempt RT Linux Kernel
+* Supports UEFI
+* Adds RT-tests
+
+=== Version 0.3 (March 27 2020)
+
+* Adds KVM/Qemu support
+* Adds libvirt / virsh tools for VM management
+* Adds RT tests on guest machines
+
+=== Version 0.4 (April 10 2020)
+
+* Adds Openvswtich / DPDK support
+* Adds Docker and Kubernetes
+* Adds VM deployment and testing tools
+
+=== Version 0.5 (April 24 2020)
+
+* Enhances boot time
+* Adds Yocto ptests
 
 :numbered:
 
