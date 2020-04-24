@@ -1,0 +1,119 @@
+Deploy_vm test tool
+===================
+:toc:
+:sectnumlevels: 1
+
+
+== Description
+
+This documentation describes how to use deploy_vm test tool, a tool to deploy
+VM on host machines based on _virt-install_ and _virsh_ commands.
+
+This tool was written for testing purpose and shall not be used on production.
+
+== Prerequisites
+
+This tool use python3 and pytoml. Please ensure you have them installed.
+Host machines needs to have :
+
+* an SSH access enabled
+* a host machine with _libvirt_ daemon running and _virsh_ command available
+
+Currently, we use root to run the virtual machine for testing purpose.
+To do so, you need to modify _/etc/libvirt/qemu.conf_ and uncomment the following lines:
+
+    user = "root"
+    group = "root"
+
+== How to use deploy_vm ?
+
+=== Description
+
+_deploy_vm_ automatizes those steps from your local machine according to a configuration file:
+
+* prepare a VM on a host machine
+
+This step ensures to copy into the host machine all the needed artifacts (kernel and rootfs) required for VM installation.
+
+* install a VM on a host machine
+
+Using _virt-install_ command, the installation of the VM is done from the host machine.
+
+* retrieving of the guest machine IP address
+
+Each VM IP address is retrieved, meaning that the VM is up.
+
+* start of test commands
+
+According to the tests described in the configuration file, the tests are run on each VM.
+
+* copy of the tests outputs
+
+The tests outputs are copied on the local machine.
+
+* destroy of the virtual machine
+
+Each VM and its artifacts are destroyed.
+
+
+=== Communication
+
+All the communications are done over SSH.
+That is the reason why all host machines and guest machines must have an ssh server installed.
+
+=== Configuration
+
+_config.toml_ file allows to configure the host machine, the guest machine and the running tests:
+
+    [[hosts]]
+    ip = "192.168.1.21"         # IP of the the host machine
+    username = ""               # Username of the host machine for ssh connection
+    name = "host1"              # name used in the configuration file
+
+    [[guests]]
+    name = "guest1"             # name used in the configuration file
+    host = "host1"              # host machine where the guest machine is installed
+    kernel_img = "path"         # local path of the kernel image
+    rootfs_img = "path"         # local path of the rootfs image
+    memory = 2048               # memory (in MBytes) used for the guest machine
+    cpuset = 1                  # a comma separated list of cpu core id that are allocated for the guest machine. (optional and default to 1)
+
+    [[tests]]
+    name = "cyclictest_guest1"  # name of the test
+    guest = "guest1"            # guest machine where the test will be run
+    cmd = "ls"                  # command to be executed
+    output_name = "output"      # output file where the results will be stored
+
+You can define as many hosts, guests, tests as you want.
+
+Then simply run:
+
+    ./deploy
+    usage: deploy [-h] --config CONFIG --output OUTPUT
+    deploy: error: the following arguments are required: --config, --output
+
+
+For instance:
+
+    ./deploy --config config.toml --output output
+
+
+== About this documentation
+
+This documentation uses the AsciiDoc documentation generator. It is a convenient
+format that allows using plain-text formatted writing that can later be
+converted to various output formats such as HTML and PDF.
+
+In order to generate an HTML version of this documentation, use the following
+command (the asciidoc package will need to be installed in your Linux
+distribution):
+
+  $ asciidoc README.adoc
+
+This will result in a README.html file being generated in the current directory.
+
+If you prefer a PDF version of the documentation instead, use the following
+command (the dblatex package will need to be installed on your Linux
+distribution):
+
+  $ asciidoctor-pdf README.adoc
