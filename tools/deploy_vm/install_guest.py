@@ -12,19 +12,23 @@ class HostInstaller:
         self._host_tmp_dir = None
         self._list_vm_config = []
         self._ip = self.host_config["ip"]
+        self._username = self.host_config.get("username", None)
         self._create_tmp_dir()
         self.output_dir = output
 
     def _create_tmp_dir(self):
 
-        ret = send_ssh_cmd(ip=self._ip, cmd="mktemp -d")
+        ret = send_ssh_cmd(ip=self._ip, cmd="mktemp -d", user=self._username)
         self._host_tmp_dir = ret.stdout.decode().rstrip()
 
     def add_vm_configs(self, list_config):
         for config in list_config:
             self._list_vm_config.append(
                 VmConfig(
-                    config=config, host_ip=self._ip, host_tmp_dir=self._host_tmp_dir
+                    config=config,
+                    host_ip=self._ip,
+                    host_user=self._username,
+                    host_tmp_dir=self._host_tmp_dir,
                 )
             )
 
@@ -66,12 +70,15 @@ class HostInstaller:
 
     def download_all_results(self, list_test):
         for test in list_test:
-            copy_file_from(self._ip, test.get("output_dir"), self.output_dir)
+            copy_file_from(
+                self._ip, test.get("output_dir"), self.output_dir, user=self._username
+            )
 
 
 class VmConfig:
-    def __init__(self, config, host_ip, host_tmp_dir):
+    def __init__(self, config, host_ip, host_user, host_tmp_dir):
         self._host_ip = host_ip
+        self._host_user = host_user
         for k in config.keys():
             setattr(self, k, config[k])
         self._vm_tmp_dir = os.path.join(host_tmp_dir, self.name)
@@ -82,11 +89,11 @@ class VmConfig:
         cmd_shutdown = "virsh shutdown {}".format(self.name)
         cmd_destroy = "virsh destroy {}".format(self.name)
         cmd_delete = "virsh undefine {}".format(self.name)
-        cmd_rm = "rm -rf {}".format(self._vm_tmp_dir)
-        send_ssh_cmd(ip=self._host_ip, cmd=cmd_shutdown)
-        send_ssh_cmd(ip=self._host_ip, cmd=cmd_destroy)
-        send_ssh_cmd(ip=self._host_ip, cmd=cmd_delete)
-        send_ssh_cmd(ip=self._host_ip, cmd=cmd_rm)
+        cmd_rm = "rm -rf --preserve-root --one-file-system -- {}".format(self._vm_tmp_dir)
+        send_ssh_cmd(ip=self._host_ip, cmd=cmd_shutdown, user=self._host_user)
+        send_ssh_cmd(ip=self._host_ip, cmd=cmd_destroy, user=self._host_user)
+        send_ssh_cmd(ip=self._host_ip, cmd=cmd_delete, user=self._host_user)
+        send_ssh_cmd(ip=self._host_ip, cmd=cmd_rm, user=self._host_user)
 
     def dump(self):
         attrs = vars(self)
@@ -98,7 +105,11 @@ class VmConfig:
 
     def prepare(self):
         print("# Prepare {}".format(self.name))
-        send_ssh_cmd(ip=self._host_ip, cmd="mkdir -p {}".format(self._vm_tmp_dir))
+        send_ssh_cmd(
+            ip=self._host_ip,
+            cmd="mkdir -p {}".format(self._vm_tmp_dir),
+            user=self._host_user,
+        )
         self._copy_kernel()
         self._copy_rootfs()
 
@@ -111,7 +122,7 @@ class VmConfig:
     def run_test(self):
         print("# Run test {}".format(self.cmd))
         cmd_test = "ssh -y root@" + self.ip_addr + " " + self.cmd
-        send_ssh_cmd(ip=self._host_ip, cmd=cmd_test)
+        send_ssh_cmd(ip=self._host_ip, cmd=cmd_test, user=self._host_user)
 
     def update_ip(self):
         print("# Get IP of {}".format(self.name))
@@ -120,7 +131,7 @@ class VmConfig:
             + self.name
             + " | grep -i 'mac address' | cut -d \"'\" -f 2"
         )
-        ret = send_ssh_cmd(ip=self._host_ip, cmd=cmd_mac)
+        ret = send_ssh_cmd(ip=self._host_ip, cmd=cmd_mac, user=self._host_user)
         self.mac_addr = ret.stdout.decode().rstrip()
 
         if not self.mac_addr:
@@ -131,7 +142,7 @@ class VmConfig:
             + self.mac_addr
             + " | tail -n 2 | head -n 1 | awk {'print $5'} | cut -d \"/\" -f 1"
         )
-        ret = send_ssh_cmd(ip=self._host_ip, cmd=cmd_ip)
+        ret = send_ssh_cmd(ip=self._host_ip, cmd=cmd_ip, user=self._host_user)
         self.ip_addr = ret.stdout.decode().rstrip()
 
         if not self.ip_addr:
@@ -142,7 +153,10 @@ class VmConfig:
             self._vm_tmp_dir, os.path.split(self.kernel_img)[1]
         )
         copy_file_into(
-            ip=self._host_ip, file_path=self.kernel_img, dst_path=self.dst_kernel_img
+            ip=self._host_ip,
+            file_path=self.kernel_img,
+            dst_path=self.dst_kernel_img,
+            user=self._host_user,
         )
 
     def _copy_rootfs(self):
@@ -150,7 +164,10 @@ class VmConfig:
             self._vm_tmp_dir, os.path.split(self.rootfs_img)[1]
         )
         copy_file_into(
-            ip=self._host_ip, file_path=self.rootfs_img, dst_path=self.dst_rootfs_img
+            ip=self._host_ip,
+            file_path=self.rootfs_img,
+            dst_path=self.dst_rootfs_img,
+            user=self._host_user,
         )
 
     def _gen_virt_install_params(self):

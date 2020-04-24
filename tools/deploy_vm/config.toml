@@ -1,6 +1,6 @@
 [[hosts]]
 ip = "192.168.1.21"
-password = ""
+username = ""
 name = "host1"
 
 [[guests]]
