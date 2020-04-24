@@ -140,7 +140,7 @@ class VmConfig:
         cmd_ip = (
             "virsh net-dhcp-leases default --mac "
             + self.mac_addr
-            + " | tail -n 2 | head -n 1 | awk {'print $5'} | cut -d \"/\" -f 1"
+            + "| awk 'NR>2 { if (NF>0) { print $5 }}' | cut -d \"/\" -f 1"
         )
         ret = send_ssh_cmd(ip=self._host_ip, cmd=cmd_ip, user=self._host_user)
         self.ip_addr = ret.stdout.decode().rstrip()
