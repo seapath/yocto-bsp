@@ -165,12 +165,25 @@ update_layers()
         return 0
     fi
 
+    local layers_filter_pattern
+    if [ -s "${TOPDIR}/layers.blacklist" ] ; then
+        while read layer
+        do
+            layers_filter_pattern="$layers_filter_pattern${sep}${SOURCESDIR}/${layer}"
+            local sep="|"
+        done < ${TOPDIR}/layers.blacklist
+        layers_filter_pattern="($layers_filter_pattern)"
+    else
+        layers_filter_pattern="!()"
+    fi
+
     local layers_to_add=$(find "${SOURCESDIR}"/meta-* \
         "${SOURCESDIR}"/poky/meta-* \
         -type f \
         -path '*/conf/layer.conf' | \
         xargs -n1 dirname | \
-        xargs -n1 dirname)
+        xargs -n1 dirname | egrep -v $layers_filter_pattern)
+
     if [ -n "${layers_to_add}" ] ; then
         run_cmd "update layers" "bitbake-layers add-layer ${layers_to_add}"
     fi
@@ -236,6 +249,11 @@ export ACCEPT_FSL_EULA="1"
 if [ ! -z "$REMOVE_BUILDDIR" ]; then
   # Clean directory
   run_cmd "Remove build directory" rm -Rf "${BUILDDIR}"
+fi
+
+# Clean layers
+if [ -z "${NO_LAYERS_UPDATE}" ] ; then
+    rm -f ${BUILDDIR}/conf/bblayers.conf
 fi
 
 # Init poky build
