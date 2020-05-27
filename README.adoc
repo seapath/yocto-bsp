@@ -40,6 +40,20 @@ in the next sections of this document.
 * Enhances boot time
 * Adds Yocto ptests
 
+=== Version 0.6 (April 25 2020)
+
+* Fixes regression in libvirt
+
+=== Version 0.7 (April 30 2020)
+
+* Adds missing drivers for intel I210
+* Adds PMD drivers for dpdk
+* Adds pciutils for dpdk
+
+=== Version 0.8 (May 18 2020)
+
+* Adds igb_uio and virtio support for Openvswitch / dpdk
+
 :numbered:
 
 == Environment setup
