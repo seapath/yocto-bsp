@@ -110,7 +110,6 @@ class VmConfig:
             cmd="mkdir -p {}".format(self._vm_tmp_dir),
             user=self._host_user,
         )
-        self._copy_kernel()
         self._copy_rootfs()
 
     def run(self):
@@ -148,17 +147,6 @@ class VmConfig:
         if not self.ip_addr:
             raise ValueError("no ip address found for {}".format(self.name))
 
-    def _copy_kernel(self):
-        self.dst_kernel_img = os.path.join(
-            self._vm_tmp_dir, os.path.split(self.kernel_img)[1]
-        )
-        copy_file_into(
-            ip=self._host_ip,
-            file_path=self.kernel_img,
-            dst_path=self.dst_kernel_img,
-            user=self._host_user,
-        )
-
     def _copy_rootfs(self):
         self.dst_rootfs_img = os.path.join(
             self._vm_tmp_dir, os.path.split(self.rootfs_img)[1]
@@ -181,15 +169,15 @@ class VmConfig:
             "--memory",
             str(self.memory),
             "--boot",
-            "kernel="
-            + self.dst_kernel_img
-            + ',kernel_args="console=ttyS0 root=/dev/sda"',
+            "uefi",
             "--disk",
-            self.dst_rootfs_img,
+            self.dst_rootfs_img + ",format=qcow2,bus=virtio",
             "--graphics",
             "none",
             "--network",
             "bridge=virbr0,model=virtio",
+            "--console",
+            "pty,target_type=virtio"
             "--noautoconsole",
         ]
 

@@ -73,7 +73,6 @@ _config.toml_ file allows to configure the host machine, the guest machine and t
     [[guests]]
     name = "guest1"             # name used in the configuration file
     host = "host1"              # host machine where the guest machine is installed
-    kernel_img = "path"         # local path of the kernel image
     rootfs_img = "path"         # local path of the rootfs image
     memory = 2048               # memory (in MBytes) used for the guest machine
     cpuset = 1                  # a comma separated list of cpu core id that are allocated for the guest machine. (optional and default to 1)

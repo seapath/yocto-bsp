@@ -6,32 +6,28 @@ name = "host1"
 [[guests]]
 name = "guest1"
 host = "host1"
-kernel_img = "images/bzImage"
-rootfs_img = "images/rte-guest-test-image-votp.ext4"
+rootfs_img = "images/rte-guest-test-image-votp.qcow2"
 memory = 2048
 cpuset = 1
 
 [[guests]]
 name = "guest2"
 host = "host1"
-kernel_img = "images/bzImage"
-rootfs_img = "images/rte-guest-test-image-votp.ext4"
+rootfs_img = "images/rte-guest-test-image-votp.qcow2"
 memory = 2048
 cpuset = 2
 
 [[guests]]
 name = "guest3"
 host = "host1"
-kernel_img = "images/bzImage"
-rootfs_img = "images/rte-guest-test-image-votp.ext4"
+rootfs_img = "images/rte-guest-test-image-votp.qcow2"
 memory = 2048
 cpuset = 3
 
 [[guests]]
 name = "guest4"
 host = "host1"
-kernel_img = "images/bzImage"
-rootfs_img = "images/rte-guest-test-image-votp.ext4"
+rootfs_img = "images/rte-guest-test-image-votp.qcow2"
 memory = 2048
 cpuset = 4
 
