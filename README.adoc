@@ -54,6 +54,13 @@ in the next sections of this document.
 
 * Adds igb_uio and virtio support for Openvswitch / dpdk
 
+=== Version 0.9 (May 27 2020)
+
+* Add guest images in qcow2 format
+* Compressed generated host images
+* Add a partition data mount in /var in all images
+* Update flash description
+
 :numbered:
 
 == Environment setup
@@ -205,9 +212,13 @@ You can also pass custom BitBake commands using the `--` separator:
 
 Three Yocto images are available:
 
-* rte-image: production image
+* rte-image: production image to work with UEFI
+* rte-bios-image: production image to work with BIOS/UEFI legacy
 * rte-dbg-image: rte production image with debug tools
 * rte-test-image: rte production image with test tools
+* rte-guest-image: rte guest production image to work whith qemu
+* rte-guest-dbg-image: rte guest production image with debug tools
+* rte-guest-test-image: rte guest production image with test tools
 
 == Building an SDK Installer
 
@@ -221,14 +232,26 @@ NOTE: prefix this command with `cqfd run` if using cqfd.
 When the bitbake command completes, the toolchain installer will be in
 `tmp/deploy/sdk/` under your build directory.
 
-== Flashing the firmware to an SD Card
+== Flashing the firmware to an SD Card or USB key
 
-On a Linux system, you can use the `dd` command. For instance, if the SD Card
-device is /dev/sdx:
+On a Linux system, you can use the `dd` command. Firmware are compressed in gzip
+format, it must be decompress with gzip first For instance, if the SD Card or
+USB key device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ sudo dd if=build/tmp/deploy/image/boardname/rte-image-boardname.img \
-      of=/dev/sdx bs=64k conv=fsync
+  $ gzip -d -c  build/tmp/deploy/image/boardname/rte-image-boardname.wic.gz | \
+      sudo dd of=/dev/sdx bs=16M conv=fsync
+
+== Flashing the firmware to the disk
+
+
+Copy the generated image in format wic.gz in a Linux live usb distribution.
+
+Boot the usb key. You can flash the disk as an SD card or USB key.
+To find the correct /dev/sdx matching your disk you can use the following
+command:
+
+  $ sudo lshw -class disk
 
 == Tests
 
