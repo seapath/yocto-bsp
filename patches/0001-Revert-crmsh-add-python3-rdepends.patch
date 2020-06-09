@@ -1,0 +1,26 @@
+From 7dbc7b2f808e77ba638ec718d3775de927aaa390 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
+Date: Tue, 9 Jun 2020 15:51:29 +0200
+Subject: [PATCH] Revert "crmsh: add python3-* rdepends"
+
+This reverts commit eabb56dfa621da166ce1c8539c8351e0ed71979e.
+---
+ meta-cgl-common/recipes-cgl/crmsh/crmsh_4.20.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meta-cgl-common/recipes-cgl/crmsh/crmsh_4.20.bb b/meta-cgl-common/recipes-cgl/crmsh/crmsh_4.20.bb
+index add7dba..0eb1e58 100644
+--- a/sources/meta-cgl/meta-cgl-common/recipes-cgl/crmsh/crmsh_4.20.bb
++++ b/sources/meta-cgl/meta-cgl-common/recipes-cgl/crmsh/crmsh_4.20.bb
+@@ -11,7 +11,7 @@ DEPENDS = "asciidoc-native \
+            libxslt-native \
+            python-setuptools-native \
+            "
+-RDEPENDS_${PN} = "pacemaker python3-lxml python3-parallax gawk bash"
++RDEPENDS_${PN} = "pacemaker python-lxml gawk bash"
+ 
+ S = "${WORKDIR}/git"
+ SRC_URI = "git://github.com/ClusterLabs/${BPN}.git \
+-- 
+2.26.2
+
