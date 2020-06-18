@@ -1,0 +1,29 @@
+From 0d4ab06846fdbcb2f5360e3948fca501a9314aef Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
+Date: Thu, 18 Jun 2020 11:39:41 +0200
+Subject: [PATCH] recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb: fix package
+ name with zeus
+
+lsbinitscripts is not provided in zeus Yocto version if systemd is used.
+Use initscripts-functions package instead which provides lsbinitscripts
+for systemd.
+---
+ meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sources/meta-cgl/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb b/sources/meta-cgl/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
+index bc0551b..5911752 100644
+--- a/sources/meta-cgl/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
++++ b/sources/meta-cgl/meta-cgl-common/recipes-cgl/ocfs2-tools/ocfs2-tools_1.8.6.bb
+@@ -34,7 +34,7 @@ DEPENDS = "corosync pacemaker \
+ # They are not the same code!
+ #
+ RDEPENDS_${PN} = "bash coreutils net-tools module-init-tools e2fsprogs glib-2.0 \
+-                  ${@bb.utils.contains('DISTRO_FEATURES','systemd','lsbinitscripts','',d)}"
++                  ${@bb.utils.contains('DISTRO_FEATURES','systemd','initscripts-functions','',d)}"
+ 
+ ASNEEDED_pn-${PN} = ""
+ PARALLEL_MAKE = ""
+-- 
+2.17.1
+
