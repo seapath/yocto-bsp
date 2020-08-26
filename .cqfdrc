@@ -9,7 +9,7 @@ files='build/tmp/deploy/images/votp/rte-image-votp.wic.gz
 archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
 tar_transform='yes'
-flavors='sfl_ci dbg guest_dbg test guest_test bios guest'
+flavors='sfl_ci dbg guest_dbg test guest_test bios guest bios_dbg bios_test'
 
 [sfl_ci]
 command='./build.sh -v \
@@ -30,6 +30,12 @@ command='./build.sh -v -i rte-guest-test-image'
 
 [bios]
 command='./build.sh -v -i rte-bios-image'
+
+[bios_dbg]
+command='./build.sh -v -i rte-bios-dbg-image'
+
+[bios_test]
+command='./build.sh -v -i rte-bios-test-image'
 
 [guest]
 command='./build.sh -v -i rte-guest-image'
