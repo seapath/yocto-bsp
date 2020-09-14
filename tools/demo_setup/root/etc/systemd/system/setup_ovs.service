@@ -1,0 +1,11 @@
+[Unit]
+Description=setup openvswitch
+After=tlp-init.service
+After=votp-config_ovs.service
+Wants=network-online.target
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/opt/setup/setup_ovs.sh
+[Install]
+WantedBy=multi-user.target

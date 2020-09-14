@@ -1,0 +1,8 @@
+[Match]
+Name=kernelbr0
+
+[Network]
+#DNS=@gateway_addr@
+#DNS=8.8.8.8
+Address=@ip_addr@/24
+#Gateway=@gateway_addr@

@@ -1,0 +1,5 @@
+[Match]
+Name=@enbridge0@
+
+[Network]
+Bridge=kernelbr0

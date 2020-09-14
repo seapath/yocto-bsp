@@ -1,0 +1,5 @@
+[Match]
+Name=kernelbr1
+
+[Network]
+DHCP=no

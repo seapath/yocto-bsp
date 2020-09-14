@@ -1,0 +1,8 @@
+[Match]
+Name=@interface@
+
+[Network]
+#DNS=@gateway_addr@
+#DNS=8.8.8.8
+Address=@observer_addr@/24
+#Gateway=@gateway_addr@

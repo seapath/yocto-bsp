@@ -1,0 +1,75 @@
+HA demonstration setup how-to
+=============================
+
+== Presentation
+Demo setup allows you to quickly set up a HA cluster as describes
+https://r1.sfl.team/projects/rte-votp/wiki/Our_HA_setup[here]:
+
+This script will setup:
+
+- one HP server as VOTP1 hypervisor ; IP address 192.168.217.131
+- another HP server as VOTP2 hypervisor ; IP address 192.168.217.132
+- Advantech server as observer ; IP address 192.168.217.133
+
+== Prerequisite
+- All machines must be flashed with VOTP distribution and must be accessible on
+the network.
+- You must have created a config.ini file at the root of this directory. This file
+describes the cluster to setup. You can refer to the example files in the
+example folder.
+- A NTP server must be available at 192.168.217.134
+
+== Configuring the cluster
+Simply run the demo_setup.sh script at the root of the demo_setup folder.
+You can specify a custom configuration file path with -c parameter.
+For example:
+
+ $ ./demo_setup.sh -c myconfig.ini
+
+Wait for setup to finish.
+
+== Add a VM disk
+Run the script import_vm_disk.sh at the root of the demo_setup folder.
+This script takes as parameter the disk image to be imported in qcow2 format.
+You can use --name or -n parameter to specify the name of the disk to be given
+in the cluster. For example:
+
+ $ ./import_vm_disk.sh image.qcow2 -n disk
+
+== Add a VM
+Run the script add_vm.sh at the root of the demo_setup folder.
+The script need parameters:
+
+- --id:        The VM id. It is a unique number per VM between 0 and 99
+- --interface: The network interface to use: kernelbr0 or kernelbr1 and ovs
+              according to the cluster configuration defined in config.ini.
+- --disk:      The name of the disk to use (the one defined above). It is an
+              optional parameter. The default name is disk.
+For example:
+
+  $ ./add_vm.sh --id 0 --interface ovs --disk disk
+
+== Cluster status
+To monitor the cluster and the VMs you can use the script cluster_status.sh.
+On "Node list" you can found the hypervisor status. On "Full List of Resources"
+you can found all the VM, there state and and which hypervisor host its.
+
+== About this documentation
+
+This documentation uses the AsciiDoc documentation generator. It is a convenient
+format that allows using plain-text formatted writing that can later be
+converted to various output formats such as HTML and PDF.
+
+In order to generate an HTML version of this documentation, use the following
+command (the asciidoc package will need to be installed in your Linux
+distribution):
+
+  $ asciidoc HOWTO.adoc
+
+This will result in a README.html file being generated in the current directory.
+
+If you prefer a PDF version of the documentation instead, use the following
+command (the dblatex package will need to be installed on your Linux
+distribution):
+
+  $ asciidoctor-pdf HOWTO.adoc
