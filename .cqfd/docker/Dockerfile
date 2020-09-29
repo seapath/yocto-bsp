@@ -1,3 +1,5 @@
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive

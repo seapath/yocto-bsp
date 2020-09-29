@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2020, RTE (http://www.rte-france.com) -->
 <domain type='kvm'>
   <name>guest@VM_ID@</name>
   <uuid>@UUID@</uuid>

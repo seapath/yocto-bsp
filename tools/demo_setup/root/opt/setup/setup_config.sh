@@ -1,3 +1,5 @@
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 VOTP1_ADDR=192.168.217.131
 VOTP2_ADDR=192.168.217.132
 OBSERVER_ADDR=192.168.217.133

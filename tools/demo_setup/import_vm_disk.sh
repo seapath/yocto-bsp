@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 
 source_dir=$(dirname "$0")
 source "${source_dir}"/src/utils.sh

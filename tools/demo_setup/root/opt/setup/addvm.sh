@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 set -e
 
 if ip addr | grep -q " kernelbr1:" ; then

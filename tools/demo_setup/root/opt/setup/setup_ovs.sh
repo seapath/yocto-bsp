@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 set -e
 dpdk-devbind --force  --bind=uio_pci_generic "@dpdk_nic@"
 if ip addr |grep -q "ovsbr:" ; then

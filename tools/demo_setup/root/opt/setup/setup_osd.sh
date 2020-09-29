@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2020, RTE (http://www.rte-france.com)
+
 set -e
 UUID=$(uuidgen)
 OSD_SECRET=$(ceph-authtool --gen-print-key)

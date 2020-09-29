@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Yocto build system initiator.
+#
+# Copyright (C) 2019-2020 Savoir-faire Linux, Inc.
+# This program is distributed under the Apache 2 license.
 
 # Name:       print_usage
 # Brief:      Print script usage
