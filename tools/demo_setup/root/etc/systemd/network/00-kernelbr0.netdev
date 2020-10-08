@@ -1,3 +1,4 @@
 [NetDev]
 Name=kernelbr0
 Kind=bridge
+MACAddress=@mac@

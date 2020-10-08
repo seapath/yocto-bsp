@@ -65,6 +65,12 @@ done
 source /opt/setup/setup_config.sh
 source /opt/setup/setup_utils.sh
 
+generate_local_mac_address()
+{
+    printf 'ea:9e:cf:%02x:%02x:%02x\n' \
+        $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]
+}
+
 create_logs_directories()
 {
     echo "Create logs directories"
@@ -132,6 +138,8 @@ setup_hypervisor_network()
 {
     echo "Configure Network"
     replace enbridge0 "${eth}" /etc/systemd/network/00-enkernelbr0.network
+    replace mac "$(generate_local_mac_address)" \
+        /etc/systemd/network/00-kernelbr0.netdev
     if [ "$host" = "votp1" ]
     then
         ip_addr="${VOTP1_ADDR}"
@@ -146,6 +154,8 @@ setup_hypervisor_network()
         cp /opt/setup/no_ovs/* /etc/systemd/network/
         replace enbridge1 "${eth2}" \
             /etc/systemd/network/00-enkernelbr1.network
+        replace mac "$(generate_local_mac_address)" \
+            /etc/systemd/network/00-kernelbr1.netdev
     else
         replace dpdk_nic "${nic}" /opt/setup/setup_ovs.sh
     fi
