@@ -16,3 +16,19 @@ run_ssh_command()
     #echo "ssh $host $command $args"
     ssh ${SSH_OPTIONS} root@"$ip_addr" -- "$command" $args
 }
+
+# param 1 iteration number before failed
+# param 2 seconds to wait between iteration
+# param 3 command to run
+wait_until()
+{
+    i="$1"
+    wait="$2"
+    shift
+    shift
+    command="$@"
+    while ! eval $command && [ $i -gt 0 ] ; do
+        sleep $wait
+    let i--
+    done
+}

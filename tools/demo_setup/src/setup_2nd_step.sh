@@ -11,7 +11,7 @@ setup_pacemaker()
 {
     echo "Configure pacemacker"
     # Check corosync/pacemacker are up and the cluster is ready
-    run_ssh_command votp1 crm status | grep -q 'Online: \[ votp1 votp2 \]'
+    wait_until 10 3 "run_ssh_command votp1 crm status | grep -q 'Online: \[ votp1 votp2 \]'"
     run_ssh_command votp1 /opt/setup/setup_pacemaker.sh
     pacemaker_config=$(run_ssh_command votp2 crm "configure show")
     echo "${pacemaker_config}" |grep -q "stonith-enabled=false"
@@ -26,14 +26,14 @@ setup_ceph_monitors()
     run_ssh_command observer /opt/setup/setup_mon_observer.sh
 
     # Check the 3 mon are up
-    run_ssh_command observer ceph status | grep -q "mon: 3 daemons, quorum"
+    wait_until 10 1 'run_ssh_command observer ceph status | grep -q "mon: 3 daemons, quorum"'
 
     run_ssh_command votp1 systemctl 'restart ceph-mon@votp1'
     run_ssh_command votp2 systemctl 'restart ceph-mon@votp2'
     run_ssh_command observer systemctl 'restart ceph-mon@observer'
 
     # Check the 3 mon are up
-    run_ssh_command votp2 ceph status | grep -q "mon: 3 daemons, quorum"
+    wait_until 10 1 'run_ssh_command votp2 ceph status | grep -q "mon: 3 daemons, quorum"'
 }
 
 setup_ceph_osds()
@@ -69,7 +69,6 @@ wait_machines_up()
             fi
         done
     done
-    sleep 5
 }
 
 wait_machines_up
