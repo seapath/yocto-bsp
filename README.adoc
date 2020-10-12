@@ -206,28 +206,28 @@ The following packages need to be installed:
 
 The build is started by running the following command:
 
-  $ ./build.sh -i rte-image -m boardname
+  $ ./build.sh -i seapath-image -m boardname
 
 You can also pass custom BitBake commands using the `--` separator:
 
-  $ ./build.sh -i rte-image -m boardname -- bitbake -c clean package_name
+  $ ./build.sh -i seapath-image -m boardname -- bitbake -c clean package_name
 
 Three Yocto images are available:
 
-* rte-image: production image to work with UEFI
-* rte-bios-image: production image to work with BIOS/UEFI legacy
-* rte-dbg-image: rte production image with debug tools
-* rte-test-image: rte production image with test tools
-* rte-guest-image: rte guest production image to work whith qemu
-* rte-guest-dbg-image: rte guest production image with debug tools
-* rte-guest-test-image: rte guest production image with test tools
+* seapath-image: production image to work with UEFI
+* seapath-bios-image: production image to work with BIOS/UEFI legacy
+* seapath-dbg-image: production image with debug tools
+* seapath-test-image: production image with test tools
+* seapath-guest-image: guest production image to work whith qemu
+* seapath-guest-dbg-image: guest production image with debug tools
+* seapath-guest-test-image: guest production image with test tools
 
 == Building an SDK Installer
 
 You can create an SDK matching your system's configuration using with the
 following command:
 
-  $ ./build.sh -i rte -m boardname --sdk
+  $ ./build.sh -i seapath -m boardname --sdk
 
 NOTE: prefix this command with `cqfd run` if using cqfd.
 
@@ -241,8 +241,8 @@ format, it must be decompress with gzip first For instance, if the SD Card or
 USB key device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ gzip -d -c  build/tmp/deploy/image/boardname/rte-image-boardname.wic.gz | \
-      sudo dd of=/dev/sdx bs=16M conv=fsync
+  $ gzip -d -c build/tmp/deploy/image/boardname/seapath-image-boardname.wic.gz \
+      | sudo dd of=/dev/sdx bs=16M conv=fsync
 
 == Flashing the firmware to the disk
 
@@ -285,7 +285,7 @@ Here is the list of tests done so far.
 
 === Performance tests
 
-The Yocto image _rte-test-image_ incudes Real Time tests such as cyclictest.
+The Yocto image _seapath-test-image_ incudes Real Time tests such as cyclictest.
 
 On the target, call:
 
@@ -302,7 +302,7 @@ Then generate the graphics:
 
 ==== KVM unit tests
 
-The Yocto image _rte-test-image_ includes https://www.linux-kvm.org/page/KVM-unit-tests[kvm-unit-tests].
+The Yocto image _seapath-test-image_ includes https://www.linux-kvm.org/page/KVM-unit-tests[kvm-unit-tests].
 
 On the target, call:
 
@@ -321,11 +321,11 @@ we need to set the console output.
 We use two distinct files to modify the Linux Kernel command line:
 
 - _bzImage_: the Linux Kernel image
-- _rte-test-image-votp.ext4_: the rte rootfs
+- _seapath-test-image-votp.ext4_: the Seapath rootfs
 
 Then run:
 
- $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda rte-test-image-votp.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
+ $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda seapath-test-image-votp.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
 
 === Yocto ptests
 
@@ -333,7 +333,7 @@ Ptest (package test) is a concept for building, installing and running the test 
 that are included in many upstream packages, and producing a consistent output format
 for the results.
 
-ptest-runner is included in _rte_test_image_ and allows to run those tests.
+ptest-runner is included in _seapath_test_image_ and allows to run those tests.
 
 For instance:
 

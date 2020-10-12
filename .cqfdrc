@@ -1,10 +1,10 @@
 [project]
-org='rte'
+org='seapath'
 name='yocto-bsp'
 
 [build]
 command='./build.sh -v'
-files='build/tmp/deploy/images/votp/rte-image-votp.wic.gz
+files='build/tmp/deploy/images/votp/seapath-image-votp.wic.gz
        build/tmp/deploy/images/README.pdf'
 archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
@@ -17,25 +17,25 @@ command='./build.sh -v \
 	--sstate-dir /mnt/sstate'
 
 [dbg]
-command='./build.sh -v -i rte-dbg-image'
+command='./build.sh -v -i seapath-dbg-image'
 
 [guest_dbg]
-command='./build.sh -v -i rte-guest-dbg-image'
+command='./build.sh -v -i seapath-guest-dbg-image'
 
 [test]
-command='./build.sh -v -i rte-test-image'
+command='./build.sh -v -i seapath-test-image'
 
 [guest_test]
-command='./build.sh -v -i rte-guest-test-image'
+command='./build.sh -v -i seapath-guest-test-image'
 
 [bios]
-command='./build.sh -v -i rte-bios-image'
+command='./build.sh -v -i seapath-bios-image'
 
 [bios_dbg]
-command='./build.sh -v -i rte-bios-dbg-image'
+command='./build.sh -v -i seapath-bios-dbg-image'
 
 [bios_test]
-command='./build.sh -v -i rte-bios-test-image'
+command='./build.sh -v -i seapath-bios-test-image'
 
 [guest]
-command='./build.sh -v -i rte-guest-image'
+command='./build.sh -v -i seapath-guest-image'

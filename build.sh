@@ -246,7 +246,7 @@ export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
 "
 
 # Set image to build, default to core-image-minimal
-export IMAGE=${IMAGE:-"rte-image"}
+export IMAGE=${IMAGE:-"seapath-image"}
 export MACHINE=${MACHINE:-"votp"}
 export DISTRO=${DISTRO:-"votp"}
 export ACCEPT_FSL_EULA="1"

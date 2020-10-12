@@ -9,7 +9,7 @@ print_usage()
     echo "This script generates a latency graph based on cyclictest output
 	For instance:
 		$ cyclictest -l100000000 -m -Sp90 -i200 -h400 -q >output
-		$ $0 -i output  -n 28 -o rte.png
+		$ $0 -i output  -n 28 -o seapath.png
 
 ./$(basename "${0}") [OPTIONS]
 
