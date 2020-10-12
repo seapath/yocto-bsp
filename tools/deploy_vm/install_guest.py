@@ -1,4 +1,5 @@
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
+# This program is distributed under the Apache 2 license.
 
 from utils import send_ssh_cmd
 from utils import copy_file_from, copy_file_into

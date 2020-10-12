@@ -1,5 +1,6 @@
 #!/bin/sh
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
+# This program is distributed under the Apache 2 license.
 
 set -e
 dpdk-devbind --force  --bind=uio_pci_generic "@dpdk_nic@"
