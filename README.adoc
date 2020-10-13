@@ -1,7 +1,7 @@
 // Copyright (C) 2020, RTE (http://www.rte-france.com)
 
-rte Yocto BSP Platform Developer Guide
-=======================================
+Seapath Yocto BSP Platform Developer Guide
+==========================================
 :toc:
 :icons:
 :iconsdir: ./doc/icons/
@@ -72,8 +72,7 @@ in the next sections of this document.
 The firmware source code is fetched from several git repositories. Some
 of them are public and require no credentials.
 
-The part specific to rte's product is stored on a private git server, provided
-by SFL at the moment.
+The part specific to Seapath is stored on the LF Energy github.
 
 If you don't already have a set of SSH keys in the `~/.ssh` directory of your
 build machine, you can create them by running:
@@ -115,7 +114,7 @@ First initialize `repo`:
   $ repo init -u <manifest_repo_url>
   $ repo sync
 
-For instance, for rte's yocto-bsp project:
+For instance, for Seapath yocto-bsp project:
 
   $ cd my_project_dir/
   $ repo init -u ssh://g1.sfl.team:29419/rte/votp/repo-manifest
@@ -294,7 +293,7 @@ On the target, call:
 *Note:* This test will run around 5 hours
 Then generate the graphics:
 
- $ ./yocto-bsp/tools/gen_cyclic_test.sh -i output -n 28 -o rte.png
+ $ ./yocto-bsp/tools/gen_cyclic_test.sh -i output -n 28 -o seapath.png
 
 *Note:* we reused OSADL http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html[tools].
 
@@ -310,7 +309,7 @@ On the target, call:
 
 ==== KVM/Qemu guest tests
 
-All RTE Yocto images include the ability to run guest Virtual Machines (VMs).
+All Seapath Yocto images include the ability to run guest Virtual Machines (VMs).
 
 We used KVM and Qemu to run them. As we do not have any window manager on the host system,
 VMs should be launched in console mode and their console output must be correctly set.
