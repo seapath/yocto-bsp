@@ -85,8 +85,6 @@ in the next sections of this document.
 
 :numbered:
 
-== Environment setup
-
 == Fetching the source using Git
 
 We are using `repo` to synchronize the source code using a manifest (an XML
