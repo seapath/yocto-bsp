@@ -63,6 +63,26 @@ in the next sections of this document.
 * Add a partition data mount in /var in all images
 * Update flash description
 
+=== Version 0.10 (Jul 3 2020)
+
+* Adds a High Availability VM solution based on Pacemaker
+* Adds a Distributed Storage solution based on Ceph
+* Adds a test tool to check data synchronization
+
+=== Version 0.11 (Aug 23 2020)
+
+* Adds support for interfacing with an Active Directory using SSSD/Realmd
+* Adds support for user authentication from a RADIUS server
+
+=== Version 0.12 (Sep 28 2020)
+
+ * Adds deployment scripts to perform a configuration similar to the High
+   Availability test setup
+ * Fixes upstream source download issues
+ * Does not start unconfigured systemd services at startup
+ * Add "test" and "debug" image variants with BIOS support
+ * Generates "guest" images in Vmware disk format
+
 :numbered:
 
 == Environment setup
