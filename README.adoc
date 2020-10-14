@@ -87,41 +87,6 @@ in the next sections of this document.
 
 == Environment setup
 
-=== SSH keys
-
-The firmware source code is fetched from several git repositories. Some
-of them are public and require no credentials.
-
-The part specific to Seapath is stored on the LF Energy github.
-
-If you don't already have a set of SSH keys in the `~/.ssh` directory of your
-build machine, you can create them by running:
-
-  $ ssh-keygen -t rsa -C <your_email@youremail.com>
-
-Then, connect to https://g1.sfl.team[gerrit] and authenticate using your
-provided user and password.
-
-In the top right corner:
-
-* Click on "Settings"
-* Go to the "SSH Public Keys" section.
-* Add the contents of your public SSH key (with the .pub extension). The default
-  SSH public key path should be `~/.ssh/id_rsa.pub`.
-
-=== Git defaults
-
-If you want to fetch the source code from SFL's Git server, add these default
-`User` and `Port` directives to your `~/.ssh/config`:
-
-```
-Host g1.sfl.team
-    Port 29419
-    User your_username
-```
-
-NOTE: Specify the SFL username that was provided to you.
-
 == Fetching the source using Git
 
 We are using `repo` to synchronize the source code using a manifest (an XML
@@ -137,7 +102,7 @@ First initialize `repo`:
 For instance, for Seapath yocto-bsp project:
 
   $ cd my_project_dir/
-  $ repo init -u ssh://g1.sfl.team:29419/rte/votp/repo-manifest
+  $ repo init -u https://github.com/seapath/repo-manifest.git
   $ repo sync
 
 Once the sync is completed, you should see a git repository named `yocto-bsp`,
