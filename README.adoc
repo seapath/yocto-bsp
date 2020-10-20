@@ -113,6 +113,13 @@ sub-directory.
 NOTE: The initial build process takes approximately 4 to 5 hours on a current
 developer machine and will produce approximately 50GB of data.
 
+== Build prerequisites
+
+Before building you must put a ssh public in
+_yocto-bsp/keys/ansible_public_ssh_key.pub_. It will be used by Ansible to
+communicate with the machines.
+See for _yocto-bsp/keys/README_ for more informations.
+
 == Building a firmware using cqfd
 
 `cqfd` is a quick and convenient way to run commands in the current directory,
