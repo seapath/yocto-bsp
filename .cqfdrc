@@ -9,7 +9,7 @@ files='build/tmp/deploy/images/votp/seapath-image-votp.wic.gz
 archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
 tar_transform='yes'
-flavors='sfl_ci dbg guest_dbg test guest_test bios guest bios_dbg bios_test'
+flavors='sfl_ci dbg guest_dbg test guest_test bios guest bios_dbg bios_test flash_bios flash_efi'
 
 [sfl_ci]
 command='./build.sh -v \
@@ -39,3 +39,9 @@ command='./build.sh -v -i seapath-bios-test-image'
 
 [guest]
 command='./build.sh -v -i seapath-guest-image'
+
+[flash_bios]
+command='./build.sh -v -i seapath-flash-bios'
+
+[flash_efi]
+command='./build.sh -v -i seapath-flash-efi'
