@@ -231,26 +231,38 @@ NOTE: prefix this command with `cqfd run` if using cqfd.
 When the bitbake command completes, the toolchain installer will be in
 `tmp/deploy/sdk/` under your build directory.
 
-== Flashing the firmware to an SD Card or USB key
+== Flashing the flash image to an USB key
 
-On a Linux system, you can use the `dd` command. Firmware are compressed in gzip
-format, it must be decompress with gzip first For instance, if the SD Card or
-USB key device is /dev/sdx:
+To be able to install Seapath firmware on machines you need to use a USB key
+running a specific application.
+This application is available in `seapath-flash-bios` for machine running a BIOS
+and `seapath-flash-efi` for machine running an UEFI.
+
+To create the flash USB key, on a Linux system, you can use the `dd` command.
+The image is compressed in gzip format, it must be uncompressed with gzip first.
+For instance, if USB key device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ gzip -d -c build/tmp/deploy/image/boardname/seapath-image-boardname.wic.gz \
+  $ gzip -d -c build/tmp/deploy/image/boardname/seapath-flash-bios.wic.gz \
       | sudo dd of=/dev/sdx bs=16M conv=fsync
 
 == Flashing the firmware to the disk
 
 
-Copy the generated image in format wic.gz in a Linux live usb distribution.
+Copy the generated image in format wic or wic.gz on the USB key flasher_data
+parition.
 
-Boot the usb key. You can flash the disk as an SD card or USB key.
-To find the correct /dev/sdx matching your disk you can use the following
-command:
 
-  $ sudo lshw -class disk
+Boot the usb key. Use the `flash` script to write the firmware image on the
+disk. `flash` takes two arguments:
+
+* --images: the path to the image to be flashed. The image partition are
+mounted on /media.
+* --disk: the disk to flash. Usualy /dev/sda.
+
+For instance:
+
+    $ flash --image /media/seapath-image.wic.gz --disk /dev/sda
 
 == Tests
 
