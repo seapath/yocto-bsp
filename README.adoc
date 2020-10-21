@@ -202,15 +202,22 @@ You can also pass custom BitBake commands using the `--` separator:
 
   $ ./build.sh -i seapath-image -m boardname -- bitbake -c clean package_name
 
-Three Yocto images are available:
+Yoou can find below the Yocto images list:
 
 * seapath-image: production image to work with UEFI
 * seapath-bios-image: production image to work with BIOS/UEFI legacy
-* seapath-dbg-image: production image with debug tools
-* seapath-test-image: production image with test tools
+* seapath-bios-dbg-image: debug image to work with BIOS/UEFI legacy
+* seapath-bios-test-image: production image whith test tools to work with
+BIOS/UEFI legacy
+* seapath-dbg-image: debug image to work with UEFI
+* seapath-test-image: production image with test tools to work with UEFI
 * seapath-guest-image: guest production image to work whith qemu
-* seapath-guest-dbg-image: guest production image with debug tools
+* seapath-guest-dbg-image: guest debug image
 * seapath-guest-test-image: guest production image with test tools
+* seapath-flash-bios: USB key flash image used to flash firmware images on disk.
+Work on BIOS machine.
+* seapath-flash-efi: USB key flash image used to flash firmware images on disk.
+Work on UEFI machine.
 
 == Building an SDK Installer
 
