@@ -1,5 +1,5 @@
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
-# This program is distributed under the Apache 2 license.
+# SPDX-License-Identifier: Apache-2.0
 
 MACHINES="votp1 votp2 observer"
 SSH_OPTIONS='-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

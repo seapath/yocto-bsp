@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
-# This program is distributed under the Apache 2 license.
+# SPDX-License-Identifier: Apache-2.0
 
 set -e
 ceph auth get-or-create client.libvirt \

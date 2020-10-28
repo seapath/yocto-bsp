@@ -1,5 +1,5 @@
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
-# This program is distributed under the Apache 2 license.
+# SPDX-License-Identifier: Apache-2.0
 
 VOTP1_ADDR=192.168.217.131
 VOTP2_ADDR=192.168.217.132
