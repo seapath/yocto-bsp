@@ -214,6 +214,10 @@ BIOS/UEFI legacy
 * seapath-guest-image: guest production image to work whith qemu
 * seapath-guest-dbg-image: guest debug image
 * seapath-guest-test-image: guest production image with test tools
+* seapath-guest-host-image: a production image working as host and guest
+* seapath-guest-host-test-image: a production image working as host and guest
+with test tool
+* seapath-guest-host-dbg-image: a debug image working as host and guest
 * seapath-flash-bios: USB key flash image used to flash firmware images on disk.
 Work on BIOS machine.
 * seapath-flash-efi: USB key flash image used to flash firmware images on disk.
