@@ -10,12 +10,51 @@ archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
 tar_transform='yes'
 flavors='sfl_ci dbg guest_dbg test guest_test bios guest bios_dbg bios_test
-    flash_bios flash_efi guest_host guest_host_dbg guest_host_test'
+    flash_bios flash_efi guest_host guest_host_dbg guest_host_test all'
 
 [sfl_ci]
 command='./build.sh -v \
-	--dl-dir /mnt/dldir \
-	--sstate-dir /mnt/sstate'
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-dbg-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-dbg-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-test-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-test-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-dbg-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-test-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-flash-bios \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-flash-efi \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-dbg-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-test-image \
+    --dl-dir /mnt/dldir \
+    --sstate-dir /mnt/sstate' 
 
 [dbg]
 command='./build.sh -v -i seapath-dbg-image'
@@ -55,3 +94,20 @@ command='./build.sh -v -i seapath-guest-host-dbg-image'
 
 [guest_host_test]
 command='./build.sh -v -i seapath-guest-host-test-image'
+
+[all]
+command=' \
+    ./build.sh -v && \
+    ./build.sh -v -i seapath-dbg-image &&  \
+    ./build.sh -v -i seapath-guest-dbg-image && \
+    ./build.sh -v -i seapath-test-image && \
+    ./build.sh -v -i seapath-guest-test-image && \
+    ./build.sh -v -i seapath-bios-image && \
+    ./build.sh -v -i seapath-bios-dbg-image && \
+    ./build.sh -v -i seapath-bios-test-image && \
+    ./build.sh -v -i seapath-guest-image && \
+    ./build.sh -v -i seapath-flash-bios && \
+    ./build.sh -v -i seapath-flash-efi && \
+    ./build.sh -v -i seapath-guest-host-image && \
+    ./build.sh -v -i seapath-guest-host-dbg-image && \
+    ./build.sh -v -i seapath-guest-host-test-image'
