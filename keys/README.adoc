@@ -1,0 +1,6 @@
+// Copyright (C) 2020, RTE (http://www.rte-france.com)
+// SPDX-License-Identifier: CC-BY-4.0
+
+To run Ansible, which takes care of machines configurations, the cluster needs to be accessible through SSH.
+Thus a SSH public key has to be added in this folder and must be named "ansible_public_ssh_key.pub".
+You can simply copy the .pub file generated with ssh-keygen and rename it.
