@@ -84,6 +84,43 @@ in the next sections of this document.
  * Add "test" and "debug" image variants with BIOS support
  * Generates "guest" images in Vmware disk format
 
+=== Version 0.13 (Oct 09 2020)
+
+ * Fixes deployment scripts timeout issue
+ * Reduces failover time
+
+=== Version 0.14 (Oct 19 2020)
+
+ * First version published on the SEAPATH Github
+ * Adds licenses and copyrights information
+
+=== Version 0.15 (Nov 10 2020)
+
+ * Adds hybrid guest and host images
+ * Adds images to perform the first installation
+ * Provides cluster configuration support with Ansible. In this version, only
+   network configuration, cluster creation and customization of kernel
+   parameters are available
+
+=== Version 0.16 (Dec 02 2020)
+
+ * Adds support for Intel 6300esb watchdog virtualizable by libvirt in images
+ * Updates Ceph version to version 14.2.15
+ * Uses Python3 instead of Python2 for Ceph
+ * Ceph is run with the user ceph instead of root
+ * Enhances Ansible cluster configuration with the Pacemaker and Ceph
+   configuration
+ * Modifies the network configuration made by Ansible to be able to generate
+   several Open vSwtich network layers
+
+=== Version 0.17 (Dev 21 2020)
+
+ * Adds cukinia cluster tests
+ * Updates Intel microde to 20201118 version
+ * Updates libvirt to 6.1 version
+ * Replaces all deprecated Python2 modules with Python3 modules
+ * Adds playbooks and Ansible roles to manage VMs and disk images
+
 :numbered:
 
 == Fetching the source using Git
