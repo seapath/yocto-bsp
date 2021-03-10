@@ -9,64 +9,41 @@ files='build/tmp/deploy/images/votp/seapath-image-votp.wic.gz
 archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
 tar_transform='yes'
-flavors='sfl_ci dbg guest_dbg test guest_test bios guest bios_dbg bios_test
-    flash_bios flash_efi guest_host guest_host_dbg guest_host_test all'
+flavors='
+    all
+    bios
+    bios_dbg
+    bios_test
+    dbg
+    flash_bios
+    flash_efi
+    guest
+    guest_dbg
+    guest_host
+    guest_host_dbg
+    guest_host_test
+    guest_test
+    sfl_ci
+    test
+'
 
-[sfl_ci]
-command='./build.sh -v \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-dbg-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-dbg-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
+[all]
+command=' \
+    ./build.sh -v && \
+    ./build.sh -v -i seapath-bios-dbg-image && \
+    ./build.sh -v -i seapath-bios-image && \
+    ./build.sh -v -i seapath-bios-test-image && \
+    ./build.sh -v -i seapath-dbg-image &&  \
+    ./build.sh -v -i seapath-flash-bios && \
+    ./build.sh -v -i seapath-flash-efi && \
+    ./build.sh -v -i seapath-guest-dbg-image && \
+    ./build.sh -v -i seapath-guest-host-dbg-image && \
+    ./build.sh -v -i seapath-guest-host-image && \
+    ./build.sh -v -i seapath-guest-host-test-image && \
+    ./build.sh -v -i seapath-guest-image && \
+    ./build.sh -v -i seapath-guest-test-image && \
     ./build.sh -v -i seapath-test-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-test-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-bios-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-bios-dbg-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-bios-test-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-flash-bios \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-flash-efi \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-host-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-host-dbg-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-host-test-image \
-    --dl-dir /mnt/dldir \
-    --sstate-dir /mnt/sstate' 
-
-[dbg]
-command='./build.sh -v -i seapath-dbg-image'
-
-[guest_dbg]
-command='./build.sh -v -i seapath-guest-dbg-image'
-
-[test]
-command='./build.sh -v -i seapath-test-image'
-
-[guest_test]
-command='./build.sh -v -i seapath-guest-test-image'
+'
 
 [bios]
 command='./build.sh -v -i seapath-bios-image'
@@ -77,14 +54,20 @@ command='./build.sh -v -i seapath-bios-dbg-image'
 [bios_test]
 command='./build.sh -v -i seapath-bios-test-image'
 
-[guest]
-command='./build.sh -v -i seapath-guest-image'
+[dbg]
+command='./build.sh -v -i seapath-dbg-image'
 
 [flash_bios]
 command='./build.sh -v -i seapath-flash-bios'
 
 [flash_efi]
 command='./build.sh -v -i seapath-flash-efi'
+
+[guest]
+command='./build.sh -v -i seapath-guest-image'
+
+[guest_dbg]
+command='./build.sh -v -i seapath-guest-dbg-image'
 
 [guest_host]
 command='./build.sh -v -i seapath-guest-host-image'
@@ -95,19 +78,54 @@ command='./build.sh -v -i seapath-guest-host-dbg-image'
 [guest_host_test]
 command='./build.sh -v -i seapath-guest-host-test-image'
 
-[all]
+[guest_test]
+command='./build.sh -v -i seapath-guest-test-image'
+
+[sfl_ci]
 command=' \
-    ./build.sh -v && \
-    ./build.sh -v -i seapath-dbg-image &&  \
-    ./build.sh -v -i seapath-guest-dbg-image && \
-    ./build.sh -v -i seapath-test-image && \
-    ./build.sh -v -i seapath-guest-test-image && \
-    ./build.sh -v -i seapath-bios-image && \
-    ./build.sh -v -i seapath-bios-dbg-image && \
-    ./build.sh -v -i seapath-bios-test-image && \
-    ./build.sh -v -i seapath-guest-image && \
-    ./build.sh -v -i seapath-flash-bios && \
-    ./build.sh -v -i seapath-flash-efi && \
-    ./build.sh -v -i seapath-guest-host-image && \
-    ./build.sh -v -i seapath-guest-host-dbg-image && \
-    ./build.sh -v -i seapath-guest-host-test-image'
+    ./build.sh -v \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-dbg-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-bios-test-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-dbg-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-flash-bios \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-flash-efi \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-dbg-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-dbg-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-host-test-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-guest-test-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate && \
+    ./build.sh -v -i seapath-test-image \
+        --dl-dir /mnt/dldir \
+        --sstate-dir /mnt/sstate \
+'
+
+[test]
+command='./build.sh -v -i seapath-test-image'
