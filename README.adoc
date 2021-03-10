@@ -259,6 +259,8 @@ with test tool
 Work on BIOS machine.
 * seapath-flash-efi: USB key flash image used to flash firmware images on disk.
 Work on UEFI machine.
+* seapath-flash-pxe: flash image used to flash firmware images on disk usable
+during a PXE boot.
 
 == Building an SDK Installer
 
