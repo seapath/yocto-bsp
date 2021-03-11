@@ -15,6 +15,7 @@ flavors='
     bios_dbg
     bios_test
     dbg
+    efi
     flash_bios
     flash_efi
     guest
@@ -56,6 +57,9 @@ command='./build.sh -v -i seapath-bios-test-image'
 
 [dbg]
 command='./build.sh -v -i seapath-dbg-image'
+
+[efi]
+command='./build.sh -v'
 
 [flash_bios]
 command='./build.sh -v -i seapath-flash-bios'
