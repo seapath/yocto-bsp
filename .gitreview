@@ -2,4 +2,4 @@
 host = g1.sfl.team
 port = 29419
 project = rte/votp/yocto-bsp
-defaultbranch = master
+defaultbranch = sfl/master
