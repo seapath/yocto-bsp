@@ -45,7 +45,9 @@ command=' \
     ./build.sh -v -i seapath-guest-host-test-image && \
     ./build.sh -v -i seapath-guest-image && \
     ./build.sh -v -i seapath-guest-test-image && \
-    ./build.sh -v -i seapath-test-image \
+    ./build.sh -v -i seapath-test-image && \
+    ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
+        ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
 '
 
 [bios]
