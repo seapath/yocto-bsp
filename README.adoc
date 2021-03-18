@@ -141,21 +141,15 @@ For instance, for Seapath yocto-bsp project:
   $ repo init -u https://github.com/seapath/repo-manifest.git
   $ repo sync
 
-Once the sync is completed, you should see a git repository named `yocto-bsp`,
-within which all the Yocto layers were fetched under the `yocto-bsp/sources`
-sub-directory.
-
-  $ cd yocto-bsp/
-
 NOTE: The initial build process takes approximately 4 to 5 hours on a current
 developer machine and will produce approximately 50GB of data.
 
 == Build prerequisites
 
 Before building you must put a ssh public in
-_yocto-bsp/keys/ansible_public_ssh_key.pub_. It will be used by Ansible to
+_keys/ansible_public_ssh_key.pub_. It will be used by Ansible to
 communicate with the machines.
-See for _yocto-bsp/keys/README_ for more informations.
+See for _keys/README_ for more informations.
 
 == Building a firmware using cqfd
 
@@ -202,7 +196,6 @@ Log out and log back in, so that your group membership can be re-evaluated.
 The first step with `cqfd` is to create the build container. For this, use the
 `cqfd init` command:
 
-  $ cd yocto-bsp/
   $ cqfd init
 
 NOTE: The step above is only required once, as once the container image has been
@@ -347,7 +340,7 @@ On the target, call:
 *Note:* This test will run around 5 hours
 Then generate the graphics:
 
- $ ./yocto-bsp/tools/gen_cyclic_test.sh -i output -n 28 -o seapath.png
+ $ ./tools/gen_cyclic_test.sh -i output -n 28 -o seapath.png
 
 *Note:* we reused OSADL http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html[tools].
 
