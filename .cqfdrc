@@ -120,7 +120,7 @@ command=' \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-host-efi-test-image \
         --dl-dir /mnt/dldir \
-        --sstate-dir /mnt/sstate \
+        --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-monitor-efi-image \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate \
