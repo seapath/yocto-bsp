@@ -26,6 +26,7 @@ flavors='
     host_efi
     host_efi_dbg
     host_efi_test
+    monitor_bios
     monitor_efi
     sfl_ci
 '
@@ -48,6 +49,7 @@ command=' \
     ./build.sh -v -i seapath-host-efi-image && \
     ./build.sh -v -i seapath-host-efi-dbg-image && \
     ./build.sh -v -i seapath-host-efi-test-image && \
+    ./build.sh -v -i seapath-monitor-bios-image && \
     ./build.sh -v -i seapath-monitor-efi-image && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
@@ -97,6 +99,9 @@ command='./build.sh -v -i seapath-host-efi-dbg-image'
 
 [host_efi_test]
 command='./build.sh -v -i seapath-host-efi-test-image'
+
+[monitor_bios]
+command='./build.sh -v -i seapath-monitor-bios-image'
 
 [monitor_efi]
 command='./build.sh -v -i seapath-monitor-efi-image'
