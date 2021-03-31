@@ -11,6 +11,7 @@ echo "Name Arch Version Image"
 for f in $@; do
   IMAGE=${f%%.*}
   IMAGE=${IMAGE%-*}
+  IMAGE=${IMAGE##*/}
 
   sed -e "s/$/ $IMAGE/" $f
 done
