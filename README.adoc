@@ -226,34 +226,35 @@ The following packages need to be installed:
 
 The build is started by running the following command:
 
-  $ ./build.sh -i seapath-image -m boardname
+  $ ./build.sh -i seapath-host-efi-image -m boardname
 
 You can also pass custom BitBake commands using the `--` separator:
 
-  $ ./build.sh -i seapath-image -m boardname -- bitbake -c clean package_name
+  $ ./build.sh -i seapath-host-efi-image -m boardname -- bitbake -c clean package_name
 
-Yoou can find below the Yocto images list:
+Images can be produced for either UEFI or BIOS compatible firmwares.
 
-* seapath-image: production image to work with UEFI
-* seapath-bios-image: production image to work with BIOS/UEFI legacy
-* seapath-bios-dbg-image: debug image to work with BIOS/UEFI legacy
-* seapath-bios-test-image: production image whith test tools to work with
-BIOS/UEFI legacy
-* seapath-dbg-image: debug image to work with UEFI
-* seapath-test-image: production image with test tools to work with UEFI
-* seapath-guest-image: guest production image to work whith qemu
-* seapath-guest-dbg-image: guest debug image
-* seapath-guest-test-image: guest production image with test tools
-* seapath-guest-host-image: a production image working as host and guest
-* seapath-guest-host-test-image: a production image working as host and guest
+Yoou can find below the Yocto images list (with [FW]=bios or [FW]=efi):
+
+* Host images
+** seapath-host-[FW]-image: production image
+** seapath-host-[FW]-dbg-image: debug image
+** seapath-host-[FW]-test-image: production image with test tools
+* Guest images
+** seapath-guest-efi-image: QEMU-compatible virtual machine production image (UEFI only)
+** seapath-guest-efi-dbg-image: QEMU-compatible virtual machine debug image (UEFI only)
+** seapath-guest-efi-test-image: guest production image with test tools (UEFI only)
+* Hybrid images
+** seapath-guest-host-image: a production image working as host and guest
+** seapath-guest-host-test-image: a production image working as host and guest
 with test tool
-* seapath-guest-host-dbg-image: a debug image working as host and guest
-* seapath-flash-bios: USB key flash image used to flash firmware images on disk.
-Work on BIOS machine.
-* seapath-flash-efi: USB key flash image used to flash firmware images on disk.
-Work on UEFI machine.
-* seapath-flash-pxe: flash image used to flash firmware images on disk usable
+** seapath-guest-host-dbg-image: a debug image working as host and guest
+* Flasher images
+** seapath-flash-[FW]: USB key flash image used to flash firmware images on disk.
+** seapath-flash-pxe: flash image used to flash firmware images on disk usable
 during a PXE boot.
+* Observer images
+** seapath-monitor-[FW]: production image for an observer (needed for clustering quorum establishment)
 
 == Building an SDK Installer
 
@@ -298,7 +299,7 @@ mounted on /media.
 
 For instance:
 
-    $ flash --image /media/seapath-image.wic.gz --disk /dev/sda
+    $ flash --image /media/seapath-host-efi-image.wic.gz --disk /dev/sda
 
 == Tests
 
