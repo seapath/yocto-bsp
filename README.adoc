@@ -245,10 +245,10 @@ Yoou can find below the Yocto images list (with [FW]=bios or [FW]=efi):
 ** seapath-guest-efi-dbg-image: QEMU-compatible virtual machine debug image (UEFI only)
 ** seapath-guest-efi-test-image: guest production image with test tools (UEFI only)
 * Hybrid images
-** seapath-guest-host-image: a production image working as host and guest
-** seapath-guest-host-test-image: a production image working as host and guest
-with test tool
-** seapath-guest-host-dbg-image: a debug image working as host and guest
+** seapath-guest-host-bios-image: a production image working as host and guest
+** seapath-guest-host-bios-test-image: a production image working as host and
+guest with test tool
+** seapath-guest-host-bios-dbg-image: a debug image working as host and guest
 * Flasher images
 ** seapath-flash-[FW]: USB key flash image used to flash firmware images on disk.
 ** seapath-flash-pxe: flash image used to flash firmware images on disk usable
