@@ -73,14 +73,14 @@ command='./build.sh -v -i seapath-guest-efi-dbg-image'
 [guest_efi_test]
 command='./build.sh -v -i seapath-guest-efi-test-image'
 
-[guest_host]
-command='./build.sh -v -i seapath-guest-host-image'
+[guest_host_bios]
+command='./build.sh -v -i seapath-guest-host-bios-image'
 
-[guest_host_dbg]
-command='./build.sh -v -i seapath-guest-host-dbg-image'
+[guest_host_bios_dbg]
+command='./build.sh -v -i seapath-guest-host-bios-dbg-image'
 
-[guest_host_test]
-command='./build.sh -v -i seapath-guest-host-test-image'
+[guest_host_bios_test]
+command='./build.sh -v -i seapath-guest-host-bios-test-image'
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image'
