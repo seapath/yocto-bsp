@@ -6,3 +6,10 @@ meta-cloud-services/meta-openstack-aio-deploy
 meta-cloud-services/meta-openstack-compute-test-config
 meta-cloud-services/meta-openstack-controller-test-config
 meta-cloud-services/meta-openstack-swift-deploy
+meta-openembedded/meta-gnome
+meta-openembedded/meta-multimedia
+meta-openembedded/meta-webserver
+meta-openembedded/meta-xfce
+meta-security/meta-tpm
+poky/meta-selftest
+poky/meta-skeleton
