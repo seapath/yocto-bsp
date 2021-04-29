@@ -34,9 +34,9 @@ Options:
 # Param[in]:  Patch file
 apply_patch()
 {
-  if patch --dry-run --silent --strip=1 --force --input ${1} >/dev/null
+  if patch --dry-run --silent -F 0 --strip=1 --force --input ${1} >/dev/null
   then
-    patch --strip=1 --force --input ${1}
+    patch --strip=1 -F 0 --force --input ${1}
   fi
 }
 
