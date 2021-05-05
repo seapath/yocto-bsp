@@ -115,6 +115,7 @@ command=' \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-flash-pxe \
+        --distro votp-flash \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-image \
