@@ -6,5 +6,6 @@ scripts/bash_scripting_tools/
 README.html
 README.pdf
 *.tar.gz
-keys/ansible_public_ssh_key.pub
+!keys/README.adoc
+keys/*
 .repo/
