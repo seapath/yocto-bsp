@@ -187,7 +187,7 @@ update_layers()
         -type f \
         -path '*/conf/layer.conf' | \
         xargs -n1 dirname | \
-        xargs -n1 dirname | egrep -v $layers_filter_pattern)
+        xargs -n1 dirname | egrep -v "^${layers_filter_pattern}$")
 
     if [ -n "${layers_to_add}" ] ; then
         run_cmd "update layers" "bitbake-layers add-layer ${layers_to_add}"
