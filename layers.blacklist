@@ -10,6 +10,12 @@ meta-openembedded/meta-gnome
 meta-openembedded/meta-multimedia
 meta-openembedded/meta-webserver
 meta-openembedded/meta-xfce
+meta-secure-core/meta-encrypted-storage
+meta-secure-core/meta-ids
+meta-secure-core/meta-integrity
+meta-secure-core/meta-intel-sgx
+meta-secure-core/meta-tpm
+meta-secure-core/meta-tpm2
 meta-security/meta-tpm
 poky/meta-selftest
 poky/meta-skeleton
