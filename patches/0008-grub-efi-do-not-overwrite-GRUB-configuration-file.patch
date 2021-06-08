@@ -1,0 +1,55 @@
+From f0d0f23dce7db65a1a71756bb1fb695267f6d135 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?S=C3=A9bastien=20LE=20STUM?=
+ <sebastien.le-stum@savoirfairelinux.com>
+Date: Tue, 8 Jun 2021 11:16:32 -0400
+Subject: [PATCH] grub-efi: do not overwrite GRUB configuration file
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This file is provided by either Poky or overridden by a 3rd party
+layer.
+
+There is no solid proof that the configuration file will always contain
+the two lines that were added if the options GRUB_SIGN_VERIFY and
+GRUB_SIGN_VERIFY_STRICT wasn't enabled.
+
+Replace that by a more concise modification of the file:
+
+* Insert "set strict_security=1" at the beginning of the file if
+GRUB_SIGN_VERIFY and GRUB_SIGN_VERIFY_STRICT are set to "1"
+* Remove that line from the file in any other case
+
+Issue: #5358
+Signed-off-by: Sébastien LE STUM <sebastien.le-stum@savoirfairelinux.com>
+---
+ .../recipes-bsp/grub/grub-efi-efi-secure-boot.inc    | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+index 8f32687..7b2c414 100644
+--- a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
++++ b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+@@ -83,16 +83,10 @@ python __anonymous () {
+ 
+ do_compile_append_class-target() {
+ 	if [ "${GRUB_SIGN_VERIFY}" = "1" -a "${GRUB_SIGN_VERIFY_STRICT}" = "1" ] ; then
+-		cat<<EOF>${WORKDIR}/cfg
+-set strict_security=1
+-EOF
+-  else
+-    > ${WORKDIR}/cfg
++		sed -i '1s%^%set strict_security=1\n%' ${WORKDIR}/cfg
++	else
++		sed -i 's%set strict_security=1%%g' ${WORKDIR}/cfg
+ 	fi
+-	cat<<EOF>>${WORKDIR}/cfg
+-search.file (\$cmdpath)${GRUB_PREFIX_DIR}/grub.cfg root
+-set prefix=(\$root)${GRUB_PREFIX_DIR}
+-EOF
+ }
+ 
+ do_compile_append_class-native() {
+-- 
+2.20.1
+
