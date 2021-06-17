@@ -17,9 +17,6 @@ flavors='
     guest_efi
     guest_efi_test
     guest_efi_dbg
-    guest_host_bios
-    guest_host_bios_dbg
-    guest_host_bios_test
     host_bios
     host_bios_dbg
     host_bios_test
@@ -36,13 +33,9 @@ command=' \
     ./build.sh -v -i seapath-flash-bios --distro seapath-flash && \
     ./build.sh -v -i seapath-flash-efi --distro seapath-flash && \
     ./build.sh -v -i seapath-flash-pxe --distro seapath-flash && \
-    ./build.sh -v -i seapath-guest-efi-image && \
-    ./build.sh -v -i seapath-guest-efi-dbg-image && \
-    ./build.sh -v -i seapath-guest-efi-test-image && \
-    ./build.sh -v -i seapath-guest-efi-dbg-image && \
-    ./build.sh -v -i seapath-guest-host-bios-image && \
-    ./build.sh -v -i seapath-guest-host-bios-dbg-image && \
-    ./build.sh -v -i seapath-guest-host-bios-test-image && \
+    ./build.sh -v -i seapath-guest-efi-image --machine votp-vm && \
+    ./build.sh -v -i seapath-guest-efi-test-image --machine votp-vm && \
+    ./build.sh -v -i seapath-guest-efi-dbg-image --machine votp-vm && \
     ./build.sh -v -i seapath-host-bios-image && \
     ./build.sh -v -i seapath-host-bios-dbg-image && \
     ./build.sh -v -i seapath-host-bios-test-image && \
@@ -65,22 +58,13 @@ command='./build.sh -v -i seapath-flash-efi --distro seapath-flash'
 command='./build.sh -v -i seapath-flash-pxe --distro seapath-flash'
 
 [guest_efi]
-command='./build.sh -v -i seapath-guest-efi-image'
+command='./build.sh -v -i seapath-guest-efi-image' --machine votp-vm  
 
 [guest_efi_dbg]
-command='./build.sh -v -i seapath-guest-efi-dbg-image'
+command='./build.sh -v -i seapath-guest-efi-dbg-image' --machine votp-vm  
 
 [guest_efi_test]
-command='./build.sh -v -i seapath-guest-efi-test-image'
-
-[guest_host_bios]
-command='./build.sh -v -i seapath-guest-host-bios-image'
-
-[guest_host_bios_dbg]
-command='./build.sh -v -i seapath-guest-host-bios-dbg-image'
-
-[guest_host_bios_test]
-command='./build.sh -v -i seapath-guest-host-bios-test-image'
+command='./build.sh -v -i seapath-guest-efi-test-image' --machine votp-vm 
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image'
@@ -119,9 +103,11 @@ command=' \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-image \
+        --machine votp-vm \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-test-image \
+        --machine votp-vm \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-host-efi-test-image \
