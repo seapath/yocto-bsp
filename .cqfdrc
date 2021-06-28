@@ -23,6 +23,7 @@ flavors='
     host_efi
     host_efi_dbg
     host_efi_test
+    host_efi_swu
     monitor_bios
     monitor_efi
     sfl_ci
@@ -42,6 +43,7 @@ command=' \
     ./build.sh -v -i seapath-host-efi-image && \
     ./build.sh -v -i seapath-host-efi-dbg-image && \
     ./build.sh -v -i seapath-host-efi-test-image && \
+    ./build.sh -v -i seapath-host-efi-swu-image && \
     ./build.sh -v -i seapath-monitor-bios-image && \
     ./build.sh -v -i seapath-monitor-efi-image && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
@@ -83,6 +85,9 @@ command='./build.sh -v -i seapath-host-efi-dbg-image'
 
 [host_efi_test]
 command='./build.sh -v -i seapath-host-efi-test-image'
+
+[host_efi_swu]
+command='./build.sh -v -i seapath-host-efi-swu-image'
 
 [monitor_bios]
 command='./build.sh -v -i seapath-monitor-bios-image --distro seapath-ro'
