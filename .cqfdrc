@@ -58,13 +58,13 @@ command='./build.sh -v -i seapath-flash-efi --distro seapath-flash'
 command='./build.sh -v -i seapath-flash-pxe --distro seapath-flash'
 
 [guest_efi]
-command='./build.sh -v -i seapath-guest-efi-image' --machine votp-vm  
+command='./build.sh -v -i seapath-guest-efi-image --machine votp-vm'
 
 [guest_efi_dbg]
-command='./build.sh -v -i seapath-guest-efi-dbg-image' --machine votp-vm  
+command='./build.sh -v -i seapath-guest-efi-dbg-image --machine votp-vm'
 
 [guest_efi_test]
-command='./build.sh -v -i seapath-guest-efi-test-image' --machine votp-vm 
+command='./build.sh -v -i seapath-guest-efi-test-image --machine votp-vm'
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image'
