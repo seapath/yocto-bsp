@@ -67,10 +67,10 @@ command='./build.sh -v -i seapath-guest-efi-dbg-image --machine votp-vm'
 command='./build.sh -v -i seapath-guest-efi-test-image --machine votp-vm'
 
 [host_bios]
-command='./build.sh -v -i seapath-host-bios-image'
+command='./build.sh -v -i seapath-host-bios-image --distro seapath-ro'
 
 [host_bios_dbg]
-command='./build.sh -v -i seapath-host-bios-dbg-image'
+command='./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-ro'
 
 [host_bios_test]
 command='./build.sh -v -i seapath-host-bios-test-image'
@@ -85,7 +85,7 @@ command='./build.sh -v -i seapath-host-efi-dbg-image'
 command='./build.sh -v -i seapath-host-efi-test-image'
 
 [monitor_bios]
-command='./build.sh -v -i seapath-monitor-bios-image'
+command='./build.sh -v -i seapath-monitor-bios-image --distro seapath-ro'
 
 [monitor_efi]
 command='./build.sh -v -i seapath-monitor-efi-image'
