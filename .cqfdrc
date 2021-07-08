@@ -78,7 +78,7 @@ command='./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-ro'
 command='./build.sh -v -i seapath-host-bios-test-image'
 
 [host_efi]
-command='./build.sh -v -i seapath-host-efi-image'
+command='./build.sh -v -i seapath-host-efi-image --distro seapath-ro'
 
 [host_efi_dbg]
 command='./build.sh -v -i seapath-host-efi-dbg-image'
@@ -93,7 +93,7 @@ command='./build.sh -v -i seapath-host-efi-swu-image'
 command='./build.sh -v -i seapath-monitor-bios-image --distro seapath-ro'
 
 [monitor_efi]
-command='./build.sh -v -i seapath-monitor-efi-image'
+command='./build.sh -v -i seapath-monitor-efi-image --distro seapath-ro'
 
 [sfl_ci]
 command=' \
