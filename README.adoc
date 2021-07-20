@@ -303,33 +303,6 @@ For instance:
 
 == Tests
 
-=== Cukinia tests
-
-Here is the list of tests done so far.
-
-.Tests
-[width="100%",cols="20%,40%,40%",frame="topbot",options="header"]
-|====================================================================================================================
-|Name                           | Description                                 | Command
-|00-cukinia-installation.conf   | Check that Cukinia is installed             | _cukinia /etc/cukinia/tests.d/00-cukinia-installation.conf_
-|01-sw-versions.conf            | Check that Kernel version is at least
-                                  4.19.106                                    | _cukinia /etc/cukinia/tests.d/01-sw_versions.conf_
-
-|02-preempt-rt.conf             | Check that the running Kernel is preempt
-                                  RT                                          | _cukinia /etc/cukinia/tests.d/02-preempt-rt.conf
-
-|03-no-kernel-errors.conf       | Check that the running Kernel does not
-                                  raise any warnings and errors               | _cukinia /etc/cukinia/tests.d/03-no-Kernel-errors.conf
-|04-virtualization.conf         | Check virtulization minimal requirements    | _cukinia /etc/cukinia/tests.d/04-virtulization.conf
-|05-container.conf              | Check that container daemon is running      | _cukinia /etc/cukinia/tests.d/05-container.conf
-|06-ovs.conf                    | Check that ovs/dpdk runs correctly          | _cukinia /etc/cukinia/tests.d/06-ovs.conf
-|07-systemd.conf                | Check that no systemd services have failed  | _cukinia /etc/cukinia/tests.d/07-systemd.conf
-|====================================================================================================================
-
-*Note:* All Cukinia tests can be executed in a row running:
-
-  $ cukinia
-
 === Performance tests
 
 The Yocto image _seapath-test-image_ incudes Real Time tests such as cyclictest.
