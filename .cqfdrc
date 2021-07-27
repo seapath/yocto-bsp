@@ -44,8 +44,14 @@ command=' \
     ./build.sh -v -i seapath-host-efi-dbg-image && \
     ./build.sh -v -i seapath-host-efi-test-image && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-ro && \
-    ./build.sh -v -i seapath-monitor-bios-image && \
-    ./build.sh -v -i seapath-monitor-efi-swu-image --distro seapath-ro && \
+    ./build.sh -v \
+        -i seapath-monitor-bios-image \
+        --machine votp-monitor \
+        --distro seapath-ro && \
+    ./build.sh -v \
+        -i seapath-monitor-efi-swu-image \
+        --machine votp-monitor \
+        --distro seapath-ro && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
 '
@@ -90,13 +96,25 @@ command='./build.sh -v -i seapath-host-efi-test-image'
 command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-ro'
 
 [monitor_bios]
-command='./build.sh -v -i seapath-monitor-bios-image --distro seapath-ro'
+command='./build.sh -v \
+    -i seapath-monitor-bios-image \
+    --machine votp-monitor \
+    --distro seapath-ro \
+'
 
 [monitor_efi]
-command='./build.sh -v -i seapath-monitor-efi-image --distro seapath-ro'
+command='./build.sh -v \
+    -i seapath-monitor-efi-image \
+    --machine votp-monitor \
+    --distro seapath-ro \
+'
 
 [monitor_efi_swu]
-command='./build.sh -v -i seapath-monitor-efi-swu-image --distro seapath-ro'
+command='./build.sh -v \
+    -i seapath-monitor-efi-swu-image \
+    --machine votp-monitor \
+    --distro seapath-ro \
+'
 
 [sfl_ci]
 command=' \
@@ -121,7 +139,10 @@ command=' \
     ./build.sh -v -i seapath-host-efi-test-image \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-monitor-efi-image  --distro seapath-ro \
+    ./build.sh -v \
+        -i seapath-monitor-efi-image  \
+        --machine votp-monitor \
+        --distro seapath-ro \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate \
 '
