@@ -41,12 +41,10 @@ command=' \
     ./build.sh -v -i seapath-host-bios-image --distro seapath-ro && \
     ./build.sh -v -i seapath-host-bios-dbg-image && \
     ./build.sh -v -i seapath-host-bios-test-image && \
-    ./build.sh -v -i seapath-host-efi-image --distro seapath-ro && \
     ./build.sh -v -i seapath-host-efi-dbg-image && \
     ./build.sh -v -i seapath-host-efi-test-image && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-ro && \
     ./build.sh -v -i seapath-monitor-bios-image && \
-    ./build.sh -v -i seapath-monitor-efi-image --distro seapath-ro && \
     ./build.sh -v -i seapath-monitor-efi-swu-image --distro seapath-ro && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
