@@ -19,6 +19,7 @@ flavors='
     guest_efi_dbg
     host_bios
     host_bios_dbg
+    host_bios_no_iommu
     host_bios_test
     host_efi
     host_efi_dbg
@@ -40,6 +41,10 @@ command=' \
     ./build.sh -v -i seapath-guest-efi-dbg-image --machine votp-vm && \
     ./build.sh -v -i seapath-host-bios-image --distro seapath-ro && \
     ./build.sh -v -i seapath-host-bios-dbg-image && \
+    ./build.sh -v \
+        -i seapath-host-bios-no-iommu-image \
+        --machine votp-no-iommu \
+        --distro seapath-ro && \
     ./build.sh -v -i seapath-host-bios-test-image && \
     ./build.sh -v -i seapath-host-efi-dbg-image && \
     ./build.sh -v -i seapath-host-efi-test-image && \
@@ -76,6 +81,12 @@ command='./build.sh -v -i seapath-guest-efi-test-image --machine votp-vm'
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image --distro seapath-ro'
+
+[host_bios_no_iommu]
+command='./build.sh -v \
+    -i seapath-host-bios-no-iommu-image \
+    --machine votp-no-iommu \
+    --distro seapath-ro'
 
 [host_bios_dbg]
 command='./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-ro'
