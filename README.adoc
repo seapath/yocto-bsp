@@ -163,13 +163,24 @@ configuration management process.
 === Prerequisites
 
 * Install repo and docker if it is not already done.
+* Install make and pkg-config if t is not already done.
 
-On Ubuntu, please run:
+On Ubuntu 20.04:
 
-  $ sudo apt-get install repo docker.io
+  * https://docs.docker.com/engine/install/ubuntu/[Install docker]
+  
+  * Install repo:
+  
+  $ sudo curl -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
+  $ sudo chmod +x /usr/local/bin/repo
+  $ sudo ln -s /usr/bin/python3 /usr/bin/python
 
 * Install cqfd:
 
+if necessary
+ `$ sudo apt-get install build-essential pkg-config` 
+
+then
 ```
 $ git clone https://github.com/savoirfairelinux/cqfd.git
 $ cd cqfd
