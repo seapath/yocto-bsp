@@ -162,22 +162,24 @@ configuration management process.
 
 === Prerequisites
 
-* Install repo and docker if it is not already done.
-* Install make and pkg-config if t is not already done.
+==== Docker installation
+
+See docker manual: https://docs.docker.com/engine/install/[Install docker]
+
+==== Repo installation
 
 On Ubuntu 20.04:
 
-  * https://docs.docker.com/engine/install/ubuntu/[Install docker]
-  
-  * Install repo:
   
   $ sudo curl -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
   $ sudo chmod +x /usr/local/bin/repo
-  $ sudo ln -s /usr/bin/python3 /usr/bin/python
+  $ sed 's|/usr/bin/env python|/usr/bin/env python3|' -i /usr/local/bin/repo
 
 * Install cqfd:
 
-if necessary
+if necessary install *make* and pkg-config packages.
+
+For instance, with Ubuntu/Debian distribution:
  `$ sudo apt-get install build-essential pkg-config` 
 
 then
