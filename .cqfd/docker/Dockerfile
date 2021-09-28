@@ -55,7 +55,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	zip
 
 # Git Proxy Configuration
-RUN wget  http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy > /usr/local/bin/oe-git-proxy
+ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
 RUN chmod +x /usr/local/bin/oe-git-proxy
 
 # Asciidoctor PDF generator for generating the manual
