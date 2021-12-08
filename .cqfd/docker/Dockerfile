@@ -30,11 +30,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	git \
 	git-core \
 	iputils-ping \
+	lbzip2 \
 	libelf-dev \
 	libncurses5-dev \
 	libsdl1.2-dev \
 	libssl-dev \
 	locales \
+	pigz \
 	python \
 	python3 \
 	python3-pip \
@@ -51,8 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	wget \
 	xterm \
 	xxd \
-	xz-utils \
-	zip
+	xz-utils
 
 # Git Proxy Configuration
 ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
