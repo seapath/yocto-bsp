@@ -1,0 +1,30 @@
+ meta-cgl-common/recipes-cgl/cluster-resource-agents/resource-agents_4.5.0.bb | 2 +-
+ meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.3.bb                     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sources/meta-cgl/meta-cgl-common/recipes-cgl/cluster-resource-agents/resource-agents_4.5.0.bb b/sources/meta-cgl/meta-cgl-common/recipes-cgl/cluster-resource-agents/resource-agents_4.5.0.bb
+index d34d706..28cfc6a 100644
+--- a/sources/meta-cgl/meta-cgl-common/recipes-cgl/cluster-resource-agents/resource-agents_4.5.0.bb
++++ b/sources/meta-cgl/meta-cgl-common/recipes-cgl/cluster-resource-agents/resource-agents_4.5.0.bb
+@@ -14,7 +14,7 @@ LICENSE_${PN}-extra = "GPLv3"
+ LICENSE_${PN}-extra-dbg = "GPLv3"
+ LICENSE_ldirectord = "GPLv2+"
+ 
+-SRC_URI = "git://github.com/ClusterLabs/resource-agents \
++SRC_URI = "git://github.com/ClusterLabs/resource-agents;branch=main \
+            file://01-disable-doc-build.patch \
+            file://02-set-OCF_ROOT_DIR-to-libdir-ocf.patch \
+            file://03-fix-header-defs-lookup.patch \
+diff --git a/sources/meta-cgl/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.3.bb b/sources/meta-cgl/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.3.bb
+index 9b63acd..2adff5a 100644
+--- a/sources/meta-cgl/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.3.bb
++++ b/sources/meta-cgl/meta-cgl-common/recipes-cgl/pacemaker/pacemaker_2.0.3.bb
+@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=000212f361a81b100d9d0f0435040663"
+ 
+ DEPENDS = "corosync libxslt libxml2 gnutls resource-agents libqb python3-native"
+ 
+-SRC_URI = "git://github.com/ClusterLabs/${BPN}.git \
++SRC_URI = "git://github.com/ClusterLabs/${BPN}.git;branch=main \
+            file://0006-Fix-tools-Fix-definition-of-curses_indented_printf.patch \
+            file://0001-Fix-python3-usage.patch \
+            file://volatiles \
