@@ -216,9 +216,41 @@ created on your machine, it will become persistent. Further calls to `cqfd init`
 will do nothing, unless the container definition (`.cqfd/docker/Dockerfile`) has
 changed in the source tree.
 
-You can then start the build using:
+cqfd provides different flavors that allow to call build.sh with certain image, distro and machine parameters.
+To list the available flavors, run:
 
-  $ cqfd run
+  $ cqfd flavors
+
+Here is a description of flavors:
+
+   * all: all flavors
+   * flash_bios: bios image to flash a server disk
+   * flash_efi: efi image to flash a server disk
+   * flash_pxe: pxe image to flash a server disk
+   * guest_efi: efi guest image (VM) 
+   * guest_efi_test: similar to guest_efi with additionnal test packages
+   * guest_efi_dbg: similar to guest_efi with debug tools
+   * host_bios: bios host image (including security, clustering and readonly features)
+   * host_bios_dbg: similar to host_bios with debug tools
+   * host_bios_minimal: similar to host_bios without security, clustering and readonly features
+   * host_bios_no_iommu: similar to host_bios without IOMMU enabled (IOMMU leads) 
+   * host_bios_test: similar to host_bios with additionnal test packages
+   * host_bios_test_no_iommu: similar to host_bios_no_iommu with additionnal test packages
+   * host_efi: efi host image (including security, clustering and readonly features)
+   * host_efi_dbg: similar to host_efi with debug tools
+   * host_efi_test: similar to host_efi with additionnal test packages
+   * host_efi_swu: efi host update image (SwUpdate)
+   * monitor_bios: bios monitor image (used to monitor the cluster)
+   * monitor_efi: efi monitor image (used to monitor the cluster)
+   * monitor_efi_swu: efi monitor update image (SwUpdate)
+
+To build on of this flavor, run:
+
+  $ cqfd -b <flavor>
+
+Note:
+* bash completion works with `-b` parameter
+* detail command used per flavor is described in `.cqfdrc` file
 
 == Building the firmware manually
 
@@ -239,15 +271,15 @@ The following packages need to be installed:
 
 The build is started by running the following command:
 
-  $ ./build.sh -i seapath-host-efi-image -m boardname
+  $ ./build.sh -i seapath-host-efi-image -m boardname --distro distroname
 
 You can also pass custom BitBake commands using the `--` separator:
 
-  $ ./build.sh -i seapath-host-efi-image -m boardname -- bitbake -c clean package_name
+  $ ./build.sh -i seapath-host-efi-image -m boardname --distro distroname -- bitbake -c clean package_name
 
 Images can be produced for either UEFI or BIOS compatible firmwares.
 
-Yoou can find below the Yocto images list (with [FW]=bios or [FW]=efi):
+You can find below the Yocto images list (with [FW]=bios or [FW]=efi):
 
 * Host images
 ** seapath-host-[FW]-image: production image
@@ -268,6 +300,15 @@ guest with test tool
 during a PXE boot.
 * Observer images
 ** seapath-monitor-[FW]: production image for an observer (needed for clustering quorum establishment)
+
+Different distros can be used:
+
+* seapath-flash: distro used for flash images
+* seapath-guest: distro used for guest images
+* seapath-host: distro used for host images with security, readonly and clustering features 
+* seapath-host-cluster-minimal: distro used for host images with clustering features
+* seapath-host-minimal: distro used for host images without security, readonly and clustering features
+* seapath-host-sb: distro used for host images without security, readonly, clustering and secureboot features
 
 == Building an SDK Installer
 
