@@ -248,7 +248,7 @@ export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
 # Set image to build, default to core-image-minimal
 export IMAGE=${IMAGE:-"seapath-host-efi-image"}
 export MACHINE=${MACHINE:-"votp"}
-export DISTRO=${DISTRO:-"seapath"}
+export DISTRO=${DISTRO:-"seapath-host"}
 export ACCEPT_FSL_EULA="1"
 
 if [ ! -z "$REMOVE_BUILDDIR" ]; then
