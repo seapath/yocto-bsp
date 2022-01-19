@@ -4,3 +4,6 @@
 # SEAPATH configuration file sample
 # This file can be used as example to create a seapath.conf file.
 # Each variable defined here is set as it default value.
+
+# Keymap
+SEAPATH_KEYMAP='us'
