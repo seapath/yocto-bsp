@@ -10,3 +10,17 @@ SEAPATH_KEYMAP='us'
 
 # Limite the number of jobs to compile Ceph to avoid out of memory errors
 SEAPATH_PARALLEL_MAKE='8'
+
+# CPUs reserved for real time applications, containers and VMs.
+# It can be an single CPU or a plage delimited by - (e.g. 2-5). Mulitples CPUs
+# and plages can be defined using , as seperator (e.g 0,2-5,7,10-12).
+# The CPU enumeration begins at 0, so the maximum value is 1 less than the
+# number of CPUs core on the system.
+# If not defined, no CPU will be reserved.
+SEAPATH_RT_CORES=''
+
+# 1 GiB hugepages reserved in hypervisor
+# 1 GiB hugepages are used by DPDK. It must be 1 + maximum VMs using DPDK
+# If the do not use DPDK do not set this variable.
+# Warning: each 1 GiB hugepage reserved can not be used as system memory.
+SEAPATH_1G_HUGEPAGES=''
