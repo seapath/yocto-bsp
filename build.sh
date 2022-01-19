@@ -7,6 +7,8 @@
 
 # Name:       print_usage
 # Brief:      Print script usage
+
+# Set image to build, default to core-image-minimal
 print_usage()
 {
     echo "This script builds a yocto distribution
@@ -236,6 +238,29 @@ do
   apply_patch ${patch}
 done
 
+# Set image to build, default to core-image-minimal
+export IMAGE=${IMAGE:-"seapath-host-efi-image"}
+export MACHINE=${MACHINE:-"votp"}
+export DISTRO=${DISTRO:-"seapath-host"}
+export ACCEPT_FSL_EULA="1"
+if [ -f seapath.conf ] ; then
+    for seapath_env in $(bash -c \
+        '( source seapath.conf ; set -o posix ; set \
+            | grep -e "^SEAPATH" )') ; do
+        seapath_env_key=$(echo ${seapath_env} | cut -d '=' -f 1)
+        seapath_env_value=$(echo ${seapath_env} | cut -d '=' -f 2-)
+        if [ -z $(printenv "${seapath_env_key}") ] ; then
+            export "${seapath_env_key}"="${seapath_env_value}"
+        fi
+        BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE ${seapath_env_key}"
+    done
+fi
+
+for seapath_env in $(printenv | grep -e "^SEAPATH") ; do
+    echo -n "$(echo $seapath_env | cut -d '=' -f 1) = "
+    echo $seapath_env | cut -d '=' -f 2-
+done
+
 # Set variable readable from command line
 export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
   DISTRO \
@@ -244,13 +269,6 @@ export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
   SSTATE_DIR \
   ACCEPT_FSL_EULA \
 "
-
-# Set image to build, default to core-image-minimal
-export IMAGE=${IMAGE:-"seapath-host-efi-image"}
-export MACHINE=${MACHINE:-"votp"}
-export DISTRO=${DISTRO:-"seapath-host"}
-export ACCEPT_FSL_EULA="1"
-
 if [ ! -z "$REMOVE_BUILDDIR" ]; then
   # Clean directory
   run_cmd "Remove build directory" rm -Rf "${BUILDDIR}"
