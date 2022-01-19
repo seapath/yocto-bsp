@@ -7,3 +7,6 @@
 
 # Keymap
 SEAPATH_KEYMAP='us'
+
+# Limite the number of jobs to compile Ceph to avoid out of memory errors
+SEAPATH_PARALLEL_MAKE='8'
