@@ -44,11 +44,11 @@ command=' \
     ./build.sh -v -i seapath-host-bios-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-host && \
     ./build.sh -v \
-        -i seapath-host-bios-no-iommu-image \
+        -i seapath-host-bios-image \
         --machine votp-no-iommu \
         --distro seapath-host && \
     ./build.sh -v -i seapath-host-bios-test-image --distro seapath-host && \
-    ./build.sh -v -i seapath-host-bios-test-no-iommu-image \
+    ./build.sh -v -i seapath-host-bios-test-image \
         --machine votp-no-iommu --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host && \
@@ -91,7 +91,7 @@ command='./build.sh -v -i seapath-host-bios-image --distro seapath-host-minimal'
 
 [host_bios_no_iommu]
 command='./build.sh -v \
-    -i seapath-host-bios-no-iommu-image \
+    -i seapath-host-bios-image \
     --machine votp-no-iommu \
     --distro seapath-host'
 
@@ -102,7 +102,7 @@ command='./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-host'
 command='./build.sh -v -i seapath-host-bios-test-image --distro seapath-host'
 
 [host_bios_test_no_iommu]
-command='./build.sh -v -i seapath-host-bios-test-no-iommu-image \
+command='./build.sh -v -i seapath-host-bios-test-image \
         --machine votp-no-iommu --distro seapath-host'
 
 [host_efi]
