@@ -24,3 +24,14 @@ SEAPATH_RT_CORES=''
 # If the do not use DPDK do not set this variable.
 # Warning: each 1 GiB hugepage reserved can not be used as system memory.
 SEAPATH_1G_HUGEPAGES=''
+
+
+# Hashed password to access Grub shell if security is enabled.
+# The password has to be stored hashed in pbkdf2 format.
+# To generate the hashed from the plain password, the following command can be
+# used:
+# grub-mkpasswd-pbkdf2 -c 65536 -s 256 -l 64
+SEAPATH_GRUB_PASSWORD=''
+
+# Time in seconds grub waiting before boot SEAPATH.
+SEAPATH_GRUB_TIMEOUT='0'
