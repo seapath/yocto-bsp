@@ -1,0 +1,31 @@
+From 104c19541acf5252cbe818a998aa071fa68e8427 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
+Date: Thu, 27 Jan 2022 09:54:00 +0100
+Subject: [PATCH] grub-efi: install grub.cfg from build directory
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Install grub.cfg based on grub-efi.cfg from build directory.
+
+Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
+---
+ .../recipes-bsp/grub/grub-efi-efi-secure-boot.inc               | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+index 7b2c414..f3089f4 100644
+--- a/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
++++ b/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+@@ -116,7 +116,7 @@ do_install_append_class-target() {
+ 
+     # Install the stacked grub configs.
+     install -d "${D}${EFI_BOOT_PATH}"
+-    install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
++    install -m 0600 "${B}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
+     install -d "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi"
+     grub-mkimage -c ../cfg -p "${GRUB_PREFIX_DIR}" -d "./grub-core" \
+         -O "${GRUB_TARGET}-efi" -o "${B}/${GRUB_IMAGE}" \
+-- 
+2.25.1
+
