@@ -240,7 +240,7 @@ done
 
 # Set image to build, default to core-image-minimal
 export IMAGE=${IMAGE:-"seapath-host-efi-image"}
-export MACHINE=${MACHINE:-"votp"}
+export MACHINE=${MACHINE:-"votp-host"}
 export DISTRO=${DISTRO:-"seapath-host"}
 export ACCEPT_FSL_EULA="1"
 if [ -f seapath.conf ] ; then
