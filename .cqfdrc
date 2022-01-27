@@ -35,14 +35,36 @@ flavors='
 
 [all]
 command=' \
-    ./build.sh -v -i seapath-flash-bios --distro seapath-flash && \
-    ./build.sh -v -i seapath-flash-efi --distro seapath-flash && \
-    ./build.sh -v -i seapath-flash-pxe --distro seapath-flash && \
-    ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine votp-vm && \
-    ./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine votp-vm && \
-    ./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine votp-vm && \
-    ./build.sh -v -i seapath-host-bios-image --distro seapath-host && \
-    ./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-host && \
+    ./build.sh -v \
+        -i seapath-flash-bios \
+        --distro seapath-flash \
+        --machine votp-flash && \
+    ./build.sh -v \
+        -i seapath-flash-efi \
+        --distro seapath-flash \
+        --machine votp-flash && \
+    ./build.sh -v \
+        -i seapath-flash-pxe \
+        --distro seapath-flash \
+        --machine votp-flash && \
+    ./build.sh -v \
+        -i seapath-guest-efi-image \
+        --distro seapath-guest \
+        --machine votp-guest && \
+    ./build.sh -v \
+        -i seapath-guest-efi-test-image \
+        --distro seapath-guest \
+        --machine votp-guest && \
+    ./build.sh -v \
+        -i seapath-guest-efi-dbg-image \
+        --distro seapath-guest \
+        --machine votp-guest && \
+    ./build.sh -v \
+        -i seapath-host-bios-image \
+        --distro seapath-host && \
+    ./build.sh -v \
+        -i seapath-host-bios-dbg-image \
+        --distro seapath-host && \
     ./build.sh -v \
         -i seapath-host-bios-image \
         --machine votp-no-iommu \
@@ -66,22 +88,31 @@ command=' \
 '
 
 [flash_bios]
-command='./build.sh -v -i seapath-flash-bios --distro seapath-flash'
+command='./build.sh -v \
+    -i seapath-flash-bios \
+    --distro seapath-flash \
+    --machine votp-flash'
 
 [flash_efi]
-command='./build.sh -v -i seapath-flash-efi --distro seapath-flash'
+command='./build.sh -v \
+    -i seapath-flash-efi \
+    --distro seapath-flash \
+    --machine votp-flash'
 
 [flash_pxe]
-command='./build.sh -v -i seapath-flash-pxe --distro seapath-flash'
+command='./build.sh -v \
+    -i seapath-flash-pxe \
+    --distro seapath-flash \
+    --machine votp-flash'
 
 [guest_efi]
-command='./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine votp-vm'
+command='./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine votp-guest'
 
 [guest_efi_dbg]
-command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine votp-vm'
+command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine votp-guest'
 
 [guest_efi_test]
-command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine votp-vm'
+command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine votp-guest'
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image --distro seapath-host'
@@ -148,14 +179,15 @@ command=' \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-flash-pxe \
         --distro seapath-flash \
+        --machine votp-flash \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest \
-        --machine votp-vm \
+        --machine votp-guest \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest \
-        --machine votp-vm \
+        --machine votp-guest \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host \
