@@ -243,6 +243,7 @@ export IMAGE=${IMAGE:-"seapath-host-efi-image"}
 export MACHINE=${MACHINE:-"votp-host"}
 export DISTRO=${DISTRO:-"seapath-host"}
 export ACCEPT_FSL_EULA="1"
+export LSB_WARN='0'
 if [ -f seapath.conf ] ; then
     for seapath_env in $(bash -c \
         '( source seapath.conf ; set -o posix ; set \
@@ -268,6 +269,7 @@ export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
   MACHINE \
   SSTATE_DIR \
   ACCEPT_FSL_EULA \
+  LSB_WARN \
 "
 if [ ! -z "$REMOVE_BUILDDIR" ]; then
   # Clean directory
