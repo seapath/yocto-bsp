@@ -35,3 +35,9 @@ SEAPATH_GRUB_PASSWORD=''
 
 # Time in seconds grub waiting before boot SEAPATH.
 SEAPATH_GRUB_TIMEOUT='0'
+
+# Set to true to disable IPv6.
+SEAPATH_DISABLE_IPV6='false'
+
+# Set to true to disable IPv6 for guest images
+SEAPATH_GUEST_DISABLE_IPV6='false'
