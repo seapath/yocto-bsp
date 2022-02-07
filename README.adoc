@@ -204,6 +204,12 @@ $ sudo usermod -aG docker $USER
 
 Log out and log back in, so that your group membership can be re-evaluated.
 
+==== SEAPATH parameters
+
+Some SEAPATH settings can be customized with a file call _seapath.conf_. This
+file must be created in the project root directory. All settings which can be
+set in this file are described in the example file _seapath.conf.sample_.
+
 === Building the firmware
 
 The first step with `cqfd` is to create the build container. For this, use the
