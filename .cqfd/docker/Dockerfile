@@ -53,6 +53,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	wget \
 	xterm \
 	xxd \
+        liblz4-tool \
+        zstd \
 	xz-utils
 
 # Git Proxy Configuration
