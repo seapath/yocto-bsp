@@ -178,9 +178,6 @@ command=' \
     ./build.sh -v -i seapath-host-efi-image --distro seapath-host \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host \
-        --dl-dir /mnt/dldir \
-        --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-flash-pxe \
         --distro seapath-flash \
         --machine votp-flash \
@@ -188,13 +185,6 @@ command=' \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest \
         --machine votp-guest \
-        --dl-dir /mnt/dldir \
-        --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest \
-        --machine votp-guest \
-        --dl-dir /mnt/dldir \
-        --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
     ./build.sh -v \
