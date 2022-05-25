@@ -23,6 +23,7 @@ flavors='
     host_bios_no_iommu
     host_bios_test
     host_bios_test_no_iommu
+    host_efi_minimal
     host_efi
     host_efi_dbg
     host_efi_test
@@ -138,6 +139,9 @@ command='./build.sh -v -i seapath-host-bios-test-image \
 
 [host_efi]
 command='./build.sh -v -i seapath-host-efi-image --distro seapath-host'
+
+[host_efi_minimal]
+command='./build.sh -v -i seapath-host-efi-image --distro seapath-host-minimal'
 
 [host_efi_dbg]
 command='./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host'
