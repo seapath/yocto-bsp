@@ -2,7 +2,6 @@ build/
 downloads/
 sources/
 build.log
-scripts/bash_scripting_tools/
 README.html
 README.pdf
 *.tar.gz
@@ -10,3 +9,4 @@ README.pdf
 keys/*
 .repo/
 seapath.conf
+patches/*.done
