@@ -60,7 +60,8 @@ ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /u
 RUN chmod +x /usr/local/bin/oe-git-proxy
 
 # Asciidoctor PDF generator for generating the manual
-RUN gem install asciidoctor-pdf --pre -v 1.5.0.rc2
+RUN gem install public_suffix -v 4.0.7 && \
+    gem install asciidoctor-pdf --pre -v 1.5.0.rc2
 
 RUN sed -i "s/# en_US\.UTF-8 UTF-8/en_US\.UTF-8 UTF-8/" /etc/locale.gen
 RUN locale-gen
