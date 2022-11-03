@@ -19,13 +19,6 @@ SEAPATH_PARALLEL_MAKE='8'
 # If not defined, no CPU will be reserved.
 SEAPATH_RT_CORES=''
 
-# 1 GiB hugepages reserved in hypervisor
-# 1 GiB hugepages are used by DPDK. It must be 1 + maximum VMs using DPDK
-# If the do not use DPDK do not set this variable.
-# Warning: each 1 GiB hugepage reserved can not be used as system memory.
-SEAPATH_1G_HUGEPAGES=''
-
-
 # Hashed password to access Grub shell if security is enabled.
 # The password has to be stored hashed in pbkdf2 format.
 # To generate the hashed from the plain password, the following command can be
