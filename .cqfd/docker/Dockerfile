@@ -1,7 +1,7 @@
-# Copyright (C) 2020, RTE (http://www.rte-france.com)
+# Copyright (C) 2023, RTE (http://www.rte-france.com)
 # SPDX-License-Identifier: Apache-2.0
 
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -12,6 +12,7 @@ ENV LC_ALL en_US.UTF-8
 # Yocto mandatory packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	asciidoc \
+	ruby-asciidoctor-pdf \
 	ruby \
 	bash \
 	bc \
@@ -37,7 +38,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	libssl-dev \
 	locales \
 	pigz \
-	python \
 	python3 \
 	python3-pip \
 	python3-pexpect \
@@ -59,9 +59,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
 RUN chmod +x /usr/local/bin/oe-git-proxy
 
-# Asciidoctor PDF generator for generating the manual
-RUN gem install public_suffix -v 4.0.7 && \
-    gem install asciidoctor-pdf --pre -v 1.5.0.rc2
+# Git Proxy Configuration
+ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
+RUN chmod +x /usr/local/bin/oe-git-proxy
 
 RUN sed -i "s/# en_US\.UTF-8 UTF-8/en_US\.UTF-8 UTF-8/" /etc/locale.gen
 RUN locale-gen
