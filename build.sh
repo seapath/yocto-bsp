@@ -2,7 +2,7 @@
 #
 # Yocto build system initiator.
 #
-# Copyright (C) 2019-2022 Savoir-faire Linux, Inc.
+# Copyright (C) 2019-2023 Savoir-faire Linux, Inc.
 # This program is distributed under the Apache 2 license.
 
 # Name:       print_usage
@@ -415,6 +415,8 @@ export MACHINE=${MACHINE:-"votp-host"}
 export DISTRO=${DISTRO:-"seapath-host"}
 export ACCEPT_FSL_EULA="1"
 export LSB_WARN='0'
+export SKIP_META_SECURITY_SANITY_CHECK="1"
+export SKIP_META_VIRT_SANITY_CHECK="1"
 if [ -f seapath.conf ] ; then
     for seapath_env in $(bash -c \
         '( source seapath.conf ; set -o posix ; set \
@@ -440,8 +442,11 @@ export BB_ENV_PASSTHROUGH_ADDITIONS="$BB_ENV_PASSTHROUGH_ADDITIONS \
   BB_NUMBER_THREADS \
   DISTRO \
   DL_DIR \
+  LSB_WARN \
   MACHINE \
   PARALLEL_MAKE \
+  SKIP_META_SECURITY_SANITY_CHECK \
+  SKIP_META_VIRT_SANITY_CHECK \
   SSTATE_DIR \
 "
 
