@@ -1,4 +1,5 @@
 # Copyright (C) 2023, RTE (http://www.rte-france.com)
+# Copyright (C) 2023 Savoir-faire Linux, Inc.
 # SPDX-License-Identifier: Apache-2.0
 
 FROM ubuntu:22.04
@@ -37,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	libsdl1.2-dev \
 	libssl-dev \
 	locales \
+	lz4 \
 	pigz \
 	python3 \
 	python3-pip \
@@ -53,7 +55,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	wget \
 	xterm \
 	xxd \
-	xz-utils
+	xz-utils \
+	zstd
 
 # Git Proxy Configuration
 ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
