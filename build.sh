@@ -424,7 +424,7 @@ if [ -f seapath.conf ] ; then
         if [ -z $(printenv "${seapath_env_key}") ] ; then
             export "${seapath_env_key}"="${seapath_env_value}"
         fi
-        BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE ${seapath_env_key}"
+        BB_ENV_PASSTHROUGH_ADDITIONS="$BB_ENV_PASSTHROUGH_ADDITIONS ${seapath_env_key}"
     done
 fi
 
@@ -434,7 +434,7 @@ for seapath_env in $(printenv | grep -e "^SEAPATH") ; do
 done
 
 # Set variable readable from command line
-export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE \
+export BB_ENV_PASSTHROUGH_ADDITIONS="$BB_ENV_PASSTHROUGH_ADDITIONS \
   ACCEPT_FSL_EULA \
   BB_GENERATE_MIRROR_TARBALLS \
   BB_NUMBER_THREADS \
