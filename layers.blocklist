@@ -17,5 +17,6 @@ meta-secure-core/meta-intel-sgx
 meta-secure-core/meta-tpm
 meta-secure-core/meta-tpm2
 meta-security/meta-tpm
+meta-security/meta-integrity
 poky/meta-selftest
 poky/meta-skeleton
