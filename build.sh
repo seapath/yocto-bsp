@@ -417,6 +417,7 @@ export ACCEPT_FSL_EULA="1"
 export LSB_WARN='0'
 export SKIP_META_SECURITY_SANITY_CHECK="1"
 export SKIP_META_VIRT_SANITY_CHECK="1"
+export CVE_CHECK_SHOW_WARNINGS="0"
 if [ -f seapath.conf ] ; then
     for seapath_env in $(bash -c \
         '( source seapath.conf ; set -o posix ; set \
@@ -448,6 +449,7 @@ export BB_ENV_PASSTHROUGH_ADDITIONS="$BB_ENV_PASSTHROUGH_ADDITIONS \
   SKIP_META_SECURITY_SANITY_CHECK \
   SKIP_META_VIRT_SANITY_CHECK \
   SSTATE_DIR \
+  CVE_CHECK_SHOW_WARNINGS \
 "
 
 # Set image to build, default to core-image-minimal
