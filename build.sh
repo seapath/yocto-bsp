@@ -384,7 +384,7 @@ fi
 if [ -f "$TOPDIR"/build.conf ]; then
   . "$TOPDIR"/build.conf
 else
-  log warn "No build.conf file found - Using defaults for image/machine/distro"
+  log info "No build.conf file found - Using defaults for image/machine/distro"
   default_image=seapath-host-efi-image
   default_machine="votp-host"
   default_distro="seapath-host"
@@ -402,7 +402,7 @@ log debug "BB_NUMBER_THREADS = '$BB_NUMBER_THREADS'"
 log debug "PARALLEL_MAKE = '$PARALLEL_MAKE'"
 
 # Apply patches
-if [ -d patches ] && ls patches/*.patch 2>/dev/null ; then
+if [ -d patches ] && ls patches/*.patch 1>/dev/null 2>/dev/null ; then
     log info "Applying patches..."
     for patch in patches/*.patch; do
         apply_patch "$patch" || exit 1
