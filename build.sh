@@ -470,7 +470,7 @@ fi
 
 # Init poky build
 set "$BUILDDIR"
-. "$POKYDIR"/oe-init-build-env
+. "$POKYDIR"/oe-init-build-env 1>/dev/null
 
 # Add layers
 update_layers
