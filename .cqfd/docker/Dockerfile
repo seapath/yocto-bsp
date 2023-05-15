@@ -34,6 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	iputils-ping \
 	lbzip2 \
 	libelf-dev \
+	libmpc-dev \
 	libncurses5-dev \
 	libsdl1.2-dev \
 	libssl-dev \
