@@ -243,9 +243,7 @@ To list the available flavors, run:
 Here is a description of flavors:
 
    * all: all flavors
-   * flash_bios: bios image to flash a server disk
-   * flash_efi: efi image to flash a server disk
-   * flash_pxe: pxe image to flash a server disk
+   * flasher: image to flash a SEAPATH disk
    * guest_efi: efi guest image (VM) 
    * guest_efi_test: similar to guest_efi with additionnal test packages
    * guest_efi_dbg: similar to guest_efi with debug tools
@@ -314,15 +312,15 @@ You can find below the Yocto images list (with [FW]=bios or [FW]=efi):
 guest with test tool
 ** seapath-guest-host-bios-dbg-image: a debug image working as host and guest
 * Flasher images
-** seapath-flash-[FW]: USB key flash image used to flash firmware images on disk.
-** seapath-flash-pxe: flash image used to flash firmware images on disk usable
+** seapath-flasher: USB drive or PXE flash image used to flash SEAPATH images on
+   disk. Works on legacy BIOS and EFI machine.
 during a PXE boot.
 * Observer images
 ** seapath-monitor-[FW]: production image for an observer (needed for clustering quorum establishment)
 
 Different distros can be used:
 
-* seapath-flash: distro used for flash images
+* seapath-flash: distro used for the flasher image
 * seapath-guest: distro used for guest images
 * seapath-host: distro used for host images with security, readonly and clustering features 
 * seapath-host-cluster-minimal: distro used for host images with clustering features
@@ -341,27 +339,41 @@ NOTE: prefix this command with `cqfd run` if using cqfd.
 When the bitbake command completes, the toolchain installer will be in
 `tmp/deploy/sdk/` under your build directory.
 
-== Flashing the flash image to an USB key
+== Install Seapath
 
-To be able to install Seapath firmware on machines you need to use a USB key
+=== Prerequisites
+
+* The `seapath-flasher` image and the SEAPATH image to flash.
+* https://github.com/intel/bmap-tools[bmap-tools]
+
+`bmap-tool` can be installed through your package manager, commonly under the
+name bmap-tools or python3-bmaptools.
+
+On Ubuntu/Debian/Mint:
+
+  $ sudo apt install bmap-tools
+
+On Fedora/CentOS/Red Hat:
+
+  $ sudo dnf install python3-bmaptools
+
+=== Flashing the flasher image to an USB drive
+
+To be able to install Seapath firmware on machines you need to use a USB drive
 running a specific application.
-This application is available in `seapath-flash-bios` for machine running a BIOS
-and `seapath-flash-efi` for machine running an UEFI.
+This application is available in `seapath-flasher`.
 
-To create the flash USB key, on a Linux system, you can use the `dd` command.
-The image is compressed in gzip format, it must be uncompressed with gzip first.
-For instance, if USB key device is /dev/sdx:
+To create the flash USB drive, on a Linux system, you can use the `bmaptool`
+command.
+For instance, if USB drive device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ gzip -d -c build/tmp/deploy/image/boardname/seapath-flash-bios.wic.gz \
-      | sudo dd of=/dev/sdx bs=16M conv=fsync
+  $ sudo bmaptool copy build/tmp/deploy/image/votp-flash/seapath-flasher.wic.gz /dev/sdx
 
-== Flashing the firmware to the disk
+=== Flashing the firmware to the disk
 
-
-Copy the generated image in format wic or wic.gz on the USB key flasher_data
+Copy the generated image in format wic or wic.gz on the USB drive flasher_data
 parition.
-
 
 Boot the usb key. Use the `flash` script to write the firmware image on the
 disk. `flash` takes two arguments:

@@ -11,9 +11,7 @@ tar_options='-h'
 tar_transform='yes'
 flavors='
     all
-    flash_bios
-    flash_efi
-    flash_pxe
+    flasher
     guest_efi
     guest_efi_test
     guest_efi_dbg
@@ -37,15 +35,7 @@ flavors='
 [all]
 command=' \
     ./build.sh -v \
-        -i seapath-flash-bios \
-        --distro seapath-flash \
-        --machine votp-flash && \
-    ./build.sh -v \
-        -i seapath-flash-efi \
-        --distro seapath-flash \
-        --machine votp-flash && \
-    ./build.sh -v \
-        -i seapath-flash-pxe \
+        -i seapath-flasher \
         --distro seapath-flash \
         --machine votp-flash && \
     ./build.sh -v \
@@ -88,21 +78,9 @@ command=' \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
 '
 
-[flash_bios]
+[flasher]
 command='./build.sh -v \
-    -i seapath-flash-bios \
-    --distro seapath-flash \
-    --machine votp-flash'
-
-[flash_efi]
-command='./build.sh -v \
-    -i seapath-flash-efi \
-    --distro seapath-flash \
-    --machine votp-flash'
-
-[flash_pxe]
-command='./build.sh -v \
-    -i seapath-flash-pxe \
+    -i seapath-flasher \
     --distro seapath-flash \
     --machine votp-flash'
 
@@ -178,7 +156,7 @@ command=' \
     ./build.sh -v -i seapath-host-efi-image --distro seapath-host \
         --dl-dir /mnt/dldir \
         --sstate-dir /mnt/sstate && \
-    ./build.sh -v -i seapath-flash-pxe \
+    ./build.sh -v -i seapath-flasher \
         --distro seapath-flash \
         --machine votp-flash \
         --dl-dir /mnt/dldir \
