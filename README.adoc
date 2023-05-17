@@ -160,6 +160,19 @@ installing anything else than Docker and `repo` on your development machine.
 NOTE: We recommend using this method as it greatly simplifies the build
 configuration management process.
 
+=== Yocto SSTATE and Download cache
+
+Yocto provides a way to share build artifacts between multiple workspaces and
+developers through the DL_DIR and SSTATE_DIR environment variables.
+To use them with cqfd, add to your .bashrc:
+
+  export CQFD_EXTRA_RUN_ARGS="-v <your_dldir_path>:/mnt/dl -e DL_DIR=/mnt/dl -v <your_sstate_path>:/mnt/sstate -e SSTATE_DIR=/mnt/sstate"
+
+You could also do this configuration in .cqfdrc with docker_run_args under build
+section:
+
+  docker_run_args='-v <your_dldir_path>:/mnt/dl -e DL_DIR=/mnt/dl -v <your_sstate_path>:/mnt/sstate -e SSTATE_DIR=/mnt/sstate'
+
 === Prerequisites
 
 ==== Docker installation
