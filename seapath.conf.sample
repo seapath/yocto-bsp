@@ -38,3 +38,7 @@ SEAPATH_GUEST_DISABLE_IPV6='false'
 # Set to 1 to skip the compilation option report. Reduce the generation time by
 # more than one hour. Set anything else to generate the report.
 SEAPATH_SECCOMPILE_MANIFEST_SKIP='1'
+
+# Disk to autoflash with the flasher image. If not set or empty the autoflash
+# will be disabled. For instance set to sda to enable auto flashing on /dev/sda.
+SEAPATH_AUTO_FLASH=""
