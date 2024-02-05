@@ -60,9 +60,9 @@ See docker manual: https://docs.docker.com/engine/install/[Install docker]
 
 ==== Repo installation
 
-On Ubuntu 20.04:
+On Ubuntu:
 
-  
+
   $ sudo curl -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
   $ sudo chmod +x /usr/local/bin/repo
   $ sed 's|/usr/bin/env python|/usr/bin/env python3|' -i /usr/local/bin/repo
