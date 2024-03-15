@@ -386,7 +386,7 @@ if [ -f "$TOPDIR"/build.conf ]; then
 else
   log info "No build.conf file found - Using defaults for image/machine/distro"
   default_image=seapath-host-efi-image
-  default_machine="votp-host"
+  default_machine="seapath-hypervisor"
   default_distro="seapath-host"
 fi
 
@@ -411,7 +411,7 @@ fi
 
 # Set image to build, default to core-image-minimal
 export IMAGE=${IMAGE:-"seapath-host-efi-image"}
-export MACHINE=${MACHINE:-"votp-host"}
+export MACHINE=${MACHINE:-"seapath-hypervisor"}
 export DISTRO=${DISTRO:-"seapath-host"}
 export ACCEPT_FSL_EULA="1"
 export LSB_WARN='0'
