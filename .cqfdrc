@@ -4,7 +4,7 @@ name='yocto-bsp'
 
 [build]
 command='./build.sh -v -i seapath-host-efi-image'
-files='build/tmp/deploy/images/votp/seapath-image-votp.wic.gz
+files='build/tmp/deploy/images/seapath-hypervisor/seapath-image-seapath-hypervisor.wic.gz
        build/tmp/deploy/images/README.pdf'
 archive='%Po-%Pn-$(scripts/get-version).tar.gz'
 tar_options='-h'
@@ -37,19 +37,19 @@ command=' \
     ./build.sh -v \
         -i seapath-flasher \
         --distro seapath-flash \
-        --machine votp-flash && \
+        --machine seapath-installer && \
     ./build.sh -v \
         -i seapath-guest-efi-image \
         --distro seapath-guest \
-        --machine votp-guest && \
+        --machine seapath-vm && \
     ./build.sh -v \
         -i seapath-guest-efi-test-image \
         --distro seapath-guest \
-        --machine votp-guest && \
+        --machine seapath-vm && \
     ./build.sh -v \
         -i seapath-guest-efi-dbg-image \
         --distro seapath-guest \
-        --machine votp-guest && \
+        --machine seapath-vm && \
     ./build.sh -v \
         -i seapath-host-bios-image \
         --distro seapath-host && \
@@ -58,21 +58,21 @@ command=' \
         --distro seapath-host && \
     ./build.sh -v \
         -i seapath-host-bios-image \
-        --machine votp-no-iommu \
+        --machine seapath-no-iommu \
         --distro seapath-host && \
     ./build.sh -v -i seapath-host-bios-test-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-bios-test-image \
-        --machine votp-no-iommu --distro seapath-host && \
+        --machine seapath-no-iommu --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
     ./build.sh -v \
         -i seapath-monitor-bios-image \
-        --machine votp-monitor \
+        --machine seapath-monitor \
         --distro seapath-host && \
     ./build.sh -v \
         -i seapath-monitor-efi-swu-image \
-        --machine votp-monitor \
+        --machine seapath-monitor \
         --distro seapath-host && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
@@ -82,16 +82,16 @@ command=' \
 command='./build.sh -v \
     -i seapath-flasher \
     --distro seapath-flash \
-    --machine votp-flash'
+    --machine seapath-installer'
 
 [guest_efi]
-command='./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine votp-guest'
+command='./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine seapath-vm'
 
 [guest_efi_dbg]
-command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine votp-guest'
+command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine seapath-vm'
 
 [guest_efi_test]
-command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine votp-guest'
+command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine seapath-vm'
 
 [host_bios]
 command='./build.sh -v -i seapath-host-bios-image --distro seapath-host'
@@ -102,7 +102,7 @@ command='./build.sh -v -i seapath-host-bios-image --distro seapath-host-minimal'
 [host_bios_no_iommu]
 command='./build.sh -v \
     -i seapath-host-bios-image \
-    --machine votp-no-iommu \
+    --machine seapath-no-iommu \
     --distro seapath-host'
 
 [host_bios_dbg]
@@ -113,7 +113,7 @@ command='./build.sh -v -i seapath-host-bios-test-image --distro seapath-host'
 
 [host_bios_test_no_iommu]
 command='./build.sh -v -i seapath-host-bios-test-image \
-        --machine votp-no-iommu --distro seapath-host'
+        --machine seapath-no-iommu --distro seapath-host'
 
 [host_efi]
 command='./build.sh -v -i seapath-host-efi-image --distro seapath-host'
@@ -133,21 +133,21 @@ command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host'
 [monitor_bios]
 command='./build.sh -v \
     -i seapath-monitor-bios-image \
-    --machine votp-monitor \
+    --machine seapath-monitor \
     --distro seapath-host \
 '
 
 [monitor_efi]
 command='./build.sh -v \
     -i seapath-monitor-efi-image \
-    --machine votp-monitor \
+    --machine seapath-monitor \
     --distro seapath-host \
 '
 
 [monitor_efi_swu]
 command='./build.sh -v \
     -i seapath-monitor-efi-swu-image \
-    --machine votp-monitor \
+    --machine seapath-monitor \
     --distro seapath-host \
 '
 
@@ -156,11 +156,11 @@ command=' \
     ./build.sh -v -i seapath-host-efi-image --distro seapath-host && \
     ./build.sh -v -i seapath-flasher \
         --distro seapath-flash \
-        --machine votp-flash && \
+        --machine seapath-installer && \
     ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest \
-        --machine votp-guest && \
+        --machine seapath-vm && \
     ./build.sh -v \
         -i seapath-monitor-efi-image  \
-        --machine votp-monitor \
+        --machine seapath-monitor \
         --distro seapath-host \
 '
