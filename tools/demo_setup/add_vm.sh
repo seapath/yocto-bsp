@@ -86,11 +86,11 @@ fi
 
 source ./src/utils.sh
 
-run_ssh_command votp1 /opt/setup/addvm.sh "--id ${id} --interface ${interface} \
+run_ssh_command seapath1 /opt/setup/addvm.sh "--id ${id} --interface ${interface} \
     -d \"${disk}\""
-run_ssh_command votp2 /opt/setup/addvm.sh "--id ${id} --interface ${interface} \
+run_ssh_command seapath2 /opt/setup/addvm.sh "--id ${id} --interface ${interface} \
     -d \"${disk}\""
-run_ssh_command votp1 crm "config primitive guest${id} \
+run_ssh_command seapath1 crm "config primitive guest${id} \
    ocf:heartbeat:VirtualDomain \
    params config=/etc/pacemaker/guest${id}.xml \
    hypervisor=\"qemu:///system\" \
@@ -98,7 +98,7 @@ run_ssh_command votp1 crm "config primitive guest${id} \
    op start timeout=\"120s\" \
    op stop timeout=\"120s\" \
    op monitor timeout=\"30\" interval=\"10\" depth=\"0\"" 2>/dev/null
-if ! run_ssh_command votp2 crm "resource status" | \
+if ! run_ssh_command seapath2 crm "resource status" | \
     grep -E -q "guest${id}.*ocf::heartbeat:VirtualDomain" ; then
     echo "Error the VM was not installed correctly"
     exit 1

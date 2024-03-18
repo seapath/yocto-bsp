@@ -9,7 +9,7 @@ source "${source_dir}"/src/utils.sh
 # params disk
 check_rbd_disk_present()
 {
-    if run_ssh_command votp1 rbd list | grep -q -E "^${1}$" ; then
+    if run_ssh_command seapath1 rbd list | grep -q -E "^${1}$" ; then
         echo yes
     else
         echo no
@@ -79,11 +79,11 @@ if [ $(check_rbd_disk_present "$disk_name") = yes ] ; then
         echo "Error $disk_name already imported"
         exit 1
     else
-        run_ssh_command votp1 rbd "rm '${disk_name}'"
+        run_ssh_command seapath1 rbd "rm '${disk_name}'"
     fi
 fi
 
 echo "Uploading ${disk_file}"
-scp ${SSH_OPTIONS} "${disk_file}" root@"${VOTP1_ADDR}":/var/"${disk_name}"
-run_ssh_command votp1 rbd "import /var/'${disk_name}'"
-run_ssh_command votp1 rm "-f /var/'${disk_name}'"
+scp ${SSH_OPTIONS} "${disk_file}" root@"${SEAPATH1_ADDR}":/var/"${disk_name}"
+run_ssh_command seapath1 rbd "import /var/'${disk_name}'"
+run_ssh_command seapath1 rm "-f /var/'${disk_name}'"

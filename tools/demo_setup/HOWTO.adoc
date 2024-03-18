@@ -10,12 +10,12 @@ https://r1.sfl.team/projects/rte-votp/wiki/Our_HA_setup[here]:
 
 This script will setup:
 
-- one HP server as VOTP1 hypervisor ; IP address 192.168.217.131
-- another HP server as VOTP2 hypervisor ; IP address 192.168.217.132
+- one HP server as SEAPATH1 hypervisor ; IP address 192.168.217.131
+- another HP server as SEAPATH2 hypervisor ; IP address 192.168.217.132
 - Advantech server as observer ; IP address 192.168.217.133
 
 == Prerequisite
-- All machines must be flashed with VOTP distribution and must be accessible on
+- All machines must be flashed with seapath distribution and must be accessible on
 the network.
 - You must have created a config.ini file at the root of this directory. This file
 describes the cluster to setup. You can refer to the example files in the

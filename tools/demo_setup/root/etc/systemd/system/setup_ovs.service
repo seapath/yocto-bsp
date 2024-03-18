@@ -4,7 +4,7 @@
 [Unit]
 Description=setup openvswitch
 After=tlp-init.service
-After=votp-config_ovs.service
+After=seapath-config_ovs.service
 Wants=network-online.target
 [Service]
 Type=oneshot

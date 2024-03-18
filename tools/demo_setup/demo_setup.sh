@@ -54,18 +54,18 @@ done
 
 cd "${source_dir}"
 source src/utils.sh
-MACHINES="votp1 votp2 observer"
+MACHINES="seapath1 seapath2 observer"
 
 VARIABLES="GENERAL_USE_DPDK \
-    VOTP1_INITIAL_IP \
-    VOTP2_INITIAL_IP \
+    SEAPATH1_INITIAL_IP \
+    SEAPATH2_INITIAL_IP \
     OBSERVER_INITIAL_IP \
-    VOTP1_NETWORK_INTERFACE \
-    VOTP2_NETWORK_INTERFACE \
+    SEAPATH1_NETWORK_INTERFACE \
+    SEAPATH2_NETWORK_INTERFACE \
     OBSERVER_NETWORK_INTERFACE \
 "
-BRIDGE_VARIABLES="VOTP1_BRIDGE_INTERFACE VOTP2_BRIDGE_INTERFACE"
-OVS_VARIABLES="VOTP1_NIC VOTP2_NIC"
+BRIDGE_VARIABLES="SEAPATH1_BRIDGE_INTERFACE SEAPATH2_BRIDGE_INTERFACE"
+OVS_VARIABLES="SEAPATH1_NIC SEAPATH2_NIC"
 
 # Params machine, parameter none, parameter
 check_no_null_parameter()
@@ -119,19 +119,19 @@ check_parameters()
 # Print configuration
 print_preliminary_message()
 {
-    echo "VOTP1_INITIAL_IP=${VOTP1_INITIAL_IP}"
-    echo "VOTP2_INITIAL_IP=${VOTP2_INITIAL_IP}"
+    echo "SEAPATH1_INITIAL_IP=${SEAPATH1_INITIAL_IP}"
+    echo "SEAPATH2_INITIAL_IP=${SEAPATH2_INITIAL_IP}"
     echo "OBSERVER_INITIAL_IP=${OBSERVER_INITIAL_IP}"
     echo "GENERAL_USE_DPDK=${GENERAL_USE_DPDK}"
-    echo "VOTP1_NETWORK_INTERFACE=${VOTP1_NETWORK_INTERFACE}"
-    echo "VOTP2_NETWORK_INTERFACE=${VOTP2_NETWORK_INTERFACE}"
+    echo "SEAPATH1_NETWORK_INTERFACE=${SEAPATH1_NETWORK_INTERFACE}"
+    echo "SEAPATH2_NETWORK_INTERFACE=${SEAPATH2_NETWORK_INTERFACE}"
     echo "OBSERVER_NETWORK_INTERFACE=${OBSERVER_NETWORK_INTERFACE}"
     if [ "${GENERAL_USE_DPDK}" != "yes" ] ; then
-        echo "VOTP1_BRIDGE_INTERFACE=${VOTP1_BRIDGE_INTERFACE}"
-        echo "VOTP2_BRIDGE_INTERFACE=${VOTP2_BRIDGE_INTERFACE}"
+        echo "SEAPATH1_BRIDGE_INTERFACE=${SEAPATH1_BRIDGE_INTERFACE}"
+        echo "SEAPATH2_BRIDGE_INTERFACE=${SEAPATH2_BRIDGE_INTERFACE}"
     else
-        echo "VOTP1_NIC=${VOTP1_NIC}"
-        echo "VOTP2_NIC=${VOTP2_NIC}"
+        echo "SEAPATH1_NIC=${SEAPATH1_NIC}"
+        echo "SEAPATH2_NIC=${SEAPATH2_NIC}"
     fi
     echo -n "Please check settings from above and all machines are up before"
     echo " continuing"
@@ -171,7 +171,7 @@ setup_marchine()
     check_no_null_parameter ${machine} initial_ip ${initial_ip}
     check_no_null_parameter ${machine} network_interface ${network_interface}
     # Check the machine have been reflash
-    if ! ssh ${SSH_OPTIONS} root@${initial_ip} -- hostname |grep -Eq '^votp$'
+    if ! ssh ${SSH_OPTIONS} root@${initial_ip} -- hostname |grep -Eq '^seapath$'
     then
         echo "Error the machine has not been reinitialized"
         exit 1
