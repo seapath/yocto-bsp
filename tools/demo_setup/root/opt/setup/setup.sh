@@ -10,7 +10,7 @@ usage()
     echo 'usage: setup.sh [-h] [--ovs] [--nic nic] [--bridge-interface interface] --host host --network-interface interface'
     echo
     echo 'mandatory arguments:'
-    echo '  --host {votp1,votp2,observer}  host to setup'
+    echo '  --host {seapath1,seapath2,observer}  host to setup'
     echo '  --network-interface interface  network interface to use'
     echo
     echo 'optional arguments:'
@@ -103,8 +103,8 @@ setup_hosts()
 {
     echo "Update /etc/hosts"
     {
-        echo "${VOTP1_ADDR} votp1"
-        echo "${VOTP2_ADDR} votp2"
+        echo "${SEAPATH1_ADDR} seapath1"
+        echo "${SEAPATH2_ADDR} seapath2"
         echo "${OBSERVER_ADDR} observer"
     } >>/etc/hosts
     sed "s/$host/$host rbd/" -i /etc/hosts
@@ -128,7 +128,7 @@ setup_observer_systemd()
     systemctl disable openvswitch.service >/dev/null 2>/dev/null
     systemctl disable libvirtd.service >/dev/null 2>/dev/null
     systemctl disable docker.service >/dev/null 2>/dev/null
-    systemctl disable votp-config_ovs.service >/dev/null 2>/dev/null
+    systemctl disable seapath-config_ovs.service >/dev/null 2>/dev/null
 }
 
 setup_observer()
@@ -143,11 +143,11 @@ setup_hypervisor_network()
     replace enbridge0 "${eth}" /etc/systemd/network/00-enkernelbr0.network
     replace mac "$(generate_local_mac_address)" \
         /etc/systemd/network/00-kernelbr0.netdev
-    if [ "$host" = "votp1" ]
+    if [ "$host" = "seapath1" ]
     then
-        ip_addr="${VOTP1_ADDR}"
+        ip_addr="${SEAPATH1_ADDR}"
     else
-        ip_addr="${VOTP2_ADDR}"
+        ip_addr="${SEAPATH2_ADDR}"
     fi
     replace ip_addr "${ip_addr}" /etc/systemd/network/00-kernelbr0.network
     replace gateway_addr "${GATEWAY_ADDR}" \
@@ -189,7 +189,7 @@ setup_hypervison_ceph_osd_partition()
     mkfs.xfs -f  /dev/sda3 >/dev/null
 
     echo "Update fstab"
-    if [ "$host" = "votp1" ] ; then
+    if [ "$host" = "seapath1" ] ; then
         ceph_osd_number=0
     else
         ceph_osd_number=1
@@ -208,8 +208,8 @@ setup_hypservisor()
 setup_ceph_conf()
 {
     echo "Update ceph configuration"
-    replace votp1_addr "${VOTP1_ADDR}" /etc/ceph/ceph.conf
-    replace votp2_addr "${VOTP2_ADDR}" /etc/ceph/ceph.conf
+    replace seapath1_addr "${SEAPATH1_ADDR}" /etc/ceph/ceph.conf
+    replace seapath2_addr "${SEAPATH2_ADDR}" /etc/ceph/ceph.conf
     replace observer_addr "${OBSERVER_ADDR}" /etc/ceph/ceph.conf
     replace public_network "${PUBLIC_NETWORK}" /etc/ceph/ceph.conf
 }
@@ -222,7 +222,7 @@ check_arguments()
         usage
         exit 1
     fi
-    if [[ "$host" != "votp1" && "$host" != "votp2" && "$host" != "observer" ]]
+    if [[ "$host" != "seapath1" && "$host" != "seapath2" && "$host" != "observer" ]]
     then
         echo "Error: bad parameter host: $host"
         usage

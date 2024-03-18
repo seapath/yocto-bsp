@@ -14,9 +14,9 @@ setup_pacemaker()
 {
     echo "Configure pacemacker"
     # Check corosync/pacemacker are up and the cluster is ready
-    wait_until 10 3 "run_ssh_command votp1 crm status | grep -q 'Online: \[ votp1 votp2 \]'"
-    run_ssh_command votp1 /opt/setup/setup_pacemaker.sh
-    pacemaker_config=$(run_ssh_command votp2 crm "configure show")
+    wait_until 10 3 "run_ssh_command seapath1 crm status | grep -q 'Online: \[ seapath1 seapath2 \]'"
+    run_ssh_command seapath1 /opt/setup/setup_pacemaker.sh
+    pacemaker_config=$(run_ssh_command seapath2 crm "configure show")
     echo "${pacemaker_config}" |grep -q "stonith-enabled=false"
     echo "${pacemaker_config}" |grep -q "no-quorum-policy=ignore"
 }
@@ -24,37 +24,37 @@ setup_pacemaker()
 setup_ceph_monitors()
 {
     echo "Setup Ceph monitors"
-    run_ssh_command votp1 /opt/setup/setup_mon_votp1.sh
-    run_ssh_command votp2 /opt/setup/setup_mon_votp2.sh
+    run_ssh_command seapath1 /opt/setup/setup_mon_seapath1.sh
+    run_ssh_command seapath2 /opt/setup/setup_mon_seapath2.sh
     run_ssh_command observer /opt/setup/setup_mon_observer.sh
 
     # Check the 3 mon are up
     wait_until 10 1 'run_ssh_command observer ceph status | grep -q "mon: 3 daemons, quorum"'
 
-    run_ssh_command votp1 systemctl 'restart ceph-mon@votp1'
-    run_ssh_command votp2 systemctl 'restart ceph-mon@votp2'
+    run_ssh_command seapath1 systemctl 'restart ceph-mon@seapath1'
+    run_ssh_command seapath2 systemctl 'restart ceph-mon@seapath2'
     run_ssh_command observer systemctl 'restart ceph-mon@observer'
 
     # Check the 3 mon are up
-    wait_until 10 1 'run_ssh_command votp2 ceph status | grep -q "mon: 3 daemons, quorum"'
+    wait_until 10 1 'run_ssh_command seapath2 ceph status | grep -q "mon: 3 daemons, quorum"'
 }
 
 setup_ceph_osds()
 {
     echo "Setup Ceph OSDs"
-    run_ssh_command votp1 /opt/setup/setup_osd.sh
-    run_ssh_command votp2 /opt/setup/setup_osd.sh
-    run_ssh_command votp2 mount |grep -q '/dev/sda3 on /var/lib/ceph/osd/ceph-1'
-    run_ssh_command votp1 mount |grep -q '/dev/sda3 on /var/lib/ceph/osd/ceph-0'
-    run_ssh_command votp2 ceph "osd stat" | grep -q "2 osds"
+    run_ssh_command seapath1 /opt/setup/setup_osd.sh
+    run_ssh_command seapath2 /opt/setup/setup_osd.sh
+    run_ssh_command seapath2 mount |grep -q '/dev/sda3 on /var/lib/ceph/osd/ceph-1'
+    run_ssh_command seapath1 mount |grep -q '/dev/sda3 on /var/lib/ceph/osd/ceph-0'
+    run_ssh_command seapath2 ceph "osd stat" | grep -q "2 osds"
 }
 
 setup_rbd_pool()
 {
     echo "setup rbd pool"
-    run_ssh_command votp1 /opt/setup/setup_rbd.sh
-    run_ssh_command votp1 /opt/setup/setup_libvirt.sh
-    run_ssh_command votp2 /opt/setup/setup_libvirt.sh
+    run_ssh_command seapath1 /opt/setup/setup_rbd.sh
+    run_ssh_command seapath1 /opt/setup/setup_libvirt.sh
+    run_ssh_command seapath2 /opt/setup/setup_libvirt.sh
 }
 
 # Wait for machine
