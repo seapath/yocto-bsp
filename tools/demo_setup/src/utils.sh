@@ -1,11 +1,11 @@
 # Copyright (C) 2020, RTE (http://www.rte-france.com)
 # SPDX-License-Identifier: Apache-2.0
 
-MACHINES="votp1 votp2 observer"
+MACHINES="seapath1 seapath2 observer"
 SSH_OPTIONS='-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 
-VOTP1_ADDR=192.168.217.131
-VOTP2_ADDR=192.168.217.132
+SEAPATH1_ADDR=192.168.217.131
+SEAPATH2_ADDR=192.168.217.132
 OBSERVER_ADDR=192.168.217.133
 NTP_ADDR=192.168.217.134
 

@@ -5,7 +5,7 @@
 set -e
 UUID=$(uuidgen)
 OSD_SECRET=$(ceph-authtool --gen-print-key)
-if [ $(hostname) = votp1 ] ; then
+if [ $(hostname) = seapath1 ] ; then
     ID=0
 else
     ID=1

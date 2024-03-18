@@ -10,8 +10,8 @@ replace()
 update_ceph_conf_after_setup()
 {
     ceph mon enable-msgr2
-    sed "s/\bmon host = .*\b/&,${VOTP2_ADDR},${OBSERVER_ADDR}/" \
+    sed "s/\bmon host = .*\b/&,${SEAPATH2_ADDR},${OBSERVER_ADDR}/" \
         -i /etc/ceph/ceph.conf
-    sed 's/\bmon initial members = votp1\b/&,votp2,observer/' \
+    sed 's/\bmon initial members = seapath1\b/&,seapath2,observer/' \
         -i /etc/ceph/ceph.conf
 }
