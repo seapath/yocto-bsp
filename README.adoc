@@ -260,7 +260,7 @@ command.
 For instance, if USB drive device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ sudo bmaptool copy build/tmp/deploy/image/votp-flash/seapath-flasher.wic.gz /dev/sdx
+  $ sudo bmaptool copy build/tmp/deploy/image/seapath-installer/seapath-flasher-seapath-installer.wic.gz /dev/sdx
 
 === Flashing the firmware to the disk
 
@@ -318,11 +318,11 @@ we need to set the console output.
 We use two distinct files to modify the Linux Kernel command line:
 
 - _bzImage_: the Linux Kernel image
-- _seapath-test-image-votp.ext4_: the Seapath rootfs
+- _seapath-test-image-seapath-vm.ext4_: the Seapath rootfs
 
 Then run:
 
- $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda seapath-test-image-votp.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
+ $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda seapath-test-image-seapath-vm.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
 
 === Yocto ptests
 
@@ -409,7 +409,7 @@ More documentation on Hawkbit is available on https://www.eclipse.org/hawkbit/[H
 
 ===== Configuration of Hawkbit
 
-Hawkbit Server URL and PORT must be configured in _/etc/sysconfig/swupdate_hawkbit.conf_ or directly in meta-seapath (/recipes-votp/system-config/system-config/efi/swupdate_hawkbit.conf)
+Hawkbit Server URL and PORT must be configured in _/etc/sysconfig/swupdate_hawkbit.conf_ or directly in meta-seapath (/recipes-seapath/system-config/system-config/efi/swupdate_hawkbit.conf)
 
 A systemd daemon (_swupdate_hawkbit.service_) is started automatically at boot.
 If you want to modify _swupdate_hawkbit.conf_ at runtime, you must restart the systemd service.
