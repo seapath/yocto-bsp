@@ -19,10 +19,10 @@ diff --git a/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py b/source
 index c28d3917c2..d2b4647510 100644
 --- a/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py
 +++ b/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py
-@@ -59,9 +59,16 @@ class BootimgEFIPlugin(SourcePlugin):
-             if not bootimg_dir:
-                 raise WicError("Couldn't find DEPLOY_DIR_IMAGE, exiting")
+@@ -41,9 +42,16 @@ class BootimgEFIPlugin(SourcePlugin):
+             raise WicError("Couldn't find DEPLOY_DIR_IMAGE, exiting")
  
+         if initrd:
 +            tmp_bootimg_dir = get_bitbake_var("IMGDEPLOYDIR")
 +            if not tmp_bootimg_dir:
 +                raise WicError("Couldn't find IMGDEPLOYDIR, exiting")

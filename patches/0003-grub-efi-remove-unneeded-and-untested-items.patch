@@ -12,14 +12,14 @@ GRUB_SIGN_VERIFY is set to 0 and SE_LOADER is set to 1.
 Signed-off-by: Sébastien LE STUM <sebastien.le-stum@savoirfairelinux.com>
 Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
 ---
- .../grub/grub-efi-efi-secure-boot.inc         | 30 +++----------------
- 1 file changed, 4 insertions(+), 26 deletions(-)
+ .../grub/grub-efi-efi-secure-boot.inc         | 28 -------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-index 5814461..8fbb75c 100644
+diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+index dfb6d98..c850582 100644
 --- a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
 +++ b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-@@ -127,14 +127,6 @@ do_install:append:class-target() {
+@@ -120,14 +120,6 @@ do_install:append:class-target() {
      # Install the stacked grub configs.
      install -d "${D}${EFI_BOOT_PATH}"
      install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
@@ -31,52 +31,48 @@ index 5814461..8fbb75c 100644
 -
 -    # Create the initial environment block with empty item.
 -    grub-editenv "${D}${EFI_BOOT_PATH}/grubenv" create
- 
+
      install -d "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi"
      grub-mkimage -c ../cfg -p "${GRUB_PREFIX_DIR}" -d "./grub-core" \
-@@ -185,11 +177,6 @@ addtask sign after do_install before do_deploy do_package
- 
+@@ -179,12 +171,6 @@ addtask sign after do_install before do_deploy do_package
+
  fakeroot do_chownboot() {
      chown root:root -R "${D}${EFI_BOOT_PATH}/grub.cfg${SB_FILE_EXT}"
 -    chown root:root -R "${D}${EFI_BOOT_PATH}/boot-menu.inc${SB_FILE_EXT}"
+-
 -    [ x"${UEFI_SB}" = x"1" ] && {
 -        chown root:root -R "${D}${EFI_BOOT_PATH}/efi-secure-boot.inc${SB_FILE_EXT}"
 -        chown root:root -R "${D}${EFI_BOOT_PATH}/password.inc${SB_FILE_EXT}"
 -    }
  }
+
  addtask chownboot after do_deploy before do_package
- 
-@@ -197,18 +184,12 @@ addtask chownboot after do_deploy before do_package
- do_deploy:append:class-target() {
+@@ -194,18 +180,7 @@ do_deploy:append:class-target() {
      install -m 0644 "${D}${EFI_BOOT_PATH}/${GRUB_IMAGE}" "${DEPLOYDIR}"
- 
-+    if [ "${GRUB_IMAGE}" != "${GRUB_IMAGE_PREFIX}${GRUB_IMAGE}" ]; then
-+        install -m 0664 "${DEPLOYDIR}/${GRUB_IMAGE}" "${DEPLOYDIR}/${GRUB_IMAGE_PREFIX}${GRUB_IMAGE}"
-+    fi
-+
+
      # Deploy the stacked grub configs.
 -    install -m 0600 "${D}${EFI_BOOT_PATH}/grubenv" "${DEPLOYDIR}"
      install -m 0600 "${D}${EFI_BOOT_PATH}/grub.cfg" "${DEPLOYDIR}"
 -    install -m 0600 "${D}${EFI_BOOT_PATH}/boot-menu.inc" "${DEPLOYDIR}"
 -    install -m 0600 "${D}${EFI_BOOT_PATH}/grub.cfg${SB_FILE_EXT}" "${DEPLOYDIR}"
 -    install -m 0600 "${D}${EFI_BOOT_PATH}/boot-menu.inc${SB_FILE_EXT}" "${DEPLOYDIR}"
+-
 -    [ x"${UEFI_SB}" = x"1" ] && {
 -        install -m 0600 "${D}${EFI_BOOT_PATH}/efi-secure-boot.inc" "${DEPLOYDIR}"
 -        install -m 0600 "${D}${EFI_BOOT_PATH}/password.inc" "${DEPLOYDIR}"
 -        install -m 0600 "${D}${EFI_BOOT_PATH}/efi-secure-boot.inc${SB_FILE_EXT}" "${DEPLOYDIR}"
 -        install -m 0600 "${D}${EFI_BOOT_PATH}/password.inc${SB_FILE_EXT}" "${DEPLOYDIR}"
 -    }
- 
+
      install -d "${DEPLOYDIR}/efi-unsigned"
      install -m 0644 "${B}/${GRUB_IMAGE}" "${DEPLOYDIR}/efi-unsigned"
-@@ -219,7 +200,4 @@ FILES:${PN} += "${EFI_BOOT_PATH}"
- 
+@@ -216,7 +191,4 @@ FILES:${PN} += "${EFI_BOOT_PATH}"
+
  CONFFILES:${PN} += "\
      ${EFI_BOOT_PATH}/grub.cfg \
 -    ${EFI_BOOT_PATH}/grubenv \
 -    ${EFI_BOOT_PATH}/boot-menu.inc \
 -    ${EFI_BOOT_PATH}/efi-secure-boot.inc \
  "
--- 
-2.25.1
-
+--
+2.34.1
