@@ -9,6 +9,9 @@ Seapath Yocto BSP Platform Developer Guide
 :iconsdir: ./doc/icons/
 :sectnumlevels: 1
 
+WARNING: The Yocto scarthgap migration is in progress and does not work yet.
+Please use the Yocto kirkstone branch.
+
 The Yocto firmware generation has been tested on Ubuntu 18.04. You can either
 use your host machine's tools, or use
 https://github.com/savoirfairelinux/cqfd[cqfd] to build. More details are given
