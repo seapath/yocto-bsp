@@ -1,0 +1,52 @@
+From: Enguerrand de Ribaucourt @ 2024-07-04 16:23 UTC (permalink / raw)
+  To: bitbake-devel; +Cc: tanguy.raufflet, richard.purdie, Enguerrand de Ribaucourt
+
+The NPM package.json documentation[1] states that git URLs may contain
+a commit-ish suffix to specify a specific revision. When running
+`npm install`, this revision will be looked for on any branch of the
+repository.
+
+The bitbake implementation however translates the URL stored in
+package.json into a git URL to be fetch by the bitbake git fetcher. The
+bitbake fetcher git.py, enforces the branch to be master by default. If
+the revision specified in the package.json is not on the master branch,
+the fetch will fail while the package.json is valid.
+
+To fix this, append the ";nobranch=1" suffix to the revision in the git
+URL to be fetched. This will make the bitbake git fetcher ignore the
+branch and respect the behavior of `npm install``.
+
+This can be tested with the following command:
+ $ devtool add --npm-dev https://github.com/seapath/cockpit-cluster-dashboard.git -B version
+Which points to a project which has a package.json with a git URL:
+```json
+  "devDependencies": {
+    "cockpit-repo": "git+https://github.com/cockpit-project/cockpit.git#d34cabacb8e5e1e028c7eea3d6e3b606d862b8ac"
+  }
+```
+In this repo, the specified revision is on the "main" branch, which
+would fail without this fix.
+
+[1] https://docs.npmjs.com/cli/v10/configuring-npm/package-json#git-urls-as-dependencies
+
+Co-authored-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+Signed-off-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+Signed-off-by: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+---
+ bitbake/lib/bb/fetch2/npmsw.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+index ff5f8dc755..018e0ad546 100644
+--- a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
++++ b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+@@ -184,6 +184,7 @@ class NpmShrinkWrap(FetchMethod):
+                 uri = URI("git://" + str(groups["url"]))
+                 uri.params["protocol"] = str(groups["protocol"])
+                 uri.params["rev"] = str(groups["rev"])
++                uri.params["nobranch"] = "1"
+                 uri.params["destsuffix"] = destsuffix
+ 
+                 url = str(uri)
+-- 
+2.34.1
