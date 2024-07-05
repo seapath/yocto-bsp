@@ -40,5 +40,5 @@ SEAPATH_GUEST_DISABLE_IPV6='false'
 SEAPATH_SECCOMPILE_MANIFEST_SKIP='1'
 
 # Disk to autoflash with the flasher image. If not set or empty the autoflash
-# will be disabled. For instance set to sda to enable auto flashing on /dev/sda.
+# will be disabled. Ex : /dev/sda
 SEAPATH_AUTO_FLASH=""
