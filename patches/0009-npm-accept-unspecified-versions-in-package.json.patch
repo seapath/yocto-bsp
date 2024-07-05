@@ -1,0 +1,56 @@
+From: Enguerrand de Ribaucourt @ 2024-07-04 16:23 UTC (permalink / raw)
+  To: bitbake-devel; +Cc: tanguy.raufflet, richard.purdie, Enguerrand de Ribaucourt
+
+Our current emulation mandates that the package.json contains a version
+field. Some packages may not provide it when they are not published to
+the registry. The actual `npm pack` would allow such packages, so
+should we.
+
+This patch adds default values to allow building such packages.
+For the shrinkwrap, we can actually use the resolved field which
+contains the exact source, including the revision, to pass integrity
+tests.
+
+This applies for instance to this package which doesn't declare a
+version:
+ - https://github.com/cockpit-project/cockpit/blob/23701a555a5af13f998ee4c7526d27fdb5669d63/package.json#L2
+
+Co-authored-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+Signed-off-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+Signed-off-by: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+---
+ bitbake/lib/bb/fetch2/npmsw.py  | 2 +-
+ meta/classes-recipe/npm.bbclass | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+index 018e0ad546..044f5b96f8 100644
+--- a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
++++ b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+@@ -88,7 +88,7 @@ class NpmShrinkWrap(FetchMethod):
+ 
+             integrity = params.get("integrity", None)
+             resolved = params.get("resolved", None)
+-            version = params.get("version", None)
++            version = params.get("version", params.get("resolved", None))
+ 
+             # Handle registry sources
+             if is_semver(version) and integrity:
+diff --git a/sources/poky/meta/classes/npm.bbclass b/sources/poky/meta/classes/npm.bbclass
+index 91da3295f2..a73ff29be8 100644
+--- a/sources/poky/meta/classes/npm.bbclass
++++ b/sources/poky/meta/classes/npm.bbclass
+@@ -75,8 +75,10 @@ def npm_pack(env, srcdir, workdir):
+         j = json.load(f)
+ 
+     # base does not really matter and is for documentation purposes
+-    # only.  But the 'version' part must exist because other parts of
++    # only. But the 'version' part must exist because other parts of
+     # the bbclass rely on it.
++    if 'version' not in j:
++        j['version'] = '0.0.0-unknown'
+     base = j['name'].split('/')[-1]
+     tarball = os.path.join(workdir, "%s-%s.tgz" % (base, j['version']));
+ 
+-- 
+2.34.1
