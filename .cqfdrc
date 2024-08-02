@@ -26,6 +26,7 @@ flavors='
     host_efi_dbg
     host_efi_test
     host_efi_swu
+    host_efi_test_swu
     monitor_bios
     monitor_efi
     monitor_efi_swu
@@ -66,6 +67,7 @@ command=' \
     ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
+    ./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host && \
     ./build.sh -v \
         -i seapath-monitor-bios-image \
         --machine seapath-monitor \
@@ -129,6 +131,9 @@ command='./build.sh -v -i seapath-host-efi-test-image --distro seapath-host'
 
 [host_efi_swu]
 command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host'
+
+[host_efi_test_swu]
+command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host'
 
 [monitor_bios]
 command='./build.sh -v \
