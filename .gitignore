@@ -10,3 +10,4 @@ keys/*
 .repo/
 seapath.conf
 patches/*.done
+.vscode/
