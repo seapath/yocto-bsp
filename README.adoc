@@ -89,7 +89,7 @@ On Ubuntu:
 if necessary install *make* and pkg-config packages.
 
 For instance, with Ubuntu/Debian distribution:
- `$ sudo apt-get install build-essential pkg-config` 
+ `$ sudo apt-get install build-essential pkg-config`
 
 then
 ```
@@ -140,22 +140,22 @@ Here is a description of flavors:
 
    * all: all flavors
    * flasher: image to flash a SEAPATH disk
-   * guest_efi: efi guest image (VM) 
+   * guest_efi: efi guest image (VM)
    * guest_efi_test: similar to guest_efi with additionnal test packages
    * guest_efi_dbg: similar to guest_efi with debug tools
    * host_bios: bios host image (including security, clustering and readonly features)
    * host_bios_dbg: similar to host_bios with debug tools
    * host_bios_minimal: similar to host_bios without security, clustering and readonly features
-   * host_bios_no_iommu: similar to host_bios without IOMMU enabled (IOMMU leads) 
+   * host_bios_no_iommu: similar to host_bios without IOMMU enabled (IOMMU leads)
    * host_bios_test: similar to host_bios with additionnal test packages
    * host_bios_test_no_iommu: similar to host_bios_no_iommu with additionnal test packages
    * host_efi: efi host image (including security, clustering and readonly features)
    * host_efi_dbg: similar to host_efi with debug tools
    * host_efi_test: similar to host_efi with additionnal test packages
    * host_efi_swu: efi host update image (SwUpdate)
-   * monitor_bios: bios monitor image (used to monitor the cluster)
-   * monitor_efi: efi monitor image (used to monitor the cluster)
-   * monitor_efi_swu: efi monitor update image (SwUpdate)
+   * observer_bios: bios observer image (used to observer the cluster)
+   * observer_efi: efi observer image (used to observer the cluster)
+   * observer_efi_swu: efi observer update image (SwUpdate)
 
 To build on of this flavor, run:
 
@@ -212,13 +212,13 @@ guest with test tool
    disk. Works on legacy BIOS and EFI machine.
 during a PXE boot.
 * Observer images
-** seapath-monitor-[FW]: production image for an observer (needed for clustering quorum establishment)
+** seapath-observer-[FW]: production image for an observer (needed for clustering quorum establishment)
 
 Different distros can be used:
 
 * seapath-flash: distro used for the flasher image
 * seapath-guest: distro used for guest images
-* seapath-host: distro used for host images with security, readonly and clustering features 
+* seapath-host: distro used for host images with security, readonly and clustering features
 * seapath-host-cluster-minimal: distro used for host images with clustering features
 * seapath-host-minimal: distro used for host images without security, readonly and clustering features
 * seapath-host-sb: distro used for host images without security, readonly, clustering and secureboot features
