@@ -27,9 +27,9 @@ flavors='
     host_efi_test
     host_efi_swu
     host_efi_test_swu
-    monitor_bios
-    monitor_efi
-    monitor_efi_swu
+    observer_bios
+    observer_efi
+    observer_efi_swu
     sfl_ci
 '
 
@@ -69,12 +69,12 @@ command=' \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host && \
     ./build.sh -v \
-        -i seapath-monitor-bios-image \
-        --machine seapath-monitor \
+        -i seapath-observer-bios-image \
+        --machine seapath-observer \
         --distro seapath-host && \
     ./build.sh -v \
-        -i seapath-monitor-efi-swu-image \
-        --machine seapath-monitor \
+        -i seapath-observer-efi-swu-image \
+        --machine seapath-observer \
         --distro seapath-host && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
@@ -135,24 +135,24 @@ command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host'
 [host_efi_test_swu]
 command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host'
 
-[monitor_bios]
+[observer_bios]
 command='./build.sh -v \
-    -i seapath-monitor-bios-image \
-    --machine seapath-monitor \
+    -i seapath-observer-bios-image \
+    --machine seapath-observer \
     --distro seapath-host \
 '
 
-[monitor_efi]
+[observer_efi]
 command='./build.sh -v \
-    -i seapath-monitor-efi-image \
-    --machine seapath-monitor \
+    -i seapath-observer-efi-image \
+    --machine seapath-observer \
     --distro seapath-host \
 '
 
-[monitor_efi_swu]
+[observer_efi_swu]
 command='./build.sh -v \
-    -i seapath-monitor-efi-swu-image \
-    --machine seapath-monitor \
+    -i seapath-observer-efi-swu-image \
+    --machine seapath-observer \
     --distro seapath-host \
 '
 
@@ -165,7 +165,7 @@ command=' \
     ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest \
         --machine seapath-vm && \
     ./build.sh -v \
-        -i seapath-monitor-efi-image  \
-        --machine seapath-monitor \
+        -i seapath-observer-efi-image  \
+        --machine seapath-observer \
         --distro seapath-host \
 '
