@@ -15,19 +15,12 @@ flavors='
     guest_efi
     guest_efi_test
     guest_efi_dbg
-    host_bios
-    host_bios_dbg
-    host_bios_minimal
-    host_bios_no_iommu
-    host_bios_test
-    host_bios_test_no_iommu
     host_efi_minimal
     host_efi
     host_efi_dbg
     host_efi_test
     host_efi_swu
     host_efi_test_swu
-    observer_bios
     observer_efi
     observer_efi_swu
     sfl_ci
@@ -51,27 +44,10 @@ command=' \
         -i seapath-guest-efi-dbg-image \
         --distro seapath-guest \
         --machine seapath-vm && \
-    ./build.sh -v \
-        -i seapath-host-bios-image \
-        --distro seapath-host && \
-    ./build.sh -v \
-        -i seapath-host-bios-dbg-image \
-        --distro seapath-host && \
-    ./build.sh -v \
-        -i seapath-host-bios-image \
-        --machine seapath-no-iommu \
-        --distro seapath-host && \
-    ./build.sh -v -i seapath-host-bios-test-image --distro seapath-host && \
-    ./build.sh -v -i seapath-host-bios-test-image \
-        --machine seapath-no-iommu --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host && \
-    ./build.sh -v \
-        -i seapath-observer-bios-image \
-        --machine seapath-observer \
-        --distro seapath-host && \
     ./build.sh -v \
         -i seapath-observer-efi-swu-image \
         --machine seapath-observer \
@@ -95,28 +71,6 @@ command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --m
 [guest_efi_test]
 command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine seapath-vm'
 
-[host_bios]
-command='./build.sh -v -i seapath-host-bios-image --distro seapath-host'
-
-[host_bios_minimal]
-command='./build.sh -v -i seapath-host-bios-image --distro seapath-host-minimal'
-
-[host_bios_no_iommu]
-command='./build.sh -v \
-    -i seapath-host-bios-image \
-    --machine seapath-no-iommu \
-    --distro seapath-host'
-
-[host_bios_dbg]
-command='./build.sh -v -i seapath-host-bios-dbg-image --distro seapath-host'
-
-[host_bios_test]
-command='./build.sh -v -i seapath-host-bios-test-image --distro seapath-host'
-
-[host_bios_test_no_iommu]
-command='./build.sh -v -i seapath-host-bios-test-image \
-        --machine seapath-no-iommu --distro seapath-host'
-
 [host_efi]
 command='./build.sh -v -i seapath-host-efi-image --distro seapath-host'
 
@@ -134,13 +88,6 @@ command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host'
 
 [host_efi_test_swu]
 command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host'
-
-[observer_bios]
-command='./build.sh -v \
-    -i seapath-observer-bios-image \
-    --machine seapath-observer \
-    --distro seapath-host \
-'
 
 [observer_efi]
 command='./build.sh -v \
