@@ -143,17 +143,10 @@ Here is a description of flavors:
    * guest_efi: efi guest image (VM)
    * guest_efi_test: similar to guest_efi with additionnal test packages
    * guest_efi_dbg: similar to guest_efi with debug tools
-   * host_bios: bios host image (including security, clustering and readonly features)
-   * host_bios_dbg: similar to host_bios with debug tools
-   * host_bios_minimal: similar to host_bios without security, clustering and readonly features
-   * host_bios_no_iommu: similar to host_bios without IOMMU enabled (IOMMU leads)
-   * host_bios_test: similar to host_bios with additionnal test packages
-   * host_bios_test_no_iommu: similar to host_bios_no_iommu with additionnal test packages
    * host_efi: efi host image (including security, clustering and readonly features)
    * host_efi_dbg: similar to host_efi with debug tools
    * host_efi_test: similar to host_efi with additionnal test packages
    * host_efi_swu: efi host update image (SwUpdate)
-   * observer_bios: bios observer image (used to observer the cluster)
    * observer_efi: efi observer image (used to observer the cluster)
    * observer_efi_swu: efi observer update image (SwUpdate)
 
@@ -190,29 +183,26 @@ You can also pass custom BitBake commands using the `--` separator:
 
   $ ./build.sh -i seapath-host-efi-image -m boardname --distro distroname -- bitbake -c clean package_name
 
-Images can be produced for either UEFI or BIOS compatible firmwares.
+Images can be produced for UEFI firmware only.
 
-You can find below the Yocto images list (with [FW]=bios or [FW]=efi):
+You can find below the Yocto images list:
 
 * Host images
-** seapath-host-[FW]-image: production image
-** seapath-host-[FW]-dbg-image: debug image
-** seapath-host-[FW]-test-image: production image with test tools
+** seapath-host-efi-image: production image
+** seapath-host-efi-dbg-image: debug image
+** seapath-host-efi-test-image: production image with test tools
 * Guest images
 ** seapath-guest-efi-image: QEMU-compatible virtual machine production image (UEFI only)
 ** seapath-guest-efi-dbg-image: QEMU-compatible virtual machine debug image (UEFI only)
 ** seapath-guest-efi-test-image: guest production image with test tools (UEFI only)
 * Hybrid images
-** seapath-guest-host-bios-image: a production image working as host and guest
-** seapath-guest-host-bios-test-image: a production image working as host and
 guest with test tool
-** seapath-guest-host-bios-dbg-image: a debug image working as host and guest
 * Flasher images
 ** seapath-flasher: USB drive or PXE flash image used to flash SEAPATH images on
-   disk. Works on legacy BIOS and EFI machine.
+   disk.
 during a PXE boot.
 * Observer images
-** seapath-observer-[FW]: production image for an observer (needed for clustering quorum establishment)
+** seapath-observer-efi: production image for an observer (needed for clustering quorum establishment)
 
 Different distros can be used:
 
