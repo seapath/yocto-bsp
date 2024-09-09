@@ -20,6 +20,7 @@ flavors='
     host_efi_dbg
     host_efi_test
     host_efi_swu
+    host_efi_dbg_swu
     host_efi_test_swu
     observer_efi
     observer_efi_swu
@@ -88,6 +89,9 @@ command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host'
 
 [host_efi_test_swu]
 command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host'
+
+[host_efi_dbg_swu]
+command='./build.sh -v -i seapath-host-efi-dbg-swu-image --distro seapath-host'
 
 [observer_efi]
 command='./build.sh -v \
