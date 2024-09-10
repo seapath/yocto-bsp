@@ -1,0 +1,45 @@
+From 32f4d4e41544c55389b2f75133c700e8a1928488 Mon Sep 17 00:00:00 2001
+From: Erwann Roussy <erwann.roussy@savoirfairelinux.com>
+Date: Tue, 10 Sep 2024 11:27:55 +0200
+Subject: [PATCH] remove dvb_apps bbappend
+
+This bbappend depends on meta-openembedded/meta-multimedia which is
+blocked on SEAPATH.
+
+SFL: #14929
+---
+ .../dvb-apps/dvb-apps_%.bbappend              | 22 -------------------
+ 1 file changed, 22 deletions(-)
+ delete mode 100644 meta-sdk/dynamic-layers/openembedded-layer/recipes-multimedia/dvb-apps/dvb-apps_%.bbappend
+
+diff --git a/sources/meta-sdk/dynamic-layers/openembedded-layer/recipes-multimedia/dvb-apps/dvb-apps_%.bbappend b/sources/meta-sdk/dynamic-layers/openembedded-layer/recipes-multimedia/dvb-apps/dvb-apps_%.bbappend
+deleted file mode 100644
+index b8d181e183..0000000000
+--- a/sources/meta-imx/meta-sdk/dynamic-layers/openembedded-layer/recipes-multimedia/dvb-apps/dvb-apps_%.bbappend
++++ /dev/null
+@@ -1,22 +0,0 @@
+-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+-
+-SRC_URI:append = " file://0001-test_dvr_play-changed-to-output-TS.patch \
+-"
+-# Enable static lib as test build needs it
+-export enable_static="yes"
+-
+-do_compile () {
+-    # Build test to generate test_dvr_play
+-    cd ${S}
+-    oe_runmake -C lib
+-    oe_runmake -C util
+-    oe_runmake -C test
+-}
+-
+-do_install:append() {
+-    install -d ${D}${bindir}
+-    if [ -e ${S}/test/test_dvr_play ]; then
+-        cp ${S}/test/test_dvr_play ${D}${bindir}
+-    fi
+-}
+-
+-- 
+2.34.1
+
