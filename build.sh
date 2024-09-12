@@ -429,6 +429,10 @@ if [ -f seapath.conf ] ; then
         fi
         BB_ENV_PASSTHROUGH_ADDITIONS="$BB_ENV_PASSTHROUGH_ADDITIONS ${seapath_env_key}"
     done
+else
+    log error "Fatal: seapath.conf does not exists."
+    log error "Look at the README to create a seapath.conf file"
+    exit 1
 fi
 
 for seapath_env in $(printenv | grep -e "^SEAPATH") ; do
