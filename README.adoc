@@ -1,4 +1,5 @@
 // Copyright (C) 2020, RTE (http://www.rte-france.com)
+// Copyright (C) 2024 Savoir-faire Linux, Inc.
 // SPDX-License-Identifier: CC-BY-4.0
 
 Seapath Yocto BSP Platform Developer Guide
@@ -245,29 +246,37 @@ On Ubuntu/Debian/Mint:
 
   $ sudo apt install bmap-tools
 
-On Fedora/CentOS/Red Hat:
+On Fedora:
 
-  $ sudo dnf install python3-bmaptools
+  $ sudo dnf install bmap-tools
+
+On CentOS/Red Hat:
+
+  $ sudo yuml install bmap-tools
+
 
 === Flashing the flasher image to an USB drive
 
 To be able to install Seapath firmware on machines you need to use a USB drive
 running a specific application.
-This application is available in `seapath-flasher`.
+This application is available in `seapath-installer` directory.
 
 To create the flash USB drive, on a Linux system, you can use the `bmaptool`
 command.
 For instance, if USB drive device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ sudo bmaptool copy build/tmp/deploy/image/seapath-installer/seapath-flasher-seapath-installer.wic.gz /dev/sdx
+  $ sudo bmaptool copy build/tmp/deploy/images/seapath-installer/seapath-flasher-seapath-installer.wic.gz /dev/sdx
+
+TIP: You can also use the `lsblk` command to list all block devices and their
+mount points to identify the USB drive.
 
 === Flashing the firmware to the disk
 
 Copy the generated image in format wic or wic.gz on the USB drive flasher_data
 parition.
 
-Boot the usb key. Use the `flash` script to write the firmware image on the
+Boot the usb drive. Use the `flash` script to write the firmware image on the
 disk. `flash` takes two arguments:
 
 * --images: the path to the image to be flashed. The image partition are
@@ -277,6 +286,9 @@ mounted on /media.
 For instance:
 
     $ flash --image /media/seapath-host-efi-image.wic.gz --disk /dev/sda
+
+TIP: You can also use the `lsblk` command to list all block devices and their
+mount points to identify the disk.
 
 == Tests
 
