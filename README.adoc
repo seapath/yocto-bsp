@@ -394,7 +394,7 @@ Then, you have different options
 
 Copy the image on the target and run
 
-    $ swupdate -i <my update>.swu
+    $ sudo swupdate -i <my update>.swu
 
 ==== Run an update from a deployment server (Hawkbit)
 
