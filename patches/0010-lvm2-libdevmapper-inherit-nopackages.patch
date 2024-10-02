@@ -1,0 +1,36 @@
+From 74ad298af5c3ac40ce837ccd7b33611e4cf644b2 Mon Sep 17 00:00:00 2001
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+Date: Wed, 2 Oct 2024 12:21:42 +0200
+Subject: [PATCH] lvm2/libdevmapper: inherit nopackages
+
+Since commit [1] in OE-Core, the buildhistory class fails after
+do_package if nothing is found in the packages-split directory of a
+recipe. If a recipe has PACKAGES empty, as with libdevmapper, the build
+will fail.
+
+Inherit nopackages class to disable do_package related tasks and prevent
+build error from buildhistory class.
+
+[1]: https://git.openembedded.org/openembedded-core/commit/?h=6817b012763fc32cdcffe30163a304da3ed59ae1
+
+Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+---
+ sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
+index be558ce1d..533dd22e1 100644
+--- a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
++++ b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
+@@ -3,6 +3,8 @@
+ # generates package libdevmapper
+ require lvm2.inc
+ 
++inherit nopackages
++
+ DEPENDS += "autoconf-archive-native"
+ 
+ TARGET_CC_ARCH += "${LDFLAGS}"
+-- 
+2.34.1
+
