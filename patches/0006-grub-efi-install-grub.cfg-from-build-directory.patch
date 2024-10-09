@@ -13,19 +13,18 @@ Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
  .../recipes-bsp/grub/grub-efi-efi-secure-boot.inc               | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-index 04d8b30..8f87f07 100644
---- a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-+++ b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-@@ -120,7 +120,7 @@ do_install:append:class-target() {
- 
+diff --git a/sources/meta-secure-core//meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+index dfb6d98..66da200 100644
+--- a/sources/meta-secure-core//meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
++++ b/sources/meta-secure-core//meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+@@ -119,7 +119,7 @@ do_install:append:class-target() {
+
      # Install the stacked grub configs.
      install -d "${D}${EFI_BOOT_PATH}"
 -    install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
 +    install -m 0600 "${B}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
- 
-     install -d "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi"
-     grub-mkimage -c ../cfg -p "${GRUB_PREFIX_DIR}" -d "./grub-core" \
--- 
-2.25.1
-
+     install -m 0600 "$menu" "${D}${EFI_BOOT_PATH}"
+     [ x"${UEFI_SB}" = x"1" ] && {
+         install -m 0600 "${WORKDIR}/efi-secure-boot.inc" "${D}${EFI_BOOT_PATH}"
+--
+2.34.1

@@ -15,22 +15,21 @@ build error from buildhistory class.
 
 Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
 ---
- sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb | 2 ++
+ sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
+diff --git a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
 index be558ce1d..533dd22e1 100644
---- a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
-+++ b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.11.bb
+--- a/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb
++++ b/sources/meta-openembedded/meta-oe/recipes-support/lvm2/libdevmapper_2.03.22.bb
 @@ -3,6 +3,8 @@
  # generates package libdevmapper
  require lvm2.inc
- 
+
 +inherit nopackages
 +
  DEPENDS += "autoconf-archive-native"
- 
- TARGET_CC_ARCH += "${LDFLAGS}"
--- 
-2.34.1
 
+ TARGET_CC_ARCH += "${LDFLAGS}"
+--
+2.34.1
