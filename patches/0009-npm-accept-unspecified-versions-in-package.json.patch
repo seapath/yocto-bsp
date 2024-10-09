@@ -28,21 +28,21 @@ index 018e0ad546..044f5b96f8 100644
 --- a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
 +++ b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
 @@ -88,7 +88,7 @@ class NpmShrinkWrap(FetchMethod):
- 
+
              integrity = params.get("integrity", None)
              resolved = params.get("resolved", None)
 -            version = params.get("version", None)
 +            version = params.get("version", params.get("resolved", None))
- 
+
              # Handle registry sources
              if is_semver(version) and integrity:
 diff --git a/sources/poky/meta/classes/npm.bbclass b/sources/poky/meta/classes/npm.bbclass
 index 91da3295f2..a73ff29be8 100644
---- a/sources/poky/meta/classes/npm.bbclass
-+++ b/sources/poky/meta/classes/npm.bbclass
+--- a/sources/poky/meta/classes-recipe/npm.bbclass
++++ b/sources/poky/meta/classes-recipe/npm.bbclass
 @@ -75,8 +75,10 @@ def npm_pack(env, srcdir, workdir):
          j = json.load(f)
- 
+
      # base does not really matter and is for documentation purposes
 -    # only.  But the 'version' part must exist because other parts of
 +    # only. But the 'version' part must exist because other parts of
@@ -51,6 +51,6 @@ index 91da3295f2..a73ff29be8 100644
 +        j['version'] = '0.0.0-unknown'
      base = j['name'].split('/')[-1]
      tarball = os.path.join(workdir, "%s-%s.tgz" % (base, j['version']));
- 
--- 
+
+--
 2.34.1
