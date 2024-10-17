@@ -72,11 +72,11 @@ command=' \
     ./build.sh -v \
         -i seapath-monitor-bios-image \
         --machine seapath-monitor \
-        --distro seapath-host && \
+        --distro seapath-observer && \
     ./build.sh -v \
         -i seapath-monitor-efi-swu-image \
         --machine seapath-monitor \
-        --distro seapath-host && \
+        --distro seapath-observer && \
     ./build.sh -v \
         -i seapath-observer-rpi-image  \
         --machine seapath-observer-rpi \
@@ -144,21 +144,21 @@ command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-host'
 command='./build.sh -v \
     -i seapath-monitor-bios-image \
     --machine seapath-monitor \
-    --distro seapath-host \
+    --distro seapath-observer \
 '
 
 [monitor_efi]
 command='./build.sh -v \
     -i seapath-monitor-efi-image \
     --machine seapath-monitor \
-    --distro seapath-host \
+    --distro seapath-observer \
 '
 
 [monitor_efi_swu]
 command='./build.sh -v \
     -i seapath-monitor-efi-swu-image \
-    --machine seapath-monitor \
-    --distro seapath-host \
+    --machine seapath-observer \
+    --distro seapath-observer \
 '
 
 [observer_rpi]
@@ -179,7 +179,7 @@ command=' \
     ./build.sh -v \
         -i seapath-monitor-efi-image  \
         --machine seapath-monitor \
-        --distro seapath-host && \
+        --distro seapath-observer && \
     ./build.sh -v \
         -i seapath-observer-rpi-image  \
         --machine seapath-observer-rpi \
