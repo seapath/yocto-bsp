@@ -30,6 +30,7 @@ flavors='
     monitor_bios
     monitor_efi
     monitor_efi_swu
+    observer_rpi
     sfl_ci
 '
 
@@ -76,6 +77,10 @@ command=' \
         -i seapath-monitor-efi-swu-image \
         --machine seapath-monitor \
         --distro seapath-host && \
+    ./build.sh -v \
+        -i seapath-observer-rpi-image  \
+        --machine seapath-observer-rpi \
+        --distro seapath-observer && \
     ./tools/get-pkg-list-csv.sh ./build/security/manifests/*.manifest > \
         ./build/security/manifests/pkg-list_$(date -u +"%Y-%m-%d_%H:%M:%S").csv \
 '
@@ -156,6 +161,13 @@ command='./build.sh -v \
     --distro seapath-host \
 '
 
+[observer_rpi]
+command='./build.sh -v \
+        -i seapath-observer-rpi-image  \
+        --machine seapath-observer-rpi \
+        --distro seapath-observer \
+'
+
 [sfl_ci]
 command=' \
     ./build.sh -v -i seapath-host-efi-image --distro seapath-host && \
@@ -167,5 +179,10 @@ command=' \
     ./build.sh -v \
         -i seapath-monitor-efi-image  \
         --machine seapath-monitor \
-        --distro seapath-host \
+        --distro seapath-host && \
+    ./build.sh -v \
+        -i seapath-observer-rpi-image  \
+        --machine seapath-observer-rpi \
+        --distro seapath-observer \
+
 '

@@ -153,6 +153,7 @@ Here is a description of flavors:
    * monitor_bios: bios monitor image (used to monitor the cluster)
    * monitor_efi: efi monitor image (used to monitor the cluster)
    * monitor_efi_swu: efi monitor update image (SwUpdate)
+   * observer_rpi: observer image on Raspberry Pi
 
 To build on of this flavor, run:
 
@@ -219,6 +220,7 @@ Different distros can be used:
 * seapath-host-cluster-minimal: distro used for host images with clustering features
 * seapath-host-minimal: distro used for host images without security, readonly and clustering features
 * seapath-host-sb: distro used for host images without security, readonly, clustering and secureboot features
+* seapath-observer: distro used for observer image
 
 == Building an SDK Installer
 
@@ -289,6 +291,18 @@ For instance:
 
 TIP: You can also use the `lsblk` command to list all block devices and their
 mount points to identify the disk.
+
+
+=== Flashing the firmware to Raspberry Pi using a SD card
+
+To be able to install Seapath observer on Raspberry Pi, you need to use a SD card.
+
+To create a bootable SD card for Raspberry Pi on a Linux system, you can use the `bmaptool` command.
+
+For instance, if the SD card is /dev/sdx:
+
+  $ sudo umount /dev/sdx*
+  $ sudo bmaptool copy --bmap build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bmap  build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bz2 /dev/sdx
 
 == Tests
 
