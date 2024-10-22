@@ -157,7 +157,7 @@ command='./build.sh -v \
 [monitor_efi_swu]
 command='./build.sh -v \
     -i seapath-monitor-efi-swu-image \
-    --machine seapath-observer \
+    --machine seapath-monitor \
     --distro seapath-observer \
 '
 
