@@ -304,6 +304,9 @@ For instance, if the SD card is /dev/sdx:
   $ sudo umount /dev/sdx*
   $ sudo bmaptool copy --bmap build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bmap  build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bz2 /dev/sdx
 
+*Note:* The A/B updates does not work on Raspberry Pi for now. The cluster functionalities are not tested yet.
+
+
 == Tests
 
 === Performance tests
