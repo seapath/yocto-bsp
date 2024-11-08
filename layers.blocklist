@@ -20,3 +20,4 @@ meta-security/meta-tpm
 meta-security/meta-integrity
 poky/meta-selftest
 poky/meta-skeleton
+meta-security/meta-parsec
