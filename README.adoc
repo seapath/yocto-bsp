@@ -74,8 +74,7 @@ See docker manual: https://docs.docker.com/engine/install/[Install docker]
 
 ==== Repo installation
 
-On Ubuntu:
-
+On Ubuntu 20.04 and greater:
 
   $ sudo curl -o /usr/local/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
   $ sudo chmod +x /usr/local/bin/repo
