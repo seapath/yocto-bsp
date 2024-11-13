@@ -200,14 +200,27 @@ during a PXE boot.
 * Observer images
 ** seapath-observer-efi: production image for an observer (needed for clustering quorum establishment)
 
-Different distros can be used:
+SEAPATH offer different distros for hosts depending on the use case. Here is a
+table describing the different distros available:
+
+[cols="7*", options="header"]
+.SEAPATH host distros
+|==================================================================================================================
+| DISTRO                             | container | virtualization | security | read-only | secure-boot | clustering
+| seapath-host-sb                    | Yes       | Yes            | Yes      | Yes       | Yes         | Yes
+| seapath-host                       | Yes       | Yes            | Yes      | Yes       | No          | Yes
+| seapath-container-host             | Yes       | No             | Yes      | Yes       | No          | Yes
+| seapath-standalone-host            | Yes       | Yes            | Yes      | Yes       | No          | No
+| seapath-standalone-containers-host | Yes       | No             | Yes      | Yes       | No          | No
+| seapath-host-cluster-minimal       | Yes       | Yes            | No       | No        | No          | Yes
+| seapath-host-minimal               | Yes       | Yes            | No       | No        | No          | No
+|==================================================================================================================
+
+In addition to host distro we have specific distros:
 
 * seapath-flash: distro used for the flasher image
 * seapath-guest: distro used for guest images
-* seapath-host: distro used for host images with security, readonly and clustering features
-* seapath-host-cluster-minimal: distro used for host images with clustering features
-* seapath-host-minimal: distro used for host images without security, readonly and clustering features
-* seapath-host-sb: distro used for host images without security, readonly, clustering and secureboot features
+* seapath-observer: distro used for observer image
 
 == Building an SDK Installer
 
@@ -278,6 +291,21 @@ For instance:
 
 TIP: You can also use the `lsblk` command to list all block devices and their
 mount points to identify the disk.
+
+
+=== Flashing the firmware to Raspberry Pi using a SD card
+
+To be able to install Seapath observer on Raspberry Pi, you need to use a SD card.
+
+To create a bootable SD card for Raspberry Pi on a Linux system, you can use the `bmaptool` command.
+
+For instance, if the SD card is /dev/sdx:
+
+  $ sudo umount /dev/sdx*
+  $ sudo bmaptool copy --bmap build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bmap  build/tmp/deploy/images/seapath-observer-rpi/seapath-observer-rpi-image-seapath-observer-rpi.wic.bz2 /dev/sdx
+
+*Note:* The A/B updates does not work on Raspberry Pi for now. The cluster functionalities are not tested yet.
+
 
 == Tests
 
