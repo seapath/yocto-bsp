@@ -201,14 +201,26 @@ during a PXE boot.
 * Observer images
 ** seapath-monitor-[FW]: production image for an observer (needed for clustering quorum establishment)
 
-Different distros can be used:
+SEAPATH offer different distros for hosts depending on the use case. Here is a
+table describing the different distros available:
+
+[cols="7*", options="header"]
+.SEAPATH host distros
+|==================================================================================================================
+| DISTRO                             | container | virtualization | security | read-only | secure-boot | clustering
+| seapath-host-sb                    | Yes       | Yes            | Yes      | Yes       | Yes         | Yes
+| seapath-host                       | Yes       | Yes            | Yes      | Yes       | No          | Yes
+| seapath-container-host             | Yes       | No             | Yes      | Yes       | No          | Yes
+| seapath-standalone-host            | Yes       | Yes            | Yes      | Yes       | No          | No
+| seapath-standalone-containers-host | Yes       | No             | Yes      | Yes       | No          | No
+| seapath-host-cluster-minimal       | Yes       | Yes            | No       | No        | No          | Yes
+| seapath-host-minimal               | Yes       | Yes            | No       | No        | No          | No
+|==================================================================================================================
+
+In addition to host distro we have specific distros:
 
 * seapath-flash: distro used for the flasher image
 * seapath-guest: distro used for guest images
-* seapath-host: distro used for host images with security, readonly and clustering features
-* seapath-host-cluster-minimal: distro used for host images with clustering features
-* seapath-host-minimal: distro used for host images without security, readonly and clustering features
-* seapath-host-sb: distro used for host images without security, readonly, clustering and secureboot features
 * seapath-observer: distro used for observer image
 
 == Building an SDK Installer
