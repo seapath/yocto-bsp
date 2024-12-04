@@ -268,7 +268,7 @@ command.
 For instance, if USB drive device is /dev/sdx:
 
   $ sudo umount /dev/sdx*
-  $ sudo bmaptool copy build/tmp/deploy/images/seapath-installer/seapath-flasher-seapath-installer.wic.gz /dev/sdx
+  $ sudo bmaptool copy build/tmp/deploy/images/seapath-installer/seapath-flasher-seapath-installer.rootfs.wic.gz /dev/sdx
 
 TIP: You can also use the `lsblk` command to list all block devices and their
 mount points to identify the USB drive.
