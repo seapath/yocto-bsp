@@ -278,7 +278,10 @@ mount points to identify the USB drive.
 Copy the generated image in format wic or wic.gz on the USB drive flasher_data
 parition.
 
-Boot the usb drive. Use the `flash` script to write the firmware image on the
+Boot the usb drive (usually requires to go through the BIOS's boot menu). You
+can login with a screen and a keyboard to the `root` user.
+
+Use the `flash` script to write the firmware image on the
 disk. `flash` takes two arguments:
 
 * --images: the path to the image to be flashed. The image partition are
@@ -306,6 +309,15 @@ For instance, if the SD card is /dev/sdx:
 
 *Note:* The A/B updates does not work on Raspberry Pi for now. The cluster functionalities are not tested yet.
 
+== Usage
+
+You can login on the hypervisor using a screen and keyboard. The default
+credentials are `emergadmin:emergadmin`. Alternatively, if DHCP is available,
+you can connect to the `admin` user using the SSH key configured through [the
+keys folder](keys/README.adoc).
+
+The next step to use Seapath is to setup the cluster with Ansible. Follow
+the instructions of the [Ansible playbook](https://github.com/seapath/ansible).
 
 == Tests
 
