@@ -15,6 +15,10 @@ flavors='
     guest_efi
     guest_efi_test
     guest_efi_dbg
+    host_docker_srg_imx8p_2gDDR
+    host_docker_srg_imx8p_2gDDR_swu
+    host_docker_srg_imx8p_4gDDR
+    host_docker_srg_imx8p_4gDDR_swu
     host_efi_minimal
     host_efi
     host_efi_dbg
@@ -45,6 +49,22 @@ command=' \
         -i seapath-guest-efi-dbg-image \
         --distro seapath-guest \
         --machine seapath-vm && \
+    ./build.sh -v \
+        -i seapath-host-docker-srg-imx8p \
+        --distro seapath-standalone-containers-host \
+        --machine seapath-hypervisor-aaeon-2g && \
+    ./build.sh -v \
+        -i seapath-host-docker-srg-imx8p \
+        --distro seapath-standalone-containers-host \
+        --machine seapath-hypervisor-aaeon-4g && \
+    ./build.sh -v \
+        -i seapath-host-docker-imx8p-swu-image \
+        --distro seapath-standalone-containers-host \
+        --machine seapath-hypervisor-aaeon-2g && \
+    ./build.sh -v \
+        -i seapath-host-docker-imx8p-swu-image \
+        --distro seapath-standalone-containers-host \
+        --machine seapath-hypervisor-aaeon-4g && \
     ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-test-image --distro seapath-host && \
     ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
@@ -75,6 +95,18 @@ command='./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --m
 
 [guest_efi_test]
 command='./build.sh -v -i seapath-guest-efi-test-image --distro seapath-guest --machine seapath-vm'
+
+[host_docker_srg_imx8p_2gDDR]
+command='./build.sh -i seapath-host-docker-srg-imx8p -m seapath-hypervisor-aaeon-2g --distro seapath-standalone-containers-host'
+
+[host_docker_srg_imx8p_2gDDR_swu]
+command='./build.sh -i seapath-host-docker-imx8p-swu-image -m seapath-hypervisor-aaeon-2g --distro seapath-standalone-containers-host'
+
+[host_docker_srg_imx8p_4gDDR]
+command='./build.sh -i seapath-host-docker-srg-imx8p -m seapath-hypervisor-aaeon-4g --distro seapath-standalone-containers-host'
+
+[host_docker_srg_imx8p_4gDDR_swu]
+command='./build.sh -i seapath-host-docker-imx8p-swu-image -m seapath-hypervisor-aaeon-4g --distro seapath-standalone-containers-host'
 
 [host_efi]
 command='./build.sh -v -i seapath-host-efi-image --distro seapath-host'
@@ -117,6 +149,8 @@ command='./build.sh -v \
 
 [sfl_ci]
 command=' \
+    touch "keys/ansible_public_ssh_key.pub" && \
+    [ -f seapath.conf ] || cp seapath.conf.sample seapath.conf ; \
     ./build.sh -v -r -i seapath-host-efi-image --distro seapath-host && \
     ./build.sh -v -r -i seapath-flasher \
         --distro seapath-flash \
@@ -130,6 +164,11 @@ command=' \
     ./build.sh -v -r \
         -i seapath-observer-rpi-image  \
         --machine seapath-observer-rpi \
-        --distro seapath-observer \
-
+        --distro seapath-observer && \
+    ./build.sh -v -r -i seapath-host-docker-srg-imx8p \
+        --machine seapath-hypervisor-aaeon-2g \
+        --distro seapath-standalone-containers-host && \
+    ./build.sh -v -r -i seapath-host-docker-srg-imx8p \
+        --machine seapath-hypervisor-aaeon-4g \
+        --distro seapath-standalone-containers-host \
 '
