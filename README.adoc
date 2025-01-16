@@ -1,5 +1,5 @@
 // Copyright (C) 2020, RTE (http://www.rte-france.com)
-// Copyright (C) 2024 Savoir-faire Linux, Inc.
+// Copyright (C) 2024-2025 Savoir-faire Linux, Inc.
 // SPDX-License-Identifier: CC-BY-4.0
 
 Seapath Yocto BSP Platform Developer Guide
@@ -9,7 +9,7 @@ Seapath Yocto BSP Platform Developer Guide
 :iconsdir: ./doc/icons/
 :sectnumlevels: 1
 
-The Yocto firmware generation has been tested on Ubuntu 18.04. You can either
+The Yocto firmware generation has been tested on Ubuntu 22.04. You can either
 use your host machine's tools, or use
 https://github.com/savoirfairelinux/cqfd[cqfd] to build. More details are given
 in the next sections of this document.
@@ -31,7 +31,7 @@ First initialize `repo`:
 For instance, for Seapath yocto-bsp project:
 
   $ cd my_project_dir/
-  $ repo init -u https://github.com/seapath/repo-manifest.git
+  $ repo init -u https://github.com/seapath/repo-manifest.git -m <manifest.xml>
   $ repo sync
 
 NOTE: The initial build process takes approximately 4 to 5 hours on a current
@@ -147,7 +147,7 @@ Here is a description of flavors:
    * monitor_efi_swu: efi monitor update image (SwUpdate)
    * observer_rpi: observer image on Raspberry Pi
 
-To build on of this flavor, run:
+To build one of this flavor, run:
 
   $ cqfd -b <flavor>
 
@@ -174,17 +174,17 @@ The following packages need to be installed:
 
 The build is started by running the following command:
 
-  $ ./build.sh -i seapath-host-efi-image -m boardname --distro distroname
+  $ ./build.sh -i image -m boardname --distro distroname
 
 You can also pass custom BitBake commands using the `--` separator:
 
-  $ ./build.sh -i seapath-host-efi-image -m boardname --distro distroname -- bitbake -c clean package_name
-
-Images can be produced for UEFI firmware only.
+  $ ./build.sh -i image -m boardname --distro distroname -- bitbake -c clean package_name
 
 You can find below the Yocto images list:
 
 * Host images
+** host_docker_srg_imx8p_2gDDR: image with docker support for srg_imx8p_2gDDR AAEON machines
+** host_docker_srg_imx8p_4gDDR: image with docker support for srg_imx8p_4gDDR AAEON machines
 ** seapath-host-efi-image: production image
 ** seapath-host-efi-dbg-image: debug image
 ** seapath-host-efi-test-image: production image with test tools
@@ -195,7 +195,7 @@ You can find below the Yocto images list:
 * Hybrid images
 guest with test tool
 * Flasher images
-** seapath-flasher: USB drive or PXE flash image used to flash SEAPATH images on
+** seapath-flasher: USB drive or PXE flash image used to flash efi SEAPATH images on
    disk.
 during a PXE boot.
 * Observer images
@@ -307,6 +307,20 @@ For instance, if the SD card is /dev/sdx:
 
 *Note:* The A/B updates does not work on Raspberry Pi for now. The cluster functionalities are not tested yet.
 
+=== Flashing the firmware on AAEON srg-imx8p using a SD card
+
+To be able to install Seapath on srg-imx8p, you need to use a SD card.
+Suppose the location of your SD card is /dev/sdx and your machine is seapath-hypervisor-aaeon-2g
+
+  $ sudo umount /dev/sdx*
+  $ bmaptool copy --bmap sseapath-host-docker-srg-imx8p-seapath-hypervisor-aaeon-2g.wic.bmap seapath-host-docker-srg-imx8p-seapath-hypervisor-aaeon-2g.wic.gz /dev/sdx
+
+As this does not reset u-boot env, it may be necessary to change the active partition.
+On the u-boot interactive shell:
+
+  $ setenv partitionset_active A
+  $ saveenv
+  $ boot
 
 == Tests
 
