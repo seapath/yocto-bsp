@@ -17,7 +17,7 @@ SEAPATH_PARALLEL_MAKE='8'
 # The CPU enumeration begins at 0, so the maximum value is 1 less than the
 # number of CPUs core on the system.
 # If not defined, no CPU will be reserved.
-SEAPATH_RT_CORES=''
+SEAPATH_RT_CORES='2-N'
 
 # Hashed password to access Grub shell if security is enabled.
 # The password has to be stored hashed in pbkdf2 format.
