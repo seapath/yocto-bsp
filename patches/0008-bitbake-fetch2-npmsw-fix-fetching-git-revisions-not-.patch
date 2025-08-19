@@ -1,5 +1,8 @@
-From: Enguerrand de Ribaucourt @ 2024-07-04 16:23 UTC (permalink / raw)
-  To: bitbake-devel; +Cc: tanguy.raufflet, richard.purdie, Enguerrand de Ribaucourt
+From 89278ef84bd73ba9b169ea7c9e3bc6b5d6337222 Mon Sep 17 00:00:00 2001
+From: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+Date: Thu, 22 Aug 2024 09:53:14 +0200
+Subject: [PATCH 1/6] bitbake: fetch2/npmsw: fix fetching git revisions not on
+ master
 
 The NPM package.json documentation[1] states that git URLs may contain
 a commit-ish suffix to specify a specific revision. When running
@@ -30,8 +33,11 @@ would fail without this fix.
 [1] https://docs.npmjs.com/cli/v10/configuring-npm/package-json#git-urls-as-dependencies
 
 Co-authored-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+(Bitbake rev: 37a35adf7882f231c13643dbf9168497c6a242a1)
+
 Signed-off-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
 Signed-off-by: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
 ---
  bitbake/lib/bb/fetch2/npmsw.py | 1 +
  1 file changed, 1 insertion(+)
@@ -50,3 +56,4 @@ index ff5f8dc755..018e0ad546 100644
                  url = str(uri)
 -- 
 2.34.1
+

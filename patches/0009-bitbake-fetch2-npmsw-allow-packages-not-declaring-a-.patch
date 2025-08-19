@@ -1,0 +1,53 @@
+From 6c8c31b6da373aa4ff5f6b44bd0aac3a7bf5fd24 Mon Sep 17 00:00:00 2001
+From: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+Date: Thu, 22 Aug 2024 09:53:15 +0200
+Subject: [PATCH 2/6] bitbake: fetch2/npmsw: allow packages not declaring a
+ registry version
+
+We fetch npm dependencies from the npm-shrinkwrap.json file. They can
+point to a package on the NPM registry with a version field, or to a
+git/http/file URL with the resolved field. Such packages are allowed not
+to declare a registry version field because they may not have been
+published to the NPM registry. The previous implementation refuses to
+fetch such packages and throws an error.
+
+The resolved field contains the exact source, including the revision,
+wich we can use to pass as SRC_URI to the git/http/file fetcher. The
+integrity field is also mandatory for HTTP tarballs which will ensure
+reproducibility. So even if the version field is not present, we are
+still fetching a precise revision of the package.
+
+Another commit published along this stack is also required in the npm
+class to support these packages.
+
+v5:
+ - improve commit message
+v3:
+ - Split bitbake npmsw.py modification in another commit
+
+Co-authored-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+(Bitbake rev: 209982b5a3efc8081e65b4326bf9b64eef7f0ba0)
+
+Signed-off-by: Tanguy Raufflet <tanguy.raufflet@savoirfairelinux.com>
+Signed-off-by: Enguerrand de Ribaucourt <enguerrand.de-ribaucourt@savoirfairelinux.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ bitbake/lib/bb/fetch2/npmsw.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+index 018e0ad546..78ce6c3a8d 100644
+--- a/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
++++ b/sources/poky/bitbake/lib/bb/fetch2/npmsw.py
+@@ -97,7 +97,7 @@ class NpmShrinkWrap(FetchMethod):
+ 
+             integrity = params.get("integrity", None)
+             resolved = params.get("resolved", None)
+-            version = params.get("version", None)
++            version = params.get("version", resolved)
+ 
+             # Handle registry sources
+             if is_semver(version) and integrity:
+-- 
+2.34.1
+
