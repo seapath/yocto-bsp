@@ -1,5 +1,5 @@
 // Copyright (C) 2020, RTE (http://www.rte-france.com)
-// Copyright (C) 2024 Savoir-faire Linux, Inc.
+// Copyright (C) 2024-2025 Savoir-faire Linux, Inc.
 // SPDX-License-Identifier: CC-BY-4.0
 
 Seapath Yocto BSP Platform Developer Guide
@@ -317,68 +317,6 @@ keys folder](keys/README.adoc).
 
 The next step to use Seapath is to setup the cluster with Ansible. Follow
 the instructions of the [Ansible playbook](https://github.com/seapath/ansible).
-
-== Tests
-
-=== Performance tests
-
-The Yocto image _seapath-test-image_ incudes Real Time tests such as cyclictest.
-
-On the target, call:
-
- $ cyclictest -l100000000 -m -Sp90 -i200 -h400 -q >output
-
-*Note:* This test will run around 5 hours
-Then generate the graphics:
-
- $ ./tools/gen_cyclic_test.sh -i output -n 28 -o seapath.png
-
-*Note:* we reused OSADL http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html[tools].
-
-=== Virtualization tests
-
-==== KVM unit tests
-
-The Yocto image _seapath-test-image_ includes https://www.linux-kvm.org/page/KVM-unit-tests[kvm-unit-tests].
-
-On the target, call:
-
- $ run_tests.sh
-
-==== KVM/Qemu guest tests
-
-All Seapath Yocto images include the ability to run guest Virtual Machines (VMs).
-
-We used KVM and Qemu to run them. As we do not have any window manager on the host system,
-VMs should be launched in console mode and their console output must be correctly set.
-
-For testing purpose, we can run our Yocto image as a guest machine.
-We do not use the _.wic_ image which includes the Linux Kernel and the rootfs because
-we need to set the console output.
-We use two distinct files to modify the Linux Kernel command line:
-
-- _bzImage_: the Linux Kernel image
-- _seapath-test-image-seapath-vm.ext4_: the Seapath rootfs
-
-Then run:
-
- $ qemu-system-x86_64 -accel kvm -kernel bzImage -m 4096 -hda seapath-test-image-seapath-vm.ext4 -nographic -append 'root=/dev/sda console=ttyS0'
-
-=== Yocto ptests
-
-Ptest (package test) is a concept for building, installing and running the test suites
-that are included in many upstream packages, and producing a consistent output format
-for the results.
-
-ptest-runner is included in _seapath_test_image_ and allows to run those tests.
-
-For instance:
-
- $ ptest-runner openvswitch libvirt qemu rt-tests
-
-The usage for the ptest-runner is as follows:
-
-    $ Usage: ptest-runner [-d directory] [-l list] [-t timeout] [-h] [ptest1 ptest2 ...]
 
 == Hypervisors updates
 
