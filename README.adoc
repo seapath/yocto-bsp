@@ -318,82 +318,17 @@ keys folder](keys/README.adoc).
 The next step to use Seapath is to setup the cluster with Ansible. Follow
 the instructions of the [Ansible playbook](https://github.com/seapath/ansible).
 
-== Hypervisors updates
+For general SEAPATH usage, follow the documentation on [SEAPATH Wiki](https://lf-energy.atlassian.net/wiki/spaces/SEAP/overview)
 
-Hypervisors updates are enabled only for production efi images:
+== Updates
 
-- legacy bios images do not implement update mechanism
-- debug and test update images are not offered
+Hypervisors updates are enabled only for production efi images. They are performed with https://sbabic.github.io/swupdate/[SwUpdate].
 
-=== A/B partitioning
-
-A/B partitioning is used to allow for an atomic and recoverable update procedure.
-The update will be written to the passive partition.
-Once the update is successfully transferred to the device, the device will reboot
-into the passive partition which thereby becomes the new active partition.
-
-If the update causes any failures, a roll back to the original active partition
-can be done to preserve uptime.
-
-The following partitioning is used on hypervisors:
-
-[options="header"]
-|=======================
-|Slot A| Slot B
-|Boot A partition (Grub + Kernel)  [/dev/<disk>1]  | Boot B partition (Grub + Kernel) [/dev/<disk>2]
-|Rootfs A partition [/dev/<disk>3]   | Rootfs B partition [/dev/<disk>4]
-2+^.^|Logs partition [/dev/<disk>5]
-2+^.^|Persistent data partition [/dev/<disk>6]
-|=======================
-
-=== Updates
-
-Hypervisor updates can be performed with https://sbabic.github.io/swupdate/[SwUpdate].
-
-First, create a SwUpdate image (.swu):
+To build the SwUpdate image (.swu) run:
 
     $ cqfd -b host_efi_swu
 
-Then, you have different options
-
-==== Run an update with command line
-
-Copy the image on the target and run
-
-    $ sudo swupdate -i <my update>.swu
-    $ sudo reboot
-
-==== Run an update from a deployment server (Hawkbit)
-
-SwUpdate can interact with a Hawbit server to push updates on the device.
-
-===== Installation of Hawkbit server
-
-We use docker-compose as explained in https://www.eclipse.org/hawkbit/gettingstarted/#b-run-hawkbit-update-server-with-services-as-docker-compose[Hawkbit documentation].
-
-    $ git clone https://github.com/eclipse/hawkbit.git
-    $ cd hawkbit/hawkbit-runtime/docker
-
-We decided to enable anonymous connection. To do that, add this line in _hawkbit-runtime/docker/docker-compose.yml_
-
-    - 'HAWKBIT_SERVER_DDI_SECURITY_AUTHENTICATION_ANONYMOUS_ENABLED=true'
-
-And start the server:
-
-    $ docker-compose up -d
-
-Then you can access the http server on port 8080. In _System Config_ menu,
-enable "Allow targets to download artifact without security credentials", so that anonymous updates can be used.
-More documentation on Hawkbit is available on https://www.eclipse.org/hawkbit/[Hawkbit website].
-
-===== Configuration of Hawkbit
-
-Hawkbit Server URL and PORT must be configured in _/etc/sysconfig/swupdate_hawkbit.conf_ or directly in meta-seapath (/recipes-seapath/system-config/system-config/efi/swupdate_hawkbit.conf)
-
-A systemd daemon (_swupdate_hawkbit.service_) is started automatically at boot.
-If you want to modify _swupdate_hawkbit.conf_ at runtime, you must restart the systemd service.
-
-Once the systemd service is started, you should see the device in Hawkbit interface. Once an update on the device is performed, a reboot will be done.
+Refer to [SEAPATH wiki](https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/31820194/Update+and+Rollback) for information on how to use this update image.
 
 == About this documentation
 
