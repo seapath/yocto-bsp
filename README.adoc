@@ -330,6 +330,14 @@ To build the SwUpdate image (.swu) run:
 
 Refer to [SEAPATH wiki](https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/31820194/Update+and+Rollback) for information on how to use this update image.
 
+== Building a basic virtual machine
+
+A basic virtual machine qcow2 file can be created using the cqfd `guest_efi` flavor :
+
+    $ cqfd -b guest_efi
+
+Refer to [SEAPATH wiki](https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/31818833/How+to+manage+VM+in+SEAPATH) for information on how to deploy the VM.
+
 == About this documentation
 
 This documentation uses the AsciiDoc documentation generator. It is a convenient
