@@ -11,3 +11,4 @@ keys/*
 seapath.conf
 patches/*.done
 .vscode/
+release-files/
