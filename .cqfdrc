@@ -141,46 +141,5 @@ command=' \
 '
 
 [release]
-command=' \
-    mkdir -p release-files && \
-    .repo/repo/repo manifest -r > release-files/vX.Y.Z.xml && \
-    cp .cqfd/docker/seapath-release-key release-files/seapath-vX.Y.Z-artifacts-key && \
-    cp .cqfd/docker/seapath-release-key.pub release-files/seapath-vX.Y.Z-artifacts-key.pub && \
-    cp .cqfd/docker/seapath-release-key.pub keys/ansible_public_ssh_key.pub && \
-    cp -f seapath.conf.sample seapath.conf &&\
-    ./build.sh -v -i seapath-flasher --distro seapath-flash --machine seapath-installer && \
-    cp build/tmp/deploy/images/seapath-installer/seapath-flasher-seapath-installer.rootfs.wic.gz \
-        release-files/seapath-vX.Y.Z-flasher-image.roofts.wic.gz && \
-    cp build/tmp/deploy/images/seapath-installer/seapath-flasher-seapath-installer.rootfs.wic.bmap \
-        release-files/seapath-vX.Y.Z-flasher-image.roofts.wic.bmap && \
-    ./build.sh -v -i seapath-host-efi-image --distro seapath-host && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.wic.gz \
-        release-files/seapath-vX.Y.Z-host-cluster-efi-image.roofts.wic.gz && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.wic.bmap \
-        release-files/seapath-vX.Y.Z-host-cluster-efi-image.roofts.wic.bmap && \
-    ./build.sh -v -i seapath-host-efi-image --distro seapath-host-minimal && \
-    ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host && \
-    ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-host && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath-hypervisor.rootfs.swu \
-        release-files/seapath-vX.Y.Z-host-cluster-efi-image.rootfs.swu && \
-    ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine seapath-vm && \
-    cp build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.wic.qcow2 \
-        release-files/seapath-vX.Y.Z-guest-efi-image.rootfs.wic.qcow2 && \
-    ./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine seapath-vm && \
-    ./build.sh -v -i seapath-host-efi-image --distro seapath-standalone-host && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.wic.gz \
-        release-files/seapath-vX.Y.Z-host-standalone-efi-image.rootfs.wic.gz && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.wic.bmap \
-        release-files/seapath-vX.Y.Z-host-standalone-efi-image.rootfs.wic.bmap && \
-    ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-standalone-host && \
-    ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-standalone-host && \
-    cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath-hypervisor.rootfs.swu \
-        release-files/seapath-vX.Y.Z-host-standalone-efi-image.rootfs.swu && \
-    ./build.sh -v -i seapath-observer-efi-image --machine seapath-observer --distro seapath-host && \
-    cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.wic.gz \
-        release-files/seapath-vX.Y.Z-observer-efi-image.roofts.wic.gz && \
-    cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.wic.bmap \
-        release-files/seapath-vX.Y.Z-observer-efi-image.roofts.wic.bmap && \
-    ./build.sh -v -i seapath-observer-efi-swu-image --machine seapath-observer --distro seapath-host && \
-    cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-swu-image-seapath-observer.rootfs.swu \
-        release-files/seapath-vX.Y.Z-observer-efi-image.rootfs.swu'
+command='./tools/make_release.sh'
+
