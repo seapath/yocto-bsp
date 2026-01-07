@@ -24,8 +24,10 @@ flavors='
     host_efi_test_swu
     host_standalone_efi
     host_standalone_efi_dbg
+    host_standalone_efi_test
     host_standalone_efi_swu
     host_standalone_efi_dbg_swu
+    host_standalone_efi_test_swu
     observer_efi
     observer_efi_swu
     sfl_ci
@@ -104,11 +106,17 @@ command='./build.sh -v -i seapath-host-efi-image --distro seapath-standalone-hos
 [host_standalone_efi_dbg]
 command='./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-standalone-host'
 
+[host_standalone_efi_test]
+command='./build.sh -v -i seapath-host-efi-test-image --distro seapath-standalone-host'
+
 [host_standalone_efi_swu]
 command='./build.sh -v -i seapath-host-efi-swu-image --distro seapath-standalone-host'
 
 [host_standalone_efi_dbg_swu]
 command='./build.sh -v -i seapath-host-efi-dbg-swu-image --distro seapath-standalone-host'
+
+[host_standalone_efi_test_swu]
+command='./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-standalone-host'
 
 [observer_efi]
 command='./build.sh -v \
