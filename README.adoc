@@ -233,7 +233,14 @@ NOTE: prefix this command with `cqfd run` if using cqfd.
 When the bitbake command completes, the toolchain installer will be in
 `tmp/deploy/sdk/` under your build directory.
 
-== Install Seapath
+== Install SEAPATH using the official installer
+
+Read the official documentation: https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/424411162/Quick+start. In particular:
+
+* https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/537722925/Install+SEAPATH[Flash the SEAPATH installer] on your installation media (such as an USB stick).
+* https://lf-energy.atlassian.net/wiki/spaces/SEAP/pages/538902535/Advanced+SEAPATH+image+installation[Copy the necessary files] from your build directory to the installation media.
+
+== Install SEAPATH using the legacy flasher
 
 === Prerequisites
 
