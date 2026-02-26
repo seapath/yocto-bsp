@@ -42,3 +42,6 @@ SEAPATH_SECCOMPILE_MANIFEST_SKIP='1'
 # Disk to autoflash with the flasher image. If not set or empty the autoflash
 # will be disabled. Ex : /dev/sda
 SEAPATH_AUTO_FLASH=""
+
+# Set to true to enable the Cockpit web UI interface. Disabled by default.
+SEAPATH_COCKPIT='false'
