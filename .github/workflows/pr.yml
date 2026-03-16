@@ -1,0 +1,35 @@
+name: Pull Requests
+
+on:
+  # TODO: make the workflow triggerable by all SEAPATH-related repositories
+  # using a "repository_dispatch" trigger:
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#repository_dispatch
+  pull_request:
+
+jobs:
+  call-build:
+    name: Call Build workflow
+    uses: ./.github/workflows/_build.yml
+
+  call-cve-check:
+    name: Call CVE check workflow
+    needs: call-build
+    uses: ./.github/workflows/_cve-check.yml
+    with:
+      build-run-id: ${{ github.run_id }}
+
+  set-result:
+    name: Set workflow status
+    needs: call-cve-check
+    runs-on: ["ubuntu-slim"]
+    steps:
+      - name: Fail job if CVE detected
+        if: needs.call-cve-check.outputs.cve-detected
+        run: |
+          echo ::error::Vulnerabilities triggered the fail condition for your build.
+          exit 1
+
+  # Might be interesting to post a comment to the PR if CVEs have been found?
+  # This would require a separate trigger 'workflow_run' to get privileges.
+  # https://github.com/marketplace/actions/create-or-update-comment
+  # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/

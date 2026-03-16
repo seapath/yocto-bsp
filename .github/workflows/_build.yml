@@ -1,0 +1,65 @@
+# Builds SEAPATH and uploads SBOM artifacts.
+# This is a reusable workflow that cannot be launched directly.
+---
+name: Build (internal)
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ["self-hosted", "runner-sfl-seapath"]
+    strategy:
+      fail-fast: true # TODO eventually set to false
+      max-parallel: 1
+      matrix:
+        cqfd_flavor: ${{ fromJSON(vars.CQFD_FLAVORS) }}
+    env:
+      REPO_MANIFEST_REPOSITORY: https://github.com/seapath/repo-manifest
+      REPO_MANIFEST_REF: HEAD
+      REPO_MANIFEST_NAME: default.xml
+      WORKSPACE: workspace-bitbake
+    defaults:
+      run:
+        working-directory: ${{ env.WORKSPACE }}
+    steps:
+      # We clean the workspace at the beginning to easily debug failed runs
+      - name: Clean workspace
+        if: vars.CLEAN_YOCTO_WORKSPACE
+        working-directory: ${{ github.workspace }}
+        run: |
+          rm -rf ${{ env.WORKSPACE }}
+
+      - name: Create workspace
+        working-directory: ${{ github.workspace }}
+        run: mkdir -p ${{ env.WORKSPACE }}
+
+      - name: Init repo
+        run: |
+          repo init -u "$REPO_MANIFEST_REPOSITORY" -b "$REPO_MANIFEST_REF" -m "$REPO_MANIFEST_NAME"
+          repo sync
+
+      # TODO checkout specific ref based on the even that triggered the CI
+
+      - name: Init build system
+        run: |
+          cqfd init
+          touch "keys/ansible_public_ssh_key.pub"
+          cp seapath.conf.sample seapath.conf
+
+      - name: Build ${{ matrix.cqfd_flavor }}
+        run: |
+          # Since we are in a non-interactive bash, the bashrc file is not
+          # read and CQFD environment variables are not used, especially the
+          # Yocto cache -related ones... Thus we source the bashrc file.
+          source /etc/bash.bashrc
+          cqfd -b ${{ matrix.cqfd_flavor }}
+
+      - name: Upload SBOM files
+        uses: actions/upload-artifact@v6
+        with:
+          name: sbom-${{ matrix.cqfd_flavor }}
+          path: |
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.json
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.tar.zst
+          if-no-files-found: warn
