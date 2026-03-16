@@ -1,0 +1,25 @@
+name: Build on push
+
+on:
+  # TODO: make the workflow triggerable by all SEAPATH-related repositories
+  # using a "repository_dispatch" trigger:
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#repository_dispatch
+  push:
+    branches:
+      - scarthgap
+    paths-ignore:
+      - .github/**/*
+  # We add the manual dispatch trigger so we can test our pipelines
+  workflow_dispatch:
+
+jobs:
+  call-build:
+    name: Call Build workflow
+    uses: ./.github/workflows/_build.yml
+
+  call-cve-check:
+    name: Call CVE check workflow
+    needs: call-build
+    uses: ./.github/workflows/_cve-check.yml
+    with:
+      build-run-id: ${{ github.run_id }}
