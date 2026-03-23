@@ -1,6 +1,6 @@
-From 7ad1703640896451fa6563fc331122bf201b7a60 Mon Sep 17 00:00:00 2001
+From da15a0149aa4b353f481bfa44f79210d4bd3e28b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
-Date: Thu, 11 May 2023 11:13:26 +0200
+Date: Mon, 23 Mar 2026 13:07:28 +0100
 Subject: [PATCH] grub-efi: remove unneeded and untested items
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -11,22 +11,23 @@ GRUB_SIGN_VERIFY is set to 0 and SE_LOADER is set to 1.
 
 Signed-off-by: Sébastien LE STUM <sebastien.le-stum@savoirfairelinux.com>
 Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
+Signed-off-by: Paul Le Guen de Kerneizon <paul.leguendekerneizon@savoirfairelinux.com>
 ---
  .../grub/grub-efi-efi-secure-boot.inc         | 28 -------------------
  1 file changed, 28 deletions(-)
 
-diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-index dfb6d98..c850582 100644
+diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
+index 4424d35..710ec33 100644
 --- a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
 +++ b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-@@ -120,14 +120,6 @@ do_install:append:class-target() {
+@@ -142,14 +142,6 @@ do_install:append:class-target() {
      # Install the stacked grub configs.
      install -d "${D}${EFI_BOOT_PATH}"
-     install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
+     install -m 0600 "${UNPACKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
 -    install -m 0600 "$menu" "${D}${EFI_BOOT_PATH}"
 -    [ x"${UEFI_SB}" = x"1" ] && {
--        install -m 0600 "${WORKDIR}/efi-secure-boot.inc" "${D}${EFI_BOOT_PATH}"
--        install -m 0600 "${WORKDIR}/password.inc" "${D}${EFI_BOOT_PATH}"
+-        install -m 0600 "${UNPACKDIR}/efi-secure-boot.inc" "${D}${EFI_BOOT_PATH}"
+-        install -m 0600 "${UNPACKDIR}/password.inc" "${D}${EFI_BOOT_PATH}"
 -    }
 -
 -    # Create the initial environment block with empty item.
@@ -34,7 +35,7 @@ index dfb6d98..c850582 100644
 
      install -d "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi"
      grub-mkimage -c ../cfg -p "${GRUB_PREFIX_DIR}" -d "./grub-core" \
-@@ -179,12 +171,6 @@ addtask sign after do_install before do_deploy do_package
+@@ -201,12 +193,6 @@ addtask sign after do_install before do_deploy do_package
 
  fakeroot do_chownboot() {
      chown root:root -R "${D}${EFI_BOOT_PATH}/grub.cfg${SB_FILE_EXT}"
@@ -47,7 +48,7 @@ index dfb6d98..c850582 100644
  }
 
  addtask chownboot after do_deploy before do_package
-@@ -194,18 +180,7 @@ do_deploy:append:class-target() {
+@@ -216,18 +202,7 @@ do_deploy:append:class-target() {
      install -m 0644 "${D}${EFI_BOOT_PATH}/${GRUB_IMAGE}" "${DEPLOYDIR}"
 
      # Deploy the stacked grub configs.
@@ -66,7 +67,7 @@ index dfb6d98..c850582 100644
 
      install -d "${DEPLOYDIR}/efi-unsigned"
      install -m 0644 "${B}/${GRUB_IMAGE}" "${DEPLOYDIR}/efi-unsigned"
-@@ -216,7 +191,4 @@ FILES:${PN} += "${EFI_BOOT_PATH}"
+@@ -238,7 +213,4 @@ FILES:${PN} += "${EFI_BOOT_PATH}"
 
  CONFFILES:${PN} += "\
      ${EFI_BOOT_PATH}/grub.cfg \

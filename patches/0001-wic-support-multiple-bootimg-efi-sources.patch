@@ -1,35 +1,36 @@
-From 48e894d57d0b7a099990926dcfe6d4574b755ce5 Mon Sep 17 00:00:00 2001
+From b1d33f57faaef78f413d8de596d1f97e50e78122 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
-Date: Wed, 26 Apr 2023 13:50:35 +0200
+Date: Mon, 23 Mar 2026 11:08:16 +0100
 Subject: [PATCH] wic: support multiple bootimg-efi sources
 
 Generate a random temporary partition file name when using the
 bootimg-efi plugin to allow multiple bootimg-efi sources.
+
+Signed-off-by: Paul Le Guen de Kerneizon <paul.leguendekerneizon@savoirfairelinux.com>
 ---
- scripts/lib/wic/plugins/source/bootimg-efi.py | 3 ++-
+ scripts/lib/wic/plugins/source/bootimg_efi.py | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py b/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py
-index a65a5b9780..e7e062d67e 100644
---- a/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py
-+++ b/sources/poky/scripts/lib/wic/plugins/source/bootimg-efi.py
+diff --git a/sources/poky/scripts/lib/wic/plugins/source/bootimg_efi.py b/sources/poky/scripts/lib/wic/plugins/source/bootimg_efi.py
+index 430b0a4b02..b0c5c65e4c 100644
+--- a/sources/poky/scripts/lib/wic/plugins/source/bootimg_efi.py
++++ b/sources/poky/scripts/lib/wic/plugins/source/bootimg_efi.py
 @@ -15,6 +15,7 @@ import os
  import tempfile
  import shutil
  import re
 +import uuid
- 
+
  from glob import glob
- 
-@@ -391,7 +392,7 @@ class BootimgEFIPlugin(SourcePlugin):
-                      extra_blocks, part.mountpoint, blocks)
- 
+
+@@ -411,7 +412,7 @@ class BootimgEFIPlugin(SourcePlugin):
+                      part.mountpoint, blocks)
+
          # dosfs image, created by mkdosfs
 -        bootimg = "%s/boot.img" % cr_workdir
 +        bootimg = "%s/boot_%s.img" % (cr_workdir, uuid.uuid4())
- 
-         label = part.label if part.label else "ESP"
- 
--- 
-2.25.1
 
+         label = part.label if part.label else "ESP"
+
+--
+2.34.1

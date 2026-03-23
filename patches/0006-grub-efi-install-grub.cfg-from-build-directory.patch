@@ -1,7 +1,7 @@
-From d521fe301444536c6e89ceab663e3fe790160814 Mon Sep 17 00:00:00 2001
+From 778297288a1d4c23dde6cb47e297f8dd6c2d23d1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Mathieu=20Dupr=C3=A9?= <mathieu.dupre@savoirfairelinux.com>
-Date: Thu, 11 May 2023 11:24:25 +0200
-Subject: [PATCH 3/3] grub-efi: install grub.cfg from build directory
+Date: Mon, 23 Mar 2026 13:41:07 +0100
+Subject: [PATCH] grub-efi: install grub.cfg from build directory
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -9,19 +9,20 @@ Content-Transfer-Encoding: 8bit
 Install grub.cfg based on grub-efi.cfg from build directory.
 
 Signed-off-by: Mathieu Dupré <mathieu.dupre@savoirfairelinux.com>
+Signed-off-by: Paul Le Guen de Kerneizon <paul.leguendekerneizon@savoirfairelinux.com>
 ---
  .../recipes-bsp/grub/grub-efi-efi-secure-boot.inc               | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-index 9f01871..65bd206 100644
+index 0cf39ce..4482dd9 100644
 --- a/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
 +++ b/sources/meta-secure-core/meta-efi-secure-boot/recipes-bsp/grub/grub-efi-efi-secure-boot.inc
-@@ -113,7 +113,7 @@ do_install:append:class-target() {
+@@ -141,7 +141,7 @@ do_install:append:class-target() {
 
      # Install the stacked grub configs.
      install -d "${D}${EFI_BOOT_PATH}"
--    install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
+-    install -m 0600 "${UNPACKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
 +    install -m 0600 "${B}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
 
      install -d "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi"
