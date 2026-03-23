@@ -1,0 +1,27 @@
+From 990f111a85634e6ffaa8a7d4f8f59fdafe66731b Mon Sep 17 00:00:00 2001
+From: Paul Le Guen de Kerneizon <paul.leguendekerneizon@savoirfairelinux.com>
+Date: Mon, 23 Mar 2026 14:25:25 +0100
+Subject: [PATCH] layer.conf: add wrynose layer compatibility
+
+The layer still hasn't been set as compatible with wrynose,
+so set it manually until it is.
+
+Signed-off-by: Paul Le Guen de Kerneizon <paul.leguendekerneizon@savoirfairelinux.com>
+---
+ meta-cgl-common/conf/layer.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sources/meta-cgl/meta-cgl-common/conf/layer.conf b/sources/meta-cgl/meta-cgl-common/conf/layer.conf
+index 522e121..8ac281b 100644
+--- a/sources/meta-cgl/meta-cgl-common/conf/layer.conf
++++ b/sources/meta-cgl/meta-cgl-common/conf/layer.conf
+@@ -11,6 +11,6 @@ BBFILE_PRIORITY_cgl-common = "7"
+
+ LAYERDEPENDS_cgl-common = "core openembedded-layer networking-layer perl-layer filesystems-layer security selinux yocto"
+
+-LAYERSERIES_COMPAT_cgl-common = "honister kirkstone langdale mickledore nanbield scarthgap styhead walnascar whinlatter"
++LAYERSERIES_COMPAT_cgl-common = "honister kirkstone langdale mickledore nanbield scarthgap styhead walnascar whinlatter wrynose"
+
+ require conf/distro/include/cgl_common_security_flags.inc
+--
+2.34.1
