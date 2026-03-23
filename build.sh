@@ -76,7 +76,12 @@ apply_patch()
 # Param[in]:  Command line parameters
 parse_options()
 {
-    ARGS=$(getopt -o "d:i:j:khm:rs:t:v" -l "distro:,dl-dir:,help,image:,jobs:,machine:,no-layers-update,debug,remove-build-dir,sdk,sstate-dir:,tasks:,verbose" -n "build.sh" -- "$@")
+    ARGS=$(getopt \
+        -o "d:i:j:khm:rs:t:v" \
+        -l "clean-image,distro:,dl-dir:,help,image:,jobs:,machine:,no-layers-update,debug,remove-build-dir,sdk,sstate-dir:,tasks:,verbose" \
+        -n "build.sh" \
+        -- "$@"
+    )
 
     # Bad arguments
     if [ $? -ne 0 ]; then
@@ -88,6 +93,11 @@ parse_options()
 
     while true; do
         case "$1" in
+            --clean-image)
+                CLEAN_IMAGE=1
+                shift
+                ;;
+
             --distro)
                 export DISTRO="$2"
                 shift 2
@@ -483,14 +493,15 @@ update_layers
 # Build Yocto
 if [ -n "$CMD" ]; then
   run_cmd "Launching command..." "$CMD"
-elif [ -z "$COMPILE_SDK" ]; then
-  run_cmd "Building image..." bitbake "$IMAGE"
-else
+elif [ -n "$CLEAN_IMAGE" ]; then
+  run_cmd "Cleaning image..." bitbake "$IMAGE" -c clean
+elif [ -n "$COMPILE_SDK" ]; then
   run_cmd "Building sdk..." bitbake "$IMAGE" -c populate_sdk
+else
+  run_cmd "Building image..." bitbake "$IMAGE"
 fi
 
 # Generate the documentation
 if [ "$(type -p asciidoctor-pdf)" ]; then
   asciidoctor-pdf -o tmp/deploy/images/README.pdf ../README.adoc
 fi
-
