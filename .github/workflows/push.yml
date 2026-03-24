@@ -1,21 +1,51 @@
 name: Build on push
 
 on:
-  # TODO: make the workflow triggerable by all SEAPATH-related repositories
-  # using a "repository_dispatch" trigger:
-  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#repository_dispatch
+  # This is for yocto-bsp itself.
   push:
     branches:
       - scarthgap
     paths-ignore:
       - .github/**/*
-  # We add the manual dispatch trigger so we can test our pipelines
+  # The manual dispatch trigger is for other repositories (such as meta-seapath)
+  # that must be able to trigger the build pipeline.
+  # We don't use repository_dispatch since there would be no way for the caller
+  # workflow to wait for completion (https://github.com/peter-evans/repository-dispatch/issues/260).
   workflow_dispatch:
+    inputs:
+      origin_repository:
+        type: string
+        required: true
+        description: Repository that triggered this workflow dispatch.
+      origin_sha:
+        type: string
+        required: true
+        description: >-
+          Value of the GITHUB_SHA variable for the workflow on the
+          origin repository.
+      origin_run_id:
+        type: number
+        required: true
+        description: ID of the delegating workflow run.
+
+run-name: "Push to ${{ inputs.origin_repository || github.repository }}"
 
 jobs:
+  notice:
+    name: Display notice
+    if: "${{ github.event_name == 'workflow_dispatch' }}"
+    runs-on: ["ubuntu-slim"]
+    steps:
+      - name: Display notice
+        run: |
+          echo "::notice::This workflow has been delegated by the ${{ inputs.origin_repository }} repository. See the delegating workflow at ${{ github.server_url }}/${{ inputs.origin_repository }}/actions/runs/${{ inputs.origin_run_id }}."
+
   call-build:
     name: Call Build workflow
     uses: ./.github/workflows/_build.yml
+    with:
+      origin_repository: "${{ inputs.origin_repository || github.repository }}"
+      origin_sha: "${{ inputs.origin_sha || github.sha }}"
 
   call-cve-check:
     name: Call CVE check workflow

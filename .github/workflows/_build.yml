@@ -5,6 +5,17 @@ name: Build (internal)
 
 on:
   workflow_call:
+    inputs:
+      origin_repository:
+        type: string
+        required: true
+        description: Repository that triggered this workflow dispatch.
+      origin_sha:
+        type: string
+        required: true
+        description: >-
+          Value of the GITHUB_SHA variable for the workflow on the
+          origin repository.
 
 jobs:
   build:
@@ -15,17 +26,18 @@ jobs:
       matrix:
         cqfd_flavor: ${{ fromJSON(vars.CQFD_FLAVORS) }}
     env:
-      REPO_MANIFEST_REPOSITORY: https://github.com/seapath/repo-manifest
-      REPO_MANIFEST_REF: HEAD
+      REPO_MANIFEST_URL: https://github.com/${{ vars.REPO_MANIFEST_REPOSITORY }}
+      REPO_MANIFEST_REF: ${{ case(inputs.origin_repository == vars.REPO_MANIFEST_REPOSITORY, inputs.origin_sha, 'HEAD') }}
       REPO_MANIFEST_NAME: default.xml
       WORKSPACE: workspace-bitbake
     defaults:
       run:
         working-directory: ${{ env.WORKSPACE }}
     steps:
-      # We clean the workspace at the beginning to easily debug failed runs
+      # We clean the workspace at the beginning and not at the end
+      # to easily debug failed runs
       - name: Clean workspace
-        if: vars.CLEAN_YOCTO_WORKSPACE
+        if: "${{ vars.CLEAN_YOCTO_WORKSPACE == 'true' }}"
         working-directory: ${{ github.workspace }}
         run: |
           rm -rf ${{ env.WORKSPACE }}
@@ -36,10 +48,24 @@ jobs:
 
       - name: Init repo
         run: |
-          repo init -u "$REPO_MANIFEST_REPOSITORY" -b "$REPO_MANIFEST_REF" -m "$REPO_MANIFEST_NAME"
+          repo init -u "$REPO_MANIFEST_URL" -b "$REPO_MANIFEST_REF" -m "$REPO_MANIFEST_NAME"
           repo sync
 
-      # TODO checkout specific ref based on the even that triggered the CI
+      - name: Checkout specific ref
+        if: inputs.origin_repository != vars.REPO_MANIFEST_REPOSITORY
+        env:
+          ORIGIN_REPOSITORY: ${{ inputs.origin_repository }}
+        run: |
+          repo_name=${ORIGIN_REPOSITORY#*/} # this removes the '<organization>/' prefix
+          path=$(repo list | awk -v repo_name="$repo_name" -F ' : ' '$2 == repo_name {print $1}')
+          echo "Checking out specific revision for git repo "$repo_name" at "$path"..."
+
+          cd "$path"
+          # repo only creates 1 remote so no problem here
+          remote=$(git remote)
+
+          git fetch "$remote" "${{ inputs.origin_sha }}"
+          git checkout FETCH_HEAD
 
       - name: Init build system
         run: |
@@ -63,3 +89,13 @@ jobs:
             ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.json
             ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.tar.zst
           if-no-files-found: warn
+
+      # We clean the image directory at the end so we don't pollute
+      # future workflows artifacts since in the above step we don't
+      # filter the artifacts we upload.
+      - name: Clean image deploy directory
+        if: always()
+        run: |
+          # see comment above
+          source /etc/bash.bashrc
+          cqfd -b ${{ matrix.cqfd_flavor }} run -c --clean-image

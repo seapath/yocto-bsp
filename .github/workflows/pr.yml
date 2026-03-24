@@ -1,15 +1,56 @@
 name: Pull Requests
 
 on:
-  # TODO: make the workflow triggerable by all SEAPATH-related repositories
-  # using a "repository_dispatch" trigger:
-  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#repository_dispatch
   pull_request:
+    branches:
+      - scarthgap
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+  # See dispatch explanation in push.yml.
+  workflow_dispatch:
+    inputs:
+      origin_repository:
+        type: string
+        required: true
+        description: Repository that triggered this workflow dispatch.
+      origin_sha:
+        type: string
+        required: true
+        description: >-
+          Value of the GITHUB_SHA variable for the workflow on the
+          origin repository.
+      origin_run_id:
+        type: number
+        required: true
+        description: ID of the delegating workflow run.
+      origin_pr_number:
+        type: number
+        required: true
+        description:
+          Number of the PR that originally triggered the workflow.
+
+run-name: "PR #${{ inputs.origin_pr_number || github.event.pull_request.number }} at ${{ inputs.origin_repository || github.repository }}"
 
 jobs:
+  notice:
+    name: Display notice
+    if: "${{ github.event_name == 'workflow_dispatch' }}"
+    runs-on: ["ubuntu-slim"]
+    steps:
+      - name: Display notice
+        run: |
+          echo "::notice::This workflow has been delegated by the ${{ inputs.origin_repository }} repository. See the delegating workflow at ${{ github.server_url }}/${{ inputs.origin_repository }}/actions/runs/${{ inputs.origin_run_id }}."
+          echo "::notice::See the pull request at ${{ github.server_url }}/${{ inputs.origin_repository }}/pull/${{ inputs.origin_pr_number }}"
+
   call-build:
     name: Call Build workflow
     uses: ./.github/workflows/_build.yml
+    with:
+      origin_repository: "${{ inputs.origin_repository || github.repository }}"
+      origin_sha: "${{ inputs.origin_sha || github.sha }}"
 
   call-cve-check:
     name: Call CVE check workflow
@@ -19,17 +60,39 @@ jobs:
       build-run-id: ${{ github.run_id }}
 
   set-result:
+    if: always()
     name: Set workflow status
-    needs: call-cve-check
+    needs:
+      - call-build
+      - call-cve-check
     runs-on: ["ubuntu-slim"]
     steps:
+      - name: Create a token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-pull-requests: write
+
+      - name: Write comment
+        uses: peter-evans/create-or-update-comment@9143c495e69aa6ad64fa02b7515ccab6bd35aad1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: ${{ inputs.origin_repository || github.repository }}
+          issue-number: ${{ inputs.origin_pr_number || github.event.pull_request.number }}
+          body: |
+            _Automated CI report ([associated workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))_
+
+            ### Build
+            ${{ case(needs.call-build.result == 'success', '**SUCCESS**', '**FAILED**' ) }}
+
+            ### CVE Check
+            ${{ case(needs.call-cve-check.outputs.cve-detected == 'false', '**SUCCESS**: no vulnerabilities have triggered the fail condition', '**FAILURE**: some vulnerabilities triggered the fail condition') }}
+
       - name: Fail job if CVE detected
-        if: needs.call-cve-check.outputs.cve-detected
+        if: "${{ needs.call-cve-check.outputs.cve-detected == 'true' }}"
         run: |
           echo ::error::Vulnerabilities triggered the fail condition for your build.
           exit 1
-
-  # Might be interesting to post a comment to the PR if CVEs have been found?
-  # This would require a separate trigger 'workflow_run' to get privileges.
-  # https://github.com/marketplace/actions/create-or-update-comment
-  # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
