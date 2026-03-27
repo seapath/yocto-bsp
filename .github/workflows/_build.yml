@@ -20,6 +20,14 @@ on:
 jobs:
   build:
     runs-on: ["self-hosted", "runner-sfl-seapath"]
+    # This job may check out potentially unsafe user code from Pull Requests.
+    # Giving it only the necessary permissions mitigates potential token misuse
+    # introduced in user code.
+    # The only step using the GitHub API is the "upload artifacts" one, which
+    # seems to only need the "contents: read" permission as per [1]
+    # [1] https://github.com/actions/upload-artifact/issues/197#issuecomment-3154708082
+    permissions:
+      contents: read
     strategy:
       fail-fast: true # TODO eventually set to false
       max-parallel: 1

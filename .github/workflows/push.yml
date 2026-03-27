@@ -30,6 +30,8 @@ on:
 
 run-name: "Push to ${{ inputs.origin_repository || github.repository }}"
 
+permissions: read-all
+
 jobs:
   notice:
     name: Display notice
