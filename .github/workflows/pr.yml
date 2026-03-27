@@ -34,6 +34,8 @@ on:
 
 run-name: "PR #${{ inputs.origin_pr_number || github.event.pull_request.number }} at ${{ inputs.origin_repository || github.repository }}"
 
+permissions: read-all
+
 jobs:
   notice:
     name: Display notice
