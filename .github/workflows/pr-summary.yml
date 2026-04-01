@@ -1,0 +1,79 @@
+name: Pull Requests Summary
+
+# Since we need access to secrets in order to post the summary in pull request
+# comments, we cannot do it in the "pull requests" workflow because when
+# running from a forked repository the secrets are not accessible.
+# Thus we use this separate workflow that automatically runs at the end of the
+# PR workflow to post the comment. This workflow can access secrets.
+on:
+  workflow_run:
+    workflows:
+      - Pull Requests
+    types:
+      - completed
+
+permissions: read-all
+
+jobs:
+  create-summary:
+    name: Create summary
+    # We cannot use ubuntu-slim here since we need Docker for the Jinja2 action
+    # cf. https://github.com/actions/runner-images/issues/13583
+    runs-on: ["ubuntu-latest"]
+    env:
+      PR_RESULTS_FILE: "pr_results.json"
+      PR_COMMENT_FILE: "comment.md"
+      PR_COMMENT_TEMPLATE: ".github/pr-comment.md.j2"
+    steps:
+      - name: Download PR results
+        uses: actions/download-artifact@v8
+        with:
+          name: "${{ env.PR_RESULTS_FILE }}"
+          run-id: "${{ github.event.workflow_run.id }}"
+          # Since we are downloading an artifact from another run, we have to
+          # specify the github-token parameter.
+          github-token: ${{ github.token }}
+
+      - name: Process PR results
+        id: pr-results
+        run: |
+          echo "pr_repository=$(cat "${{ env.PR_RESULTS_FILE }}" | jq -r '.pr_repository')" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$(cat "${{ env.PR_RESULTS_FILE }}" | jq -r '.pr_number')" >> "$GITHUB_OUTPUT"
+          # We don't need to export the rest of the variables since the whole
+          # JSON file is passed to the Jinja2 action as a variable source.
+
+      - name: Checkout comment template
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            ${{ env.PR_COMMENT_TEMPLATE }}
+          sparse-checkout-cone-mode: false
+          path: comment
+
+      - name: Generate PR comment
+        uses: cuchi/jinja2-action@8bd801365a8d36a0b20f45ee969161685de7785a
+        with:
+          template: "comment/${{ env.PR_COMMENT_TEMPLATE }}"
+          output_file: "${{ env.PR_COMMENT_FILE }}"
+          data_file: "${{ env.PR_RESULTS_FILE }}"
+          strict: true
+          variables: |
+            github_server_url=${{ github.server_url }}
+            pr_run_id=${{ github.event.workflow_run.id }}
+
+      - name: Create a token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-pull-requests: write
+
+      - name: Write a comment on the PR
+        uses: peter-evans/create-or-update-comment@9143c495e69aa6ad64fa02b7515ccab6bd35aad1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: ${{ steps.pr-results.outputs.pr_repository }}
+          issue-number: ${{ steps.pr-results.outputs.pr_number }}
+          body-path: ${{ env.PR_COMMENT_FILE }}
