@@ -1,0 +1,25 @@
+{% set workflow_url = "%s/%s/actions/runs/%s" % (github_server_url, pr_repository, pr_run_id) %}
+
+### Build
+{% if build_result == 'success' %}
+**SUCCESS**: all flavors compiled correctly.
+{% else %}
+**FAILED**: build went wrong
+{% endif %}
+
+### CVE Check
+{% if cve_detected == 'true' %}
+**CVE DETECTED**: some vulnerabilities triggered the fail condition.\
+See details in the [workflow run logs]({{ workflow_url }}).
+{% elif cve_detected == 'false' %}
+**CLEAR**: no vulnerabilities have triggered the fail condition.\
+Get information on all vulnerabilities and detected packages in the artifacts of the [workflow run]({{ workflow_url }}).
+{% elif cve_check_result == 'skipped' %}
+**SKIPPED**
+{% else %}
+**FAILED**: CVE detection went wrong
+{% endif %}
+
+---
+> [!NOTE]
+> This is an automated CI report. See the [associated workflow run]({{ workflow_url }})

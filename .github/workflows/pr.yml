@@ -63,40 +63,38 @@ jobs:
     with:
       build-run-id: ${{ github.run_id }}
 
-  set-result:
+  process-results:
     if: always()
-    name: Set workflow status
+    name: Process results
     needs:
       - call-build
       - call-cve-check
     runs-on: ["ubuntu-slim"]
+    env:
+      PR_RESULTS_FILE: pr_results.json
     steps:
-      - name: Create a token
-        id: app-token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+      - name: Create results file
+        run: |
+          cat <<EOF > ${{ env.PR_RESULTS_FILE }}
+          {
+            "pr_number": ${{ inputs.origin_pr_number || github.event.pull_request.number }},
+            "pr_repository": "${{ inputs.origin_repository || github.repository }}",
+            "build_result": "${{ needs.call-build.result }}",
+            "cve_check_result": "${{ needs.call-cve-check.result }}",
+            "cve_detected": "${{ needs.call-cve-check.outputs.cve-detected }}"
+          }
+          EOF
+
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v7
         with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          permission-pull-requests: write
-
-      - name: Write comment
-        uses: peter-evans/create-or-update-comment@9143c495e69aa6ad64fa02b7515ccab6bd35aad1
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          repository: ${{ inputs.origin_repository || github.repository }}
-          issue-number: ${{ inputs.origin_pr_number || github.event.pull_request.number }}
-          body: |
-            _Automated CI report ([associated workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))_
-
-            ### Build
-            ${{ case(needs.call-build.result == 'success', '**SUCCESS**', '**FAILED**' ) }}
-
-            ### CVE Check
-            ${{ case(needs.call-cve-check.outputs.cve-detected == 'false', '**SUCCESS**: no vulnerabilities have triggered the fail condition', '**FAILURE**: some vulnerabilities triggered the fail condition') }}
+          archive: false
+          path: "${{ env.PR_RESULTS_FILE }}"
+          retention-days: 1
 
       - name: Fail job if CVE detected
         if: "${{ needs.call-cve-check.outputs.cve-detected == 'true' }}"
-        run: |
-          echo ::error::Vulnerabilities triggered the fail condition for your build.
-          exit 1
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.setFailed("Vulnerabilities triggered the fail condition for your build.")
