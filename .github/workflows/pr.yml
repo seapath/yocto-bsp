@@ -8,6 +8,8 @@ on:
       - opened
       - synchronize
       - reopened
+    paths-ignore:
+      - .github/**/*
 
   # See dispatch explanation in push.yml.
   workflow_dispatch:
