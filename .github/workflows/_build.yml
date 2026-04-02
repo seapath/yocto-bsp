@@ -17,6 +17,15 @@ on:
           Value of the GITHUB_SHA variable for the workflow on the
           origin repository.
 
+# This is absolutely crazy but Action Variables are not accessible to runs
+# triggered by PRs from forks repository (https://github.com/orgs/community/discussions/44322).
+# Thus, we avoid all use of Action Variables in the pr workflow and the ones
+# called by it (_build and _cve-check) and we hardcode the values here.
+# It makes developing the CI itself a pain but there is no real good solution.
+env:
+  REPO_MANIFEST_REPOSITORY: 'SEAPATH/repo-manifest'
+  REPO_MANIFEST_NAME: 'default.xml'
+
 jobs:
   build:
     runs-on: ["self-hosted", "runner-sfl-seapath"]
@@ -32,11 +41,10 @@ jobs:
       fail-fast: true # TODO eventually set to false
       max-parallel: 1
       matrix:
-        cqfd_flavor: ${{ fromJSON(vars.CQFD_FLAVORS) }}
+        # Hardcoded due to GH Actions limitation on vars (see above),
+        # must be the same as in _cve-check.yml
+        cqfd_flavor: ["host_efi", "host_standalone_efi", "guest_efi", "observer_efi"]
     env:
-      REPO_MANIFEST_URL: https://github.com/${{ vars.REPO_MANIFEST_REPOSITORY }}
-      REPO_MANIFEST_REF: ${{ case(inputs.origin_repository == vars.REPO_MANIFEST_REPOSITORY, inputs.origin_sha, 'HEAD') }}
-      REPO_MANIFEST_NAME: default.xml
       WORKSPACE: workspace-bitbake
     defaults:
       run:
@@ -45,7 +53,6 @@ jobs:
       # We clean the workspace at the beginning and not at the end
       # to easily debug failed runs
       - name: Clean workspace
-        if: "${{ vars.CLEAN_YOCTO_WORKSPACE == 'true' }}"
         working-directory: ${{ github.workspace }}
         run: |
           rm -rf ${{ env.WORKSPACE }}
@@ -56,11 +63,14 @@ jobs:
 
       - name: Init repo
         run: |
-          repo init -u "$REPO_MANIFEST_URL" -b "$REPO_MANIFEST_REF" -m "$REPO_MANIFEST_NAME"
+          repo init \
+            -u "${{ github.server_url }}/${{ env.REPO_MANIFEST_REPOSITORY }}" \
+            -b "${{ case(inputs.origin_repository == env.REPO_MANIFEST_REPOSITORY, inputs.origin_sha, 'HEAD') }}" \
+            -m "${{ env.REPO_MANIFEST_NAME }}"
           repo sync
 
       - name: Checkout specific ref
-        if: inputs.origin_repository != vars.REPO_MANIFEST_REPOSITORY
+        if: inputs.origin_repository != env.REPO_MANIFEST_REPOSITORY
         env:
           ORIGIN_REPOSITORY: ${{ inputs.origin_repository }}
         run: |
