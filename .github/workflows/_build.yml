@@ -41,8 +41,7 @@ jobs:
       fail-fast: true # TODO eventually set to false
       max-parallel: 1
       matrix:
-        # Hardcoded due to GH Actions limitation on vars (see above),
-        # must be the same as in _cve-check.yml
+        # Hardcoded due to GH Actions limitation on vars (see above)
         cqfd_flavor: ["host_efi", "host_standalone_efi", "guest_efi", "observer_efi"]
     env:
       WORKSPACE: workspace-bitbake
