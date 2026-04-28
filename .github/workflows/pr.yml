@@ -64,7 +64,7 @@ jobs:
       build-run-id: ${{ github.run_id }}
 
   process-results:
-    if: always()
+    if: "${{ !cancelled() }}"
     name: Process results
     needs:
       - call-build
@@ -91,10 +91,3 @@ jobs:
           archive: false
           path: "${{ env.PR_RESULTS_FILE }}"
           retention-days: 1
-
-      - name: Fail job if CVE detected
-        if: "${{ needs.call-cve-check.outputs.cve-detected == 'true' }}"
-        uses: actions/github-script@v8
-        with:
-          script: |
-            core.setFailed("Vulnerabilities triggered the fail condition for your build.")

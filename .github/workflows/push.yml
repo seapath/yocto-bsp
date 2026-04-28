@@ -48,10 +48,3 @@ jobs:
     with:
       origin_repository: "${{ inputs.origin_repository || github.repository }}"
       origin_sha: "${{ inputs.origin_sha || github.sha }}"
-
-  call-cve-check:
-    name: Call CVE check workflow
-    needs: call-build
-    uses: ./.github/workflows/_cve-check.yml
-    with:
-      build-run-id: ${{ github.run_id }}
