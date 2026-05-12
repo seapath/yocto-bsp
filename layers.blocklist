@@ -16,5 +16,5 @@ meta-secure-core/meta-integrity
 meta-secure-core/meta-tpm2
 meta-security/meta-tpm
 meta-security/meta-integrity
-poky/meta-selftest
-poky/meta-skeleton
+openembedded-core/meta-selftest
+openembedded-core/meta-skeleton

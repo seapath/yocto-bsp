@@ -259,7 +259,7 @@ update_layers()
     [ -n "$NO_LAYERS_UPDATE" ] && return 0
 
     layers_to_add=$(find "$SOURCESDIR"/meta-* \
-        "$SOURCESDIR"/poky/meta-* \
+        "$SOURCESDIR"/openembedded-core/meta* \
         -type f \
         -path '*/conf/layer.conf' \
         -print0 |
