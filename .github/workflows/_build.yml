@@ -24,7 +24,7 @@ on:
 # It makes developing the CI itself a pain but there is no real good solution.
 env:
   REPO_MANIFEST_REPOSITORY: 'SEAPATH/repo-manifest'
-  REPO_MANIFEST_NAME: 'default.xml'
+  REPO_MANIFEST_NAME: 'wrynose.xml'
 
 jobs:
   build:
