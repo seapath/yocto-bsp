@@ -60,12 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zstd
 
 # Git Proxy Configuration
-ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
-RUN chmod +x /usr/local/bin/oe-git-proxy
-
-# Git Proxy Configuration
-ADD http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/oe-git-proxy /usr/local/bin/oe-git-proxy
-RUN chmod +x /usr/local/bin/oe-git-proxy
+COPY --chmod=755 oe-git-proxy /usr/local/bin/oe-git-proxy
 
 RUN sed -i "s/# en_US\.UTF-8 UTF-8/en_US\.UTF-8 UTF-8/" /etc/locale.gen
 RUN locale-gen
