@@ -4,7 +4,7 @@ on:
   # This is for yocto-bsp itself.
   push:
     branches:
-      - scarthgap
+      - wrynose
     paths-ignore:
       - .github/**/*
   # The manual dispatch trigger is for other repositories (such as meta-seapath)
