@@ -98,14 +98,16 @@ jobs:
           source /etc/bash.bashrc
           cqfd -b ${{ matrix.cqfd_flavor }}
 
-      - name: Upload SBOM files
-        uses: actions/upload-artifact@v6
+      - name: Upload SBOM file
+        uses: actions/upload-artifact@v7
         with:
+          # we only upload a single file but we want to set its name to the
+          # cqfd flavor, thus we still upload it as an archive
+          archive: true
           name: sbom-${{ matrix.cqfd_flavor }}
           path: |
-            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.json
-            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.tar.zst
-          if-no-files-found: warn
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.json
+          if-no-files-found: error
 
       # We clean the image directory at the end so we don't pollute
       # future workflows artifacts since in the above step we don't
