@@ -58,8 +58,7 @@ jobs:
           data_file: "${{ env.PR_RESULTS_FILE }}"
           strict: true
           variables: |
-            github_server_url=${{ github.server_url }}
-            pr_run_id=${{ github.event.workflow_run.id }}
+            workflow_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
 
       - name: Create a token
         id: app-token
