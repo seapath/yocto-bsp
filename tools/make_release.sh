@@ -38,6 +38,8 @@ cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hyp
         release-files/seapath-"${VERSION}"-host-cluster-efi-image.rootfs.wic.bmap
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath-hypervisor.rootfs.swu \
     release-files/seapath-"${VERSION}"-host-cluster-efi-image.rootfs.swu
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.spdx.json \
+    release-files/seapath-"${VERSION}"-host-cluster-efi-image.rootfs.spdx.json
 
 # Build seapath-host minimal image
 ./build.sh -v -i seapath-host-efi-image --distro seapath-host-minimal
@@ -49,6 +51,8 @@ cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath
 ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine seapath-vm
 cp build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.wic.qcow2 \
     release-files/seapath-"${VERSION}"-guest-efi-image.rootfs.wic.qcow2
+cp build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.spdx.json \
+    release-files/seapath-"${VERSION}"-guest-efi-image.rootfs.spdx.json
 
 # Build seapath-guest debug image
 ./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine seapath-vm
@@ -61,6 +65,8 @@ cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hyp
     release-files/seapath-"${VERSION}"-host-standalone-efi-image.rootfs.wic.bmap
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath-hypervisor.rootfs.swu \
     release-files/seapath-"${VERSION}"-host-standalone-efi-image.rootfs.swu
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.spdx.json \
+    release-files/seapath-"${VERSION}"-host-standalone-efi-image.rootfs.spdx.json
 
 # Build seapath-host standalone debug image
 ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-standalone-host
@@ -73,3 +79,5 @@ cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-o
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.wic.bmap
 cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-swu-image-seapath-observer.rootfs.swu \
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.swu
+cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.spdx.json \
+    release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.spdx.json
