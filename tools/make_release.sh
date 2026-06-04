@@ -2,13 +2,35 @@
 
 set -e
 
+VERSION=""
+FULL_BUILD=false
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --tag)
+            VERSION="$2"
+            shift 2
+            ;;
+        --full-build)
+            FULL_BUILD=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [--tag <tag>] [--full-build]"
+            exit 1
+            ;;
+    esac
+done
+
 cd $(dirname $0)/..
 
 # Try to the version release from git
-VERSION=$(git describe --tags --abbrev=0)
 if [ -z "$VERSION" ]; then
-    echo "Could not determine version from git tags, using X.Y.Z"
-    VERSION="vX.Y.Z"
+    VERSION=$(git describe --tags --abbrev=0)
+    if [ -z "$VERSION" ]; then
+        echo "Could not determine version from git tags, using X.Y.Z"
+        VERSION="vX.Y.Z"
+    fi
 fi
 
 echo "Preparing release for version ${VERSION}"
@@ -41,21 +63,12 @@ cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.spdx.json \
     release-files/seapath-"${VERSION}"-host-cluster-efi-image.rootfs.spdx.json
 
-# Build seapath-host minimal image
-./build.sh -v -i seapath-host-efi-image --distro seapath-host-minimal
-
-# Build seapath-host debug image
-./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host
-
 # Build seapath-guest image
 ./build.sh -v -i seapath-guest-efi-image --distro seapath-guest --machine seapath-vm
 cp build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.wic.qcow2 \
     release-files/seapath-"${VERSION}"-guest-efi-image.rootfs.wic.qcow2
 cp build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.spdx.json \
     release-files/seapath-"${VERSION}"-guest-efi-image.rootfs.spdx.json
-
-# Build seapath-guest debug image
-./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine seapath-vm
 
 # Build seapath-host standalone image
 ./build.sh -v -i seapath-host-efi-swu-image --distro seapath-standalone-host
@@ -68,9 +81,6 @@ cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-swu-image-seapath
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.spdx.json \
     release-files/seapath-"${VERSION}"-host-standalone-efi-image.rootfs.spdx.json
 
-# Build seapath-host standalone debug image
-./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-standalone-host
-
 # Build seapath-observer image
 ./build.sh -v -i seapath-observer-efi-swu-image --machine seapath-observer --distro seapath-host
 cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.wic.gz \
@@ -81,3 +91,22 @@ cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-swu-image-seapa
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.swu
 cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.spdx.json \
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.spdx.json
+
+
+if [ "$FULL_BUILD" = true ]; then
+    # Build seapath-host minimal image
+    ./build.sh -v -i seapath-host-efi-image --distro seapath-host-minimal
+
+    # Build seapath-host debug image
+    ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-host
+
+    # Build seapath-host standalone debug image
+    ./build.sh -v -i seapath-host-efi-dbg-image --distro seapath-standalone-host
+
+    # Build seapath-guest debug image
+    ./build.sh -v -i seapath-guest-efi-dbg-image --distro seapath-guest --machine seapath-vm
+
+    # Build host image with cockpit enabled
+    sed -i "s/SEAPATH_COCKPIT='false'/SEAPATH_COCKPIT='true'/" seapath.conf
+    ./build.sh -v -i seapath-host-efi-image --distro seapath-host
+fi

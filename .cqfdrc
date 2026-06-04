@@ -149,5 +149,5 @@ command=' \
 '
 
 [release]
-command='./tools/make_release.sh'
+command='./tools/make_release.sh --full-build'
 
