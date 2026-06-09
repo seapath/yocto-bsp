@@ -93,7 +93,7 @@ cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-o
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.spdx.json
 
 # Build seapath-standalone test image
-./build.sh -v -i seapath-host-efi-test-image --distro seapath-standalone-host
+./build.sh -v -i seapath-host-efi-test-swu-image --distro seapath-standalone-host
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-image-seapath-hypervisor.rootfs.wic.gz \
     release-files/seapath-"${VERSION}"-host-standalone-efi-test-image.rootfs.wic.gz
 cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-image-seapath-hypervisor.rootfs.wic.bmap \
