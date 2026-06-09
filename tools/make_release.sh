@@ -92,6 +92,17 @@ cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-swu-image-seapa
 cp build/tmp/deploy/images/seapath-observer/seapath-observer-efi-image-seapath-observer.rootfs.spdx.json \
     release-files/seapath-"${VERSION}"-observer-efi-image.rootfs.spdx.json
 
+# Build seapath-standalone test image
+./build.sh -v -i seapath-host-efi-test-image --distro seapath-standalone-host
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-image-seapath-hypervisor.rootfs.wic.gz \
+    release-files/seapath-"${VERSION}"-host-standalone-efi-test-image.rootfs.wic.gz
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-image-seapath-hypervisor.rootfs.wic.bmap \
+    release-files/seapath-"${VERSION}"-host-standalone-efi-test-image.rootfs.wic.bmap
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-swu-image-seapath-hypervisor.rootfs.swu \
+    release-files/seapath-"${VERSION}"-host-standalone-efi-test-image.rootfs.swu
+cp build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-test-image-seapath-hypervisor.rootfs.spdx.json \
+    release-files/seapath-"${VERSION}"-host-standalone-efi-test-image.rootfs.spdx.json
+
 
 if [ "$FULL_BUILD" = true ]; then
     # Build seapath-host minimal image
