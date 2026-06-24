@@ -45,3 +45,6 @@ SEAPATH_AUTO_FLASH=""
 
 # Set to true to enable the Cockpit web UI interface. Disabled by default.
 SEAPATH_COCKPIT='false'
+
+# Set to true to install LTTng tracing tool. Disabled by default.
+SEAPATH_USE_LTTNG='false'
