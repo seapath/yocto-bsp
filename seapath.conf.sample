@@ -48,3 +48,8 @@ SEAPATH_COCKPIT='false'
 
 # Set to true to install LTTng tracing tool. Disabled by default.
 SEAPATH_USE_LTTNG='false'
+
+# Set to true to enable a LTTng trace point in cyclictest.
+# The tracepoint is triggered when a latency is over the threshold defined
+# by the --spike option of cyclictest. Disabled by default.
+SEAPATH_CYCLICTEST_TP='false'
