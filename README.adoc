@@ -115,6 +115,11 @@ Some SEAPATH settings can be customized with a file call _seapath.conf_. This
 file must be created in the project root directory. All settings which can be
 set in this file are described in the example file _seapath.conf.sample_.
 
+The _SEAPATH_RM_WORK_ option can be set to `true` to enable the Yocto
+`rm_work` class. This removes recipe work directories after they are built,
+which significantly reduces disk usage during a build. It is enabled by
+default in _seapath.conf.sample_.
+
 === Building the firmware
 
 The first step with `cqfd` is to create the build container. For this, use the
