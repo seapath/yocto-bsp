@@ -53,3 +53,7 @@ SEAPATH_USE_LTTNG='false'
 # The tracepoint is triggered when a latency is over the threshold defined
 # by the --spike option of cyclictest. Disabled by default.
 SEAPATH_CYCLICTEST_TP='false'
+
+# Set to true to remove recipe work directories after build and save disk
+# space. Enabled by default.
+SEAPATH_RM_WORK='true'
