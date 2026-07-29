@@ -109,12 +109,35 @@ jobs:
             ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.json
           if-no-files-found: error
 
-      # We clean the image directory at the end so we don't pollute
-      # future workflows artifacts since in the above step we don't
-      # filter the artifacts we upload.
+      - name: Upload virtual hypervisor image
+        uses: actions/upload-artifact@v7
+        with:
+          name: hypervisor-image
+          path: |
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/seapath-hypervisor/seapath-host-efi-image-seapath-hypervisor.rootfs.wic.qcow2.gz
+          if-no-files-found: error
+
+      - name: Upload VM image
+        uses: actions/upload-artifact@v7
+        with:
+          name: vm-image
+          path: |
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/seapath-vm/seapath-guest-efi-image-seapath-vm.rootfs.wic.qcow2
+          if-no-files-found: error
+
       - name: Clean image deploy directory
         if: always()
         run: |
           # see comment above
           source /etc/bash.bashrc
           cqfd -b ${{ matrix.cqfd_flavor }} run -c --clean-image
+
+  test-virtual-cluster:
+    needs: build
+    uses: paullgk/virtual-cluster/.github/workflows/yocto-setup.yml@main
+    with:
+      hypervisor_image_filename: seapath-host-efi-image-seapath-hypervisor.rootfs.wic.qcow2.gz
+      vm_image_filename: seapath-guest-efi-image-seapath-vm.rootfs.wic.qcow2
+      # We clean the image directory at the end so we don't pollute
+      # future workflows artifacts since in the above step we don't
+      # filter the artifacts we upload.
