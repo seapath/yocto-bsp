@@ -56,19 +56,11 @@ jobs:
       origin_repository: "${{ inputs.origin_repository || github.repository }}"
       origin_sha: "${{ inputs.origin_sha || github.sha }}"
 
-  call-cve-check:
-    name: Call CVE check workflow
-    needs: call-build
-    uses: ./.github/workflows/_cve-check.yml
-    with:
-      build-run-id: ${{ github.run_id }}
-
   process-results:
     if: "${{ !cancelled() }}"
     name: Process results
     needs:
       - call-build
-      - call-cve-check
     runs-on: ["ubuntu-slim"]
     env:
       PR_RESULTS_FILE: pr_results.json
@@ -79,9 +71,7 @@ jobs:
           {
             "pr_number": ${{ inputs.origin_pr_number || github.event.pull_request.number }},
             "pr_repository": "${{ inputs.origin_repository || github.repository }}",
-            "build_result": "${{ needs.call-build.result }}",
-            "cve_check_result": "${{ needs.call-cve-check.result }}",
-            "cve_detected": "${{ needs.call-cve-check.outputs.cve-detected }}"
+            "build_result": "${{ needs.call-build.result }}"
           }
           EOF
 
