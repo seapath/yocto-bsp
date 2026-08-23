@@ -1,0 +1,68 @@
+name: Promote weekly to release
+
+on:
+  workflow_call:
+    inputs:
+      weekly_id:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      corrective_sequence:
+        type: string
+        required: false
+        default: ''
+    secrets:
+      S3CMD_ACCESS_KEY:
+        required: true
+      S3CMD_SECRET_KEY:
+        required: true
+      SEAPATH_RELEASE_TOKEN:
+        required: false
+  workflow_dispatch:
+    inputs:
+      weekly_id:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      corrective_sequence:
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ["ubuntu-latest"]
+    env:
+      WEEKLY_ID: ${{ inputs.weekly_id }}
+      VERSION: ${{ inputs.version }}
+      MANIFEST_REPOSITORY: ${{ vars.MAIN_MANIFEST_REPO || 'SEAPATH/repo-manifest' }}
+      GH_TOKEN: ${{ secrets.SEAPATH_RELEASE_TOKEN || github.token }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download and validate weekly
+        run: |
+          python3 -m pip install --quiet s3cmd
+          mkdir -p source-weekly
+          s3cmd --access_key="${{ secrets.S3CMD_ACCESS_KEY }}" --secret_key="${{ secrets.S3CMD_SECRET_KEY }}" sync "s3://seapath-releases/builds/weeklies/$WEEKLY_ID/" source-weekly/
+          tools/promote-weekly.sh --weekly-id "$WEEKLY_ID" --version "$VERSION" --source-dir source-weekly --dry-run
+      - name: Publish immutable release objects
+        run: |
+          tools/promote-weekly.sh --weekly-id "$WEEKLY_ID" --version "$VERSION" --source-dir source-weekly --corrective-sequence "${{ inputs.corrective_sequence }}"
+      - name: Prepare repo-manifest PR from the weekly manifest
+        run: |
+          git clone "https://github.com/${{ vars.MAIN_MANIFEST_REPO || 'SEAPATH/repo-manifest' }}" repo-manifest
+          mkdir -p release-source
+          cp source-weekly/weekly.xml "release-source/$VERSION.xml"
+          pushd repo-manifest
+          git checkout -B "release/$VERSION"
+          MOCK_RELEASES_URL="${{ github.workspace }}/release-source/" tools/prepare-release.sh "$VERSION"
+          git push --force-with-lease "https://x-access-token:$GH_TOKEN@github.com/$MANIFEST_REPOSITORY.git" "release/$VERSION"
+          gh pr create --repo "$MANIFEST_REPOSITORY" --base main --head "release/$VERSION" \
+            --title "$VERSION: promote $WEEKLY_ID" --body "Promotes the already-built weekly $WEEKLY_ID without rebuilding."

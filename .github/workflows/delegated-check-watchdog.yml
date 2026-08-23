@@ -1,0 +1,48 @@
+name: Delegated check watchdog
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  expire-stale-checks:
+    runs-on: ["ubuntu-latest"]
+    steps:
+      - name: Create fresh GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-checks: write
+          permission-pull-requests: read
+      - name: Mark checks pending for more than six hours as failed
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          cutoff=$(date -u -d '6 hours ago' +%s)
+          for repository in SEAPATH/meta-seapath SEAPATH/yocto-bsp; do
+            # Delegation checks are attached to PR head commits, never to the
+            # moving wrynose branch tip. Enumerate open PR heads first, then
+            # inspect each commit's check-runs collection.
+            mapfile -t heads < <(
+              gh api --paginate "repos/$repository/pulls?state=open&base=wrynose&per_page=100" \
+                --jq '.[].head.sha' | sort -u
+            )
+            for sha in "${heads[@]}"; do
+              [ -n "$sha" ] || continue
+              gh api --paginate "repos/$repository/commits/$sha/check-runs?per_page=100" \
+                --jq '.check_runs[] | select(.name == "SEAPATH Yocto delegated CI" and .status == "in_progress") | [.id,.head_sha,.started_at] | @tsv' 2>/dev/null |
+                while IFS=$'\t' read -r check_id check_sha started; do
+                  [ -n "$check_id" ] || continue
+                  started_epoch=$(date -u -d "$started" +%s 2>/dev/null || echo 0)
+                  [ "$started_epoch" -lt "$cutoff" ] || continue
+                  jq -n '{status:"completed",conclusion:"failure",output:{title:"Delegated CI watchdog",summary:"No central workflow result was received within six hours."}}' |
+                    gh api --method PATCH "repos/$repository/check-runs/$check_id" --input - >/dev/null
+                done
+            done
+          done

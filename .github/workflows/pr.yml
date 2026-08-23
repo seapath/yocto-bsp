@@ -2,80 +2,99 @@ name: Pull Requests
 
 on:
   pull_request:
-    branches:
-      - wrynose
-    types:
-      - opened
-      - synchronize
-      - reopened
-
-  # See dispatch explanation in push.yml.
+    branches: [wrynose]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
     inputs:
       origin_repository:
         type: string
         required: true
-        description: Repository that triggered this workflow dispatch.
       origin_sha:
         type: string
         required: true
-        description: >-
-          Value of the GITHUB_SHA variable for the workflow on the
-          origin repository.
       origin_run_id:
-        type: number
+        type: string
         required: true
-        description: ID of the delegating workflow run.
       origin_pr_number:
-        type: number
+        type: string
         required: true
-        description:
-          Number of the PR that originally triggered the workflow.
+      baseline_manifest_name:
+        type: string
+        required: false
+        default: weekly.xml
+      baseline_manifest_revision:
+        type: string
+        required: false
+        default: ''
+      callback_repository:
+        type: string
+        required: false
+        default: ''
+      callback_sha:
+        type: string
+        required: false
+        default: ''
+      callback_check_id:
+        type: string
+        required: false
+        default: ''
 
 run-name: "PR #${{ inputs.origin_pr_number || github.event.pull_request.number }} at ${{ inputs.origin_repository || github.repository }}"
 
 permissions: read-all
 
 jobs:
-  notice:
-    name: Display notice
-    if: "${{ github.event_name == 'workflow_dispatch' }}"
-    runs-on: ["ubuntu-slim"]
-    steps:
-      - name: Display notice
-        run: |
-          echo "::notice::This workflow has been delegated by the ${{ inputs.origin_repository }} repository. See the delegating workflow at ${{ github.server_url }}/${{ inputs.origin_repository }}/actions/runs/${{ inputs.origin_run_id }}."
-          echo "::notice::See the pull request at ${{ github.server_url }}/${{ inputs.origin_repository }}/pull/${{ inputs.origin_pr_number }}"
-
   call-build:
-    name: Call Build workflow
+    name: Build weekly-baseline candidate
     uses: ./.github/workflows/_build.yml
     with:
-      origin_repository: "${{ inputs.origin_repository || github.repository }}"
-      origin_sha: "${{ inputs.origin_sha || github.sha }}"
+      origin_repository: ${{ inputs.origin_repository || github.repository }}
+      origin_sha: ${{ inputs.origin_sha || github.event.pull_request.head.sha }}
+      baseline_manifest_name: ${{ inputs.baseline_manifest_name || 'weekly.xml' }}
+      baseline_manifest_revision: ${{ inputs.baseline_manifest_revision || '' }}
+      candidate: false
+      weekly_id: ''
+      callback_repository: ${{ inputs.callback_repository || '' }}
+      callback_sha: ${{ inputs.callback_sha || '' }}
+      callback_check_id: ${{ inputs.callback_check_id || '' }}
+      origin_pr_number: ${{ inputs.origin_pr_number || github.event.pull_request.number }}
+      origin_run_id: ${{ inputs.origin_run_id || github.run_id }}
 
   process-results:
-    if: "${{ !cancelled() }}"
+    if: always()
     name: Process results
-    needs:
-      - call-build
+    needs: [call-build]
     runs-on: ["ubuntu-slim"]
     env:
       PR_RESULTS_FILE: pr_results.json
     steps:
       - name: Create results file
+        env:
+          PR_NUMBER: ${{ inputs.origin_pr_number || github.event.pull_request.number }}
+          PR_REPOSITORY: ${{ inputs.callback_repository || inputs.origin_repository || github.repository }}
+          ORIGIN_SHA: ${{ inputs.origin_sha || github.event.pull_request.head.sha }}
+          CALLBACK_SHA: ${{ inputs.callback_sha || github.event.pull_request.head.sha }}
+          CALLBACK_CHECK_ID: ${{ inputs.callback_check_id || '' }}
+          CALLBACK_REPOSITORY: ${{ inputs.callback_repository || '' }}
+          BASELINE_MANIFEST_NAME: ${{ inputs.baseline_manifest_name || 'weekly.xml' }}
+          BASELINE_MANIFEST_REVISION: ${{ inputs.baseline_manifest_revision || '' }}
+          BUILD_RESULT: ${{ needs.call-build.result }}
         run: |
-          cat <<EOF > ${{ env.PR_RESULTS_FILE }}
-          {
-            "pr_number": ${{ inputs.origin_pr_number || github.event.pull_request.number }},
-            "pr_repository": "${{ inputs.origin_repository || github.repository }}",
-            "build_result": "${{ needs.call-build.result }}"
-          }
-          EOF
+          jq -n \
+            --argjson pr_number "$PR_NUMBER" \
+            --arg pr_repository "$PR_REPOSITORY" \
+            --arg origin_sha "$ORIGIN_SHA" \
+            --arg callback_repository "$CALLBACK_REPOSITORY" \
+            --arg callback_sha "$CALLBACK_SHA" \
+            --arg callback_check_id "$CALLBACK_CHECK_ID" \
+            --arg baseline_manifest_name "$BASELINE_MANIFEST_NAME" \
+            --arg baseline_manifest_revision "$BASELINE_MANIFEST_REVISION" \
+            --arg build_result "$BUILD_RESULT" \
+            --arg workflow_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '{pr_number:$pr_number,pr_repository:$pr_repository,origin_sha:$origin_sha,callback_repository:$callback_repository,callback_sha:$callback_sha,callback_check_id:$callback_check_id,baseline_manifest_name:$baseline_manifest_name,baseline_manifest_revision:$baseline_manifest_revision,build_result:$build_result,workflow_url:$workflow_url}' > "$PR_RESULTS_FILE"
 
       - name: Upload results artifact
         uses: actions/upload-artifact@v7
         with:
-          archive: false
-          path: "${{ env.PR_RESULTS_FILE }}"
-          retention-days: 1
+          path: ${{ env.PR_RESULTS_FILE }}
+          retention-days: 7

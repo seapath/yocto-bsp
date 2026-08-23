@@ -1,0 +1,50 @@
+name: Push delegation summary
+
+on:
+  workflow_run:
+    workflows: [Build on push]
+    types: [completed]
+
+permissions: read-all
+
+jobs:
+  finalize:
+    runs-on: ["ubuntu-latest"]
+    steps:
+      - name: Download result metadata
+        uses: actions/download-artifact@v8
+        with:
+          name: push_results.json
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Create fresh GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-checks: write
+
+      - name: Finalize delegated push check
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
+        run: |
+          repository=$(jq -r '.callback_repository // ""' push_results.json)
+          sha=$(jq -r '.callback_sha // ""' push_results.json)
+          check_id=$(jq -r '.callback_check_id // ""' push_results.json)
+          result=$(jq -r '.build_result // "failure"' push_results.json)
+          [ -n "$repository" ] && [ -n "$check_id" ] || exit 0
+          shopt -s nocasematch
+          case "$repository" in
+            SEAPATH/meta-seapath|SEAPATH/yocto-bsp) ;;
+            *) echo "callback repository is not allow-listed" >&2; exit 1 ;;
+          esac
+          shopt -u nocasematch
+          [ "$(gh api "repos/$repository/check-runs/$check_id" --jq .head_sha)" = "$sha" ] || exit 1
+          case "$result" in success) conclusion=success ;; cancelled|canceled) conclusion=cancelled ;; *) conclusion=failure ;; esac
+          jq -n --arg conclusion "$conclusion" --arg url "$RUN_URL" --arg result "$result" \
+            '{status:"completed",conclusion:$conclusion,details_url:$url,output:{title:"Central Yocto CI",summary:("Build result: "+$result+". "+$url)}}' \
+            | gh api --method PATCH "repos/$repository/check-runs/$check_id" --input - >/dev/null

@@ -1,75 +1,94 @@
 name: Pull Requests Summary
 
-# Since we need access to secrets in order to post the summary in pull request
-# comments, we cannot do it in the "pull requests" workflow because when
-# running from a forked repository the secrets are not accessible.
-# Thus we use this separate workflow that automatically runs at the end of the
-# PR workflow to post the comment. This workflow can access secrets.
 on:
   workflow_run:
-    workflows:
-      - Pull Requests
-    types:
-      - completed
+    workflows: [Pull Requests]
+    types: [completed]
 
 permissions: read-all
 
 jobs:
   create-summary:
-    name: Create summary
-    # We cannot use ubuntu-slim here since we need Docker for the Jinja2 action
-    # cf. https://github.com/actions/runner-images/issues/13583
+    name: Finalize delegated check and summarize
     runs-on: ["ubuntu-latest"]
     env:
-      PR_RESULTS_FILE: "pr_results.json"
-      PR_COMMENT_FILE: "comment.md"
-      PR_COMMENT_TEMPLATE: ".github/pr-comment.md.j2"
+      PR_RESULTS_FILE: pr_results.json
+      PR_COMMENT_FILE: comment.md
+      PR_COMMENT_TEMPLATE: .github/pr-comment.md.j2
     steps:
       - name: Download PR results
         uses: actions/download-artifact@v8
         with:
-          name: "${{ env.PR_RESULTS_FILE }}"
-          run-id: "${{ github.event.workflow_run.id }}"
-          # Since we are downloading an artifact from another run, we have to
-          # specify the github-token parameter.
+          name: ${{ env.PR_RESULTS_FILE }}
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
 
       - name: Process PR results
         id: pr-results
         run: |
-          echo "pr_repository=$(cat "${{ env.PR_RESULTS_FILE }}" | jq -r '.pr_repository')" >> "$GITHUB_OUTPUT"
-          echo "pr_number=$(cat "${{ env.PR_RESULTS_FILE }}" | jq -r '.pr_number')" >> "$GITHUB_OUTPUT"
-          # We don't need to export the rest of the variables since the whole
-          # JSON file is passed to the Jinja2 action as a variable source.
+          jq -r '"pr_repository=" + (.pr_repository // "")' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
+          jq -r '"pr_number=" + ((.pr_number // "")|tostring)' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
+          jq -r '"callback_repository=" + (.callback_repository // "")' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
+          jq -r '"callback_sha=" + (.callback_sha // "")' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
+          jq -r '"callback_check_id=" + ((.callback_check_id // "")|tostring)' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
+          jq -r '"build_result=" + (.build_result // "failure")' "$PR_RESULTS_FILE" >> "$GITHUB_OUTPUT"
 
       - name: Checkout comment template
         uses: actions/checkout@v6
         with:
-          sparse-checkout: |
-            ${{ env.PR_COMMENT_TEMPLATE }}
+          sparse-checkout: ${{ env.PR_COMMENT_TEMPLATE }}
           sparse-checkout-cone-mode: false
           path: comment
 
       - name: Generate PR comment
-        uses: cuchi/jinja2-action@8bd801365a8d36a0b20f45ee969161685de7785a
+        uses: cuchi/jinja2-action@8bd801365a8d36a0b20f45ee969161685de7785
         with:
-          template: "comment/${{ env.PR_COMMENT_TEMPLATE }}"
-          output_file: "${{ env.PR_COMMENT_FILE }}"
-          data_file: "${{ env.PR_RESULTS_FILE }}"
+          template: comment/${{ env.PR_COMMENT_TEMPLATE }}
+          output_file: ${{ env.PR_COMMENT_FILE }}
+          data_file: ${{ env.PR_RESULTS_FILE }}
           strict: true
-          variables: |
-            workflow_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
+          variables: workflow_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
 
-      - name: Create a token
+      - name: Create fresh GitHub App token
         id: app-token
         uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
         with:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
+          permission-checks: write
           permission-pull-requests: write
 
+
+      - name: Finalize delegated check
+        if: steps.pr-results.outputs.callback_check_id != ''
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          CALLBACK_REPOSITORY: ${{ steps.pr-results.outputs.callback_repository }}
+          CALLBACK_SHA: ${{ steps.pr-results.outputs.callback_sha }}
+          CALLBACK_CHECK_ID: ${{ steps.pr-results.outputs.callback_check_id }}
+          BUILD_RESULT: ${{ steps.pr-results.outputs.build_result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
+        run: |
+          shopt -s nocasematch
+          case "$CALLBACK_REPOSITORY" in
+            SEAPATH/meta-seapath|SEAPATH/yocto-bsp) ;;
+            *) echo "callback repository is not allow-listed" >&2; exit 1 ;;
+          esac
+          shopt -u nocasematch
+          actual_sha=$(gh api "repos/$CALLBACK_REPOSITORY/check-runs/$CALLBACK_CHECK_ID" --jq .head_sha)
+          [ "$actual_sha" = "$CALLBACK_SHA" ] || { echo "callback SHA mismatch" >&2; exit 1; }
+          case "$BUILD_RESULT" in
+            success) conclusion=success ;;
+            cancelled|canceled) conclusion=cancelled ;;
+            *) conclusion=failure ;;
+          esac
+          jq -n --arg conclusion "$conclusion" --arg url "$RUN_URL" --arg result "$BUILD_RESULT" \
+            '{status:"completed",conclusion:$conclusion,details_url:$url,output:{title:"Central Yocto CI",summary:("Build result: "+$result+". "+$url)}}' \
+            | gh api --method PATCH "repos/$CALLBACK_REPOSITORY/check-runs/$CALLBACK_CHECK_ID" --input - >/dev/null
+
       - name: Write a comment on the PR
+        if: steps.pr-results.outputs.pr_number != ''
         uses: peter-evans/create-or-update-comment@9143c495e69aa6ad64fa02b7515ccab6bd35aad1
         with:
           token: ${{ steps.app-token.outputs.token }}
