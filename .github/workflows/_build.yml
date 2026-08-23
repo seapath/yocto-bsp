@@ -1,4 +1,4 @@
-# Builds SEAPATH and uploads SBOM artifacts.
+# Builds SEAPATH from the immutable weekly baseline and uploads artifacts.
 # This is a reusable workflow that cannot be launched directly.
 ---
 name: Build (internal)
@@ -13,108 +13,210 @@ on:
       origin_sha:
         type: string
         required: true
-        description: >-
-          Value of the GITHUB_SHA variable for the workflow on the
-          origin repository.
+        description: Commit to test in the origin repository.
+      baseline_manifest_name:
+        type: string
+        required: false
+        default: weekly.xml
+        description: Manifest used as the CI baseline.
+      baseline_manifest_revision:
+        type: string
+        required: false
+        default: ''
+        description: Manifest repository SHA for a manifest PR.
+      candidate:
+        type: boolean
+        required: false
+        default: false
+        description: Upload the complete weekly image set instead of SBOM-only artifacts.
+      weekly_id:
+        type: string
+        required: false
+        default: ''
+        description: Weekly identifier included in provenance and artifact names.
+      expected_distro_version:
+        type: string
+        required: false
+        default: ''
+        description: Optional version that every variant must embed.
+      callback_repository:
+        type: string
+        required: false
+        default: ''
+      callback_sha:
+        type: string
+        required: false
+        default: ''
+      callback_check_id:
+        type: string
+        required: false
+        default: ''
+      origin_pr_number:
+        type: string
+        required: false
+        default: ''
+      origin_run_id:
+        type: string
+        required: false
+        default: ''
 
-# This is absolutely crazy but Action Variables are not accessible to runs
-# triggered by PRs from forks repository (https://github.com/orgs/community/discussions/44322).
-# Thus, we avoid all use of Action Variables in the pr workflow and the ones
-# called by it (_build and _cve-check) and we hardcode the values here.
-# It makes developing the CI itself a pain but there is no real good solution.
+concurrency:
+  group: seapath-yocto-${{ inputs.origin_repository }}-${{ inputs.origin_sha }}
+  cancel-in-progress: true
+
 env:
   REPO_MANIFEST_REPOSITORY: 'SEAPATH/repo-manifest'
-  REPO_MANIFEST_NAME: 'wrynose.xml'
 
 jobs:
   build:
     runs-on: ["self-hosted", "runner-sfl-seapath"]
-    # This job may check out potentially unsafe user code from Pull Requests.
-    # Giving it only the necessary permissions mitigates potential token misuse
-    # introduced in user code.
-    # The only step using the GitHub API is the "upload artifacts" one, which
-    # seems to only need the "contents: read" permission as per [1]
-    # [1] https://github.com/actions/upload-artifact/issues/197#issuecomment-3154708082
     permissions:
       contents: read
     strategy:
-      fail-fast: true # TODO eventually set to false
+      fail-fast: true
       max-parallel: 1
       matrix:
-        # Hardcoded due to GH Actions limitation on vars (see above)
-        cqfd_flavor: ["host_efi", "host_standalone_efi", "guest_efi", "observer_efi"]
+        cqfd_flavor: ["flasher", "host_efi", "host_standalone_efi", "guest_efi", "observer_efi", "host_standalone_efi_test"]
     env:
       WORKSPACE: workspace-bitbake
+      BASELINE_MANIFEST_NAME: ${{ inputs.baseline_manifest_name }}
+      BASELINE_MANIFEST_REVISION: ${{ inputs.baseline_manifest_revision }}
+      ORIGIN_REPOSITORY: ${{ inputs.origin_repository }}
+      ORIGIN_SHA: ${{ inputs.origin_sha }}
+      WEEKLY_ID: ${{ inputs.weekly_id }}
+      EXPECTED_DISTRO_VERSION: ${{ inputs.expected_distro_version }}
     defaults:
       run:
         working-directory: ${{ env.WORKSPACE }}
     steps:
-      # We clean the workspace at the beginning and not at the end
-      # to easily debug failed runs
-      - name: Clean workspace
+      - name: Preserve previous workspace
         working-directory: ${{ github.workspace }}
         run: |
-          rm -rf ${{ env.WORKSPACE }}
+          if [ -d "$WORKSPACE" ]; then
+            mv "$WORKSPACE" "${WORKSPACE}.previous-${GITHUB_RUN_ID}"
+          fi
+          find . -maxdepth 1 -type d -name "${WORKSPACE}.previous-*" -printf "%T@ %p\n" | sort -nr | tail -n +4 | cut -d' ' -f2- | while read -r old; do
+            [ -n "$old" ] && mv "$old" /tmp/
+          done
 
       - name: Create workspace
         working-directory: ${{ github.workspace }}
-        run: mkdir -p ${{ env.WORKSPACE }}
+        run: mkdir -p "$WORKSPACE"
 
-      - name: Init repo
+      - name: Validate origin repository
         run: |
-          repo init \
-            -u "${{ github.server_url }}/${{ env.REPO_MANIFEST_REPOSITORY }}" \
-            -b "${{ case(inputs.origin_repository == env.REPO_MANIFEST_REPOSITORY, inputs.origin_sha, 'HEAD') }}" \
-            -m "${{ env.REPO_MANIFEST_NAME }}"
+          case "$ORIGIN_REPOSITORY" in
+            SEAPATH/yocto-bsp|SEAPATH/meta-seapath|SEAPATH/repo-manifest) ;;
+            *) echo "origin repository is not allow-listed: $ORIGIN_REPOSITORY" >&2; exit 1 ;;
+          esac
+          [[ "$ORIGIN_SHA" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "origin SHA is not a commit SHA" >&2; exit 1; }
+
+      - name: Init repo from weekly baseline
+        run: |
+          manifest_repository="$REPO_MANIFEST_REPOSITORY"
+          case "$ORIGIN_REPOSITORY" in
+            */repo-manifest) manifest_repository="$ORIGIN_REPOSITORY" ;;
+          esac
+          if [ -n "$BASELINE_MANIFEST_REVISION" ]; then
+            repo init -u "${{ github.server_url }}/$manifest_repository" \
+              -b "$BASELINE_MANIFEST_REVISION" -m "$BASELINE_MANIFEST_NAME"
+          else
+            repo init -u "${{ github.server_url }}/$manifest_repository" \
+              -m "$BASELINE_MANIFEST_NAME"
+          fi
           repo sync
 
-      - name: Checkout specific ref
-        if: inputs.origin_repository != env.REPO_MANIFEST_REPOSITORY
-        env:
-          ORIGIN_REPOSITORY: ${{ inputs.origin_repository }}
+      - name: Checkout origin commit
+        if: ${{ !endsWith(inputs.origin_repository, '/repo-manifest') }}
         run: |
-          repo_name=${ORIGIN_REPOSITORY#*/} # this removes the '<organization>/' prefix
-          path=$(repo list | awk -v repo_name="$repo_name" -F ' : ' '$2 == repo_name {print $1}')
-          echo "Checking out specific revision for git repo "$repo_name" at "$path"..."
-
+          repo_name=${ORIGIN_REPOSITORY#*/}
+          path=$(repo list | awk -v repo_name="$repo_name" -F ' : ' '$2 == repo_name {print $1; exit}')
+          [ -n "$path" ] || { echo "unable to find $repo_name in manifest" >&2; exit 1; }
           cd "$path"
-          # repo only creates 1 remote so no problem here
-          remote=$(git remote)
-
-          git fetch "$remote" "${{ inputs.origin_sha }}"
-          git checkout FETCH_HEAD
+          remote=$(git remote | head -1)
+          git fetch "$remote" "$ORIGIN_SHA"
+          git checkout --detach FETCH_HEAD
 
       - name: Init build system
         run: |
           cqfd init
-          touch "keys/ansible_public_ssh_key.pub"
+          touch keys/ansible_public_ssh_key.pub
           cp seapath.conf.sample seapath.conf
 
       - name: Build ${{ matrix.cqfd_flavor }}
         run: |
-          # Since we are in a non-interactive bash, the bashrc file is not
-          # read and CQFD environment variables are not used, especially the
-          # Yocto cache -related ones... Thus we source the bashrc file.
           source /etc/bash.bashrc
-          cqfd -b ${{ matrix.cqfd_flavor }}
+          cqfd -b "${{ matrix.cqfd_flavor }}"
 
-      - name: Upload SBOM file
+      - name: Write variant provenance
+        run: |
+          case "${{ matrix.cqfd_flavor }}" in
+            flasher) variant=flasher ;;
+            host_efi) variant=host-cluster ;;
+            host_standalone_efi) variant=host-standalone ;;
+            guest_efi) variant=guest ;;
+            observer_efi) variant=observer ;;
+            host_standalone_efi_test) variant=host-standalone-test ;;
+          esac
+          deploy=$(find build/tmp/deploy/images -maxdepth 2 -type d | tail -1)
+          case "${{ matrix.cqfd_flavor }}" in
+            flasher) image=seapath-flasher ;;
+            host_efi|host_standalone_efi|host_standalone_efi_test) image=seapath-host-efi-image ;;
+            guest_efi) image=seapath-guest-efi-image ;;
+            observer_efi) image=seapath-observer-efi-image ;;
+          esac
+          distro_version=$(cqfd -b "${{ matrix.cqfd_flavor }}" run bitbake -e "$image" 2>/dev/null | sed -n -E 's/^DISTRO_VERSION="(.*)"$/\1/p' | head -1 || true)
+          [ -n "$distro_version" ] || distro_version=$(grep -Rhs '^DISTRO_VERSION[[:space:]]*=' build/conf sources/meta-seapath/conf/distro 2>/dev/null | head -1 | sed -E 's/.*=[[:space:]]*//;s/["'"']//g' || true)
+          [ -n "$distro_version" ] || distro_version=unknown
+          if [ -n "$EXPECTED_DISTRO_VERSION" ] && [ "$distro_version" != "$EXPECTED_DISTRO_VERSION" ]; then
+            echo "DISTRO_VERSION mismatch: expected $EXPECTED_DISTRO_VERSION, got $distro_version" >&2
+            exit 1
+          fi
+          export DISTRO_VERSION="$distro_version"
+          mkdir -p "$deploy/weekly-provenance"
+          python3 - "$deploy/weekly-provenance/${variant}.json" <<'PY'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          manifest=Path('.repo/manifests/'+os.environ['BASELINE_MANIFEST_NAME'])
+          sha=hashlib.sha256(manifest.read_bytes()).hexdigest()
+          data={
+            'schema_version': 1,
+            'weekly_id': os.environ.get('WEEKLY_ID') or None,
+            'variant': Path(sys.argv[1]).stem,
+            'origin_repository': os.environ['ORIGIN_REPOSITORY'],
+            'origin_sha': os.environ['ORIGIN_SHA'],
+            'manifest': os.environ['BASELINE_MANIFEST_NAME'],
+            'manifest_sha256': sha,
+            'manifest_revision': os.environ.get('BASELINE_MANIFEST_REVISION') or None,
+            'distro_version': os.environ.get('DISTRO_VERSION', 'unknown'),
+          }
+          Path(sys.argv[1]).write_text(json.dumps(data, indent=2)+'\n')
+          PY
+
+      - name: Upload weekly candidate artifact
+        if: inputs.candidate
         uses: actions/upload-artifact@v7
         with:
-          # we only upload a single file but we want to set its name to the
-          # cqfd flavor, thus we still upload it as an archive
-          archive: true
+          compression-level: 0
+          name: weekly-${{ inputs.weekly_id }}-${{ matrix.cqfd_flavor }}
+          path: |
+            ${{ env.WORKSPACE }}/build/tmp/deploy/images/**
+            ${{ env.WORKSPACE }}/build/security/**
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload SBOM artifact
+        if: ${{ !inputs.candidate }}
+        uses: actions/upload-artifact@v7
+        with:
           name: sbom-${{ matrix.cqfd_flavor }}
           path: |
             ${{ env.WORKSPACE }}/build/tmp/deploy/images/**/*.rootfs.spdx.json
+          retention-days: 1
           if-no-files-found: error
 
-      # We clean the image directory at the end so we don't pollute
-      # future workflows artifacts since in the above step we don't
-      # filter the artifacts we upload.
       - name: Clean image deploy directory
         if: always()
         run: |
-          # see comment above
           source /etc/bash.bashrc
-          cqfd -b ${{ matrix.cqfd_flavor }} run -c --clean-image
+          cqfd -b "${{ matrix.cqfd_flavor }}" run -c --clean-image

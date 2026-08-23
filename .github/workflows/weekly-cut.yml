@@ -1,0 +1,57 @@
+name: Weekly baseline cut
+
+on:
+  schedule:
+    - cron: '0 20 * * 3'
+  workflow_dispatch:
+    inputs:
+      weekly_id:
+        type: string
+        required: false
+      previous_weekly:
+        type: string
+        required: false
+      allow_existing:
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seapath-weekly-cut
+  cancel-in-progress: false
+
+jobs:
+  cut:
+    runs-on: ["self-hosted", "runner-sfl-seapath"]
+    env:
+      GH_TOKEN: ${{ secrets.SEAPATH_UPDATE_TOKEN || github.token }}
+      WEEKLY_ID: ${{ inputs.weekly_id || '' }}
+      PREVIOUS_WEEKLY: ${{ inputs.previous_weekly || '' }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Initialize repo manifest workspace
+        working-directory: ${{ github.workspace }}
+        run: |
+          mkdir -p weekly-workspace
+          cd weekly-workspace
+          repo init -u https://github.com/SEAPATH/repo-manifest -b main -m wrynose.xml
+          repo sync
+      - name: Resolve weekly identifier
+        if: env.WEEKLY_ID == ''
+        run: echo "WEEKLY_ID=weekly-$(date -u +%G-W%V)" >> "$GITHUB_ENV"
+      - name: Resolve active weekly when not supplied
+        if: env.PREVIOUS_WEEKLY == ''
+        run: |
+          if command -v curl >/dev/null && [ -n "${{ secrets.S3CMD_ACCESS_KEY }}" ]; then
+            previous=$(curl -fsSL https://releases.seapath.org/builds/weeklies/latest.json | jq -r '.active_weekly // empty' || true)
+            echo "PREVIOUS_WEEKLY=$previous" >> "$GITHUB_ENV"
+          fi
+      - name: Generate one manifest candidate
+        working-directory: ${{ github.workspace }}/weekly-workspace
+        run: |
+          args=(--weekly-id "$WEEKLY_ID" --previous-weekly "$PREVIOUS_WEEKLY" --open-pr)
+          ${{ inputs.allow_existing && 'args+=(--allow-existing)' || 'true' }}
+          tools/update-weekly-manifest.sh "${args[@]}"

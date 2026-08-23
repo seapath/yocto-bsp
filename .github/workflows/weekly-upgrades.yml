@@ -1,0 +1,56 @@
+name: Weekly dependency upgrades
+
+on:
+  schedule:
+    - cron: '0 3 * * 6'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seapath-weekly-upgrades
+  cancel-in-progress: false
+
+jobs:
+  kernel:
+    runs-on: ["ubuntu-latest"]
+    env:
+      GH_TOKEN: ${{ secrets.SEAPATH_UPDATE_TOKEN || github.token }}
+      SEAPATH_FORK_OWNER: seapath
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Update active kernels as one PR
+        run: |
+          args=(--fork "$SEAPATH_FORK_OWNER" --https --git-name 'SEAPATH weekly updater' --git-email 'seapath-updater@invalid')
+          ${{ inputs.dry_run && 'args+=(--dry-run)' || 'true' }}
+          tools/update-kernel-revisions.sh "${args[@]}"
+
+  recipes:
+    runs-on: ["self-hosted", "runner-sfl-seapath"]
+    env:
+      GH_TOKEN: ${{ secrets.SEAPATH_UPDATE_TOKEN || github.token }}
+      SEAPATH_FORK_OWNER: seapath
+    steps:
+      - uses: actions/checkout@v6
+      - name: Initialize Yocto workspace
+        run: |
+          mkdir -p weekly-workspace
+          cd weekly-workspace
+          repo init -u https://github.com/SEAPATH/repo-manifest -b main -m wrynose.xml
+          repo sync
+          cqfd init
+      - name: Generate atomic recipe upgrade PRs
+        working-directory: ${{ github.workspace }}/weekly-workspace
+        run: |
+          args=(--fork "$SEAPATH_FORK_OWNER")
+          ${{ inputs.dry_run && 'args+=(--dry-run)' || 'true' }}
+          source /etc/bash.bashrc
+          cqfd run tools/update-recipe-groups.sh "${args[@]}"
