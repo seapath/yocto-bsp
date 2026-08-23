@@ -105,10 +105,12 @@ jobs:
 
       - name: Validate origin repository
         run: |
+          shopt -s nocasematch
           case "$ORIGIN_REPOSITORY" in
             SEAPATH/yocto-bsp|SEAPATH/meta-seapath|SEAPATH/repo-manifest) ;;
             *) echo "origin repository is not allow-listed: $ORIGIN_REPOSITORY" >&2; exit 1 ;;
           esac
+          shopt -u nocasematch
           [[ "$ORIGIN_SHA" =~ ^[0-9a-fA-F]{40}$ ]] || { echo "origin SHA is not a commit SHA" >&2; exit 1; }
 
       - name: Init repo from weekly baseline
@@ -127,7 +129,7 @@ jobs:
           repo sync
 
       - name: Checkout origin commit
-        if: ${{ !endsWith(inputs.origin_repository, '/repo-manifest') }}
+        if: inputs.origin_repository != env.REPO_MANIFEST_REPOSITORY && inputs.origin_repository != 'seapath/repo-manifest'
         run: |
           repo_name=${ORIGIN_REPOSITORY#*/}
           path=$(repo list | awk -v repo_name="$repo_name" -F ' : ' '$2 == repo_name {print $1; exit}')

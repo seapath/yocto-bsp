@@ -70,10 +70,12 @@ jobs:
           BUILD_RESULT: ${{ steps.pr-results.outputs.build_result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
         run: |
+          shopt -s nocasematch
           case "$CALLBACK_REPOSITORY" in
             SEAPATH/meta-seapath|SEAPATH/yocto-bsp) ;;
             *) echo "callback repository is not allow-listed" >&2; exit 1 ;;
           esac
+          shopt -u nocasematch
           actual_sha=$(gh api "repos/$CALLBACK_REPOSITORY/check-runs/$CALLBACK_CHECK_ID" --jq .head_sha)
           [ "$actual_sha" = "$CALLBACK_SHA" ] || { echo "callback SHA mismatch" >&2; exit 1; }
           case "$BUILD_RESULT" in
