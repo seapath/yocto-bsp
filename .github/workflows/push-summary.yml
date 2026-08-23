@@ -37,10 +37,12 @@ jobs:
           check_id=$(jq -r '.callback_check_id // ""' push_results.json)
           result=$(jq -r '.build_result // "failure"' push_results.json)
           [ -n "$repository" ] && [ -n "$check_id" ] || exit 0
+          shopt -s nocasematch
           case "$repository" in
             SEAPATH/meta-seapath|SEAPATH/yocto-bsp) ;;
             *) echo "callback repository is not allow-listed" >&2; exit 1 ;;
           esac
+          shopt -u nocasematch
           [ "$(gh api "repos/$repository/check-runs/$check_id" --jq .head_sha)" = "$sha" ] || exit 1
           case "$result" in success) conclusion=success ;; cancelled|canceled) conclusion=cancelled ;; *) conclusion=failure ;; esac
           jq -n --arg conclusion "$conclusion" --arg url "$RUN_URL" --arg result "$result" \
