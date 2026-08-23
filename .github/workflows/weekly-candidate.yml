@@ -1,0 +1,91 @@
+name: Weekly candidate build and publication
+
+on:
+  workflow_dispatch:
+    inputs:
+      weekly_id:
+        type: string
+        required: true
+      manifest_revision:
+        type: string
+        required: true
+      previous_weekly:
+        type: string
+        required: false
+        default: ''
+      expected_distro_version:
+        type: string
+        required: false
+        default: ''
+        description: Optional version to validate in all candidate images.
+  repository_dispatch:
+    types: [weekly-manifest-merged]
+
+permissions: read-all
+
+concurrency:
+  group: seapath-weekly-candidate-${{ inputs.weekly_id || github.event.client_payload.weekly_id }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yml
+    with:
+      origin_repository: SEAPATH/repo-manifest
+      origin_sha: ${{ inputs.manifest_revision || github.event.client_payload.manifest_revision }}
+      baseline_manifest_name: weekly.xml
+      baseline_manifest_revision: ${{ inputs.manifest_revision || github.event.client_payload.manifest_revision }}
+      candidate: true
+      weekly_id: ${{ inputs.weekly_id || github.event.client_payload.weekly_id }}
+      expected_distro_version: ${{ inputs.expected_distro_version || github.event.client_payload.expected_distro_version || '' }}
+
+  security:
+    needs: [build]
+    uses: ./.github/workflows/_cve-check.yml
+    with:
+      build-run-id: ${{ github.run_id }}
+      weekly-id: ${{ inputs.weekly_id || github.event.client_payload.weekly_id }}
+      previous-weekly: ${{ inputs.previous_weekly || github.event.client_payload.previous_weekly || '' }}
+    secrets: inherit
+
+  publish:
+    needs: [build, security]
+    if: needs.security.outputs.analysis-ok == 'true' && needs.security.outputs.export-complete == 'true'
+    runs-on: ["ubuntu-latest"]
+    env:
+      WEEKLY_ID: ${{ inputs.weekly_id || github.event.client_payload.weekly_id }}
+      MANIFEST_REVISION: ${{ inputs.manifest_revision || github.event.client_payload.manifest_revision }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download all candidate artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: candidate
+      - name: Normalize publication layout
+        run: |
+          mkdir -p candidate/security candidate/sboms
+          while IFS= read -r file; do
+            rel=${file#*security/}
+            [ "$rel" != "$file" ] || continue
+            mkdir -p "candidate/security/$(dirname "$rel")"
+            cp "$file" "candidate/security/$rel"
+            case "$rel" in
+              */raw.spdx.json)
+                variant=${rel%%/*}
+                mkdir -p "candidate/sboms/$variant"
+                cp "$file" "candidate/sboms/$variant/raw.spdx.json"
+                ;;
+            esac
+          done < <(find candidate -type f -path '*security/*' ! -path 'candidate/security/*')
+      - name: Install publication tools
+        run: python3 -m pip install --quiet s3cmd
+      - name: Write weekly metadata
+        run: |
+          jq -n --arg id "$WEEKLY_ID" --arg revision "$MANIFEST_REVISION" \
+            '{schema_version:1,weekly_id:$id,manifest:"weekly.xml",manifest_revision:$revision,candidate_run:'"${{ github.run_id }}"'}' \
+            > candidate/weekly-metadata.json
+      - name: Publish and rotate weeklies
+        env:
+          S3CMD_ACCESS_KEY: ${{ secrets.S3CMD_ACCESS_KEY }}
+          S3CMD_SECRET_KEY: ${{ secrets.S3CMD_SECRET_KEY }}
+        run: tools/publish-weekly.sh --weekly-id "$WEEKLY_ID" --artifact-dir candidate
