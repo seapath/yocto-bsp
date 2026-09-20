@@ -336,6 +336,11 @@ For general SEAPATH usage, follow the documentation on [SEAPATH Wiki](https://lf
 
 Hypervisors updates are enabled only for production efi images. They are performed with https://sbabic.github.io/swupdate/[SwUpdate].
 
+Production update packages are signed and integrity-checked: the target only
+installs a package produced by a trusted SEAPATH issuer, refuses tampered
+content and refuses a release older than the running system. See
+<<Update signing and trust>> for the trust model and the key material.
+
 To build the SwUpdate image (.swu) run:
 
     $ cqfd -b host_efi_swu
@@ -377,6 +382,76 @@ Wait for the analysis process to finish (it can take a few minutes) then connect
 
 We use the `--export-filter-vex-status affected not_affected under_investigation` flag in the `sbom-cve-check` command so we do not export `fixed` vulnerabilities since they represent the biggest part, are not useful for CVE analysis and would make the exported file much larger.
 
+=== Update signing and trust
+
+==== Signed packages
+
+The host, host-test and observer update images are signed with CMS at build
+time. The signature covers _sw-description_, which in turn pins every artifact
+(images and install script) with a `sha256` hash. SWUpdate verifies the
+signature and each artifact hash before installing anything. The debug update
+image is not signed and is not an update target.
+
+`CONFIG_SIGNED_IMAGES` and `CONFIG_SIGALG_CMS` are compiled into the SWUpdate
+binary, so verification cannot be disabled by the operator or by the update
+package.
+
+==== Trust model
+
+The trusted issuers are the CA certificates stored in the build key store
+(`keys/swupdate-keys/ca/*.crt`, see `keys/README.adoc`). The `swupdate-trust`
+recipe assembles them into _/etc/swupdate/ca-chain.pem_ and installs
+_/etc/swupdate.cfg_ with:
+
+* `public-key-file = "/etc/swupdate/ca-chain.pem"`
+* `cert-purpose = "codeSigning"`
+* `no-downgrading = "<DISTRO_VERSION>"`
+
+Because `CONFIG_DEFAULT_CONFIG_FILE` points at _/etc/swupdate.cfg_, every
+invocation path (the Hawkbit daemon, a manual `swupdate -i`, and the USB
+`swupdate-client`) inherits the trust anchor and the downgrade floor without a
+per-command `-k`.
+
+An update is accepted only when its signer certificate chains to one of the
+installed anchors. Signing certificates carry `EKU=codeSigning`; certificate
+revocation (CRL/OCSP) checking is not implemented yet.
+
+==== Key material and PKI responsibilities
+
+The production PKI is managed outside of this project. This repository only
+provides the key layout and a generator for throwaway keys:
+
+    $ scripts/generate-swupdate-keys.sh -o keys/swupdate-keys
+
+The generated layout is documented in `keys/README.adoc`. `keys/*` is
+git-ignored, so signing keys never enter the repository. The build reads the
+key material from `keys/swupdate-keys/` by default; the `SEAPATH_SWUPDATE_*`
+variables documented in `seapath.conf.sample` override the location, which
+allows CI to inject an ephemeral PKI for each run.
+
+==== Key rotation
+
+Signing certificates can be rotated without changing the device trust store: a
+package signed by a new leaf issued under an already-trusted root is accepted.
+For a root rotation, ship the new root in the trust store alongside the old
+one for a full release overlap window before removing the old root, so that
+devices on either side of an A/B rollback still trust the update. The trust
+anchors are part of the signed rootfs, so a removed root only disappears once a
+device has installed a release that no longer carries it.
+
+==== Certificate expiry
+
+All certificates must be valid when the package is verified: expired
+certificates are rejected. Use long-lived roots and short-to-medium-lived
+signing certificates, and rotate signing certificates before they expire.
+Because a root rotation requires the overlap window above, plan it well before
+the root expiry date.
+
+WARNING: CMS signing currently uses an unencrypted private key on the build
+host, because the Yocto SWUpdate class does not support encrypted private
+keys. Restrict the key file permissions and the CI secret access, and prefer a
+dedicated build host. Moving the signature to a hardware security module (HSM)
+is planned but not implemented yet.
 
 == About this documentation
 
