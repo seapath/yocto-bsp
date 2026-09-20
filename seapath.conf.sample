@@ -17,7 +17,7 @@ SEAPATH_PARALLEL_MAKE='8'
 # The CPU enumeration begins at 0, so the maximum value is 1 less than the
 # number of CPUs core on the system.
 # If not defined, no CPU will be reserved.
-SEAPATH_RT_CORES='2-N'
+SEAPATH_RT_CORES=''
 
 # Hashed password to access Grub shell if security is enabled.
 # The password has to be stored hashed in pbkdf2 format.
@@ -57,3 +57,21 @@ SEAPATH_CYCLICTEST_TP='false'
 # Set to true to remove recipe work directories after build and save disk
 # space. Enabled by default.
 SEAPATH_RM_WORK='true'
+
+# SWUpdate CMS signing key material. Used to sign the sw-description of the
+# host, host-test and observer update packages, and to install the trust
+# anchors in their rootfs. Leave empty to use the default keys/swupdate-keys/
+# layout (see keys/README.adoc). A throwaway PKI can be generated with:
+#   scripts/generate-swupdate-keys.sh -o keys/swupdate-keys
+#
+# Directory holding the key material (ca/, signer.crt, signer.key).
+# Use an absolute path: the build has no well-defined working directory for
+# relative paths.
+SEAPATH_SWUPDATE_KEYS_DIR=''
+# Signing certificate (leaf, EKU=codeSigning) and its unencrypted private key.
+SEAPATH_SWUPDATE_CMS_CERT=''
+SEAPATH_SWUPDATE_CMS_KEY=''
+# Extra certificates embedded in the CMS signature (the intermediate CA).
+SEAPATH_SWUPDATE_CMS_EXTRA_CERTS=''
+# Directory of trusted CA certificates assembled into the rootfs trust store.
+SEAPATH_SWUPDATE_CA_CERTS_DIR=''
