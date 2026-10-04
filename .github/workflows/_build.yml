@@ -42,7 +42,7 @@ jobs:
       max-parallel: 1
       matrix:
         # Hardcoded due to GH Actions limitation on vars (see above)
-        cqfd_flavor: ["host_efi", "host_standalone_efi", "guest_efi", "observer_efi"]
+        cqfd_flavor: ["host_efi_swu", "host_standalone_efi_swu", "guest_efi", "observer_efi_swu"]
     env:
       WORKSPACE: workspace-bitbake
     defaults:
@@ -89,6 +89,13 @@ jobs:
           cqfd init
           touch "keys/ansible_public_ssh_key.pub"
           cp seapath.conf.sample seapath.conf
+          # Generate a throwaway PKI for this run so the signed update images
+          # and packages can be built without the production keys, and point
+          # the build at it.
+          scripts/generate-swupdate-keys.sh -o keys/swupdate-keys
+          cat >> seapath.conf <<EOF
+          SEAPATH_SWUPDATE_KEYS_DIR="$PWD/keys/swupdate-keys"
+          EOF
 
       - name: Build ${{ matrix.cqfd_flavor }}
         run: |
@@ -97,6 +104,32 @@ jobs:
           # Yocto cache -related ones... Thus we source the bashrc file.
           source /etc/bash.bashrc
           cqfd -b ${{ matrix.cqfd_flavor }}
+
+      - name: Verify signed SWU
+        if: contains(matrix.cqfd_flavor, 'swu')
+        run: |
+          shopt -s nullglob
+          swus=(build/tmp/deploy/images/*/*.swu)
+          if [ "${#swus[@]}" -eq 0 ]; then
+            echo "No .swu produced by ${{ matrix.cqfd_flavor }}" >&2
+            exit 1
+          fi
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          for swu in "${swus[@]}"; do
+            # Skip the non-timestamped symlink so each package is checked once.
+            [ -L "$swu" ] && continue
+            echo "== Checking $swu =="
+            (cd "$tmp" && cpio -idm --no-absolute-filenames -H crc < "$(realpath "$swu")" 2>/dev/null)
+            test -f "$tmp/sw-description.sig"
+            openssl cms -verify -binary -inform DER \
+              -in "$tmp/sw-description.sig" \
+              -content "$tmp/sw-description" \
+              -CAfile keys/swupdate-keys/ca/root-ca.crt \
+              -purpose any -out /dev/null
+            echo "Signature verified"
+            rm -f "$tmp"/*
+          done
 
       - name: Upload SBOM file
         uses: actions/upload-artifact@v7
