@@ -404,6 +404,8 @@ recipe assembles them into _/etc/swupdate/ca-chain.pem_ and installs
 _/etc/swupdate.cfg_ with:
 
 * `public-key-file = "/etc/swupdate/ca-chain.pem"`
+* `digest-provider = "opensslCMS"` (selects CMS, since the RSA provider is also
+  registered and would otherwise try to load the CA bundle as an RSA key)
 * `cert-purpose = "codeSigning"`
 * `no-downgrading = "<DISTRO_VERSION>"`
 
