@@ -248,9 +248,14 @@ main() {
 
     OUTPUT="$(realpath -m "${OUTPUT}")"
 
-    if [ -e "${OUTPUT}/signer.key" ] || [ -e "${OUTPUT}/ca/root-ca.key" ]; then
-        die "Output directory already contains key material: ${OUTPUT}"
-    fi
+    for artifact in \
+        "${OUTPUT}/signer.key" "${OUTPUT}/signer.crt" \
+        "${OUTPUT}/ca/root-ca.key" "${OUTPUT}/ca/root-ca.crt" \
+        "${OUTPUT}/ca/intermediate-ca.key" "${OUTPUT}/ca/intermediate-ca.crt"; do
+        if [ -e "${artifact}" ] || [ -L "${artifact}" ]; then
+            die "Output directory already contains key material: ${artifact}"
+        fi
+    done
 
     mkdir -p "${OUTPUT}/ca" || die "Cannot create ${OUTPUT}/ca"
 
