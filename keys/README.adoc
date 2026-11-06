@@ -1,6 +1,41 @@
 // Copyright (C) 2020, RTE (http://www.rte-france.com)
+// Copyright (C) 2026 Savoir-faire Linux, Inc.
 // SPDX-License-Identifier: CC-BY-4.0
+
+== Ansible SSH key
 
 To run Ansible, which takes care of machines configurations, the cluster needs to be accessible through SSH.
 Thus a SSH public key has to be added in this folder and must be named "ansible_public_ssh_key.pub".
 You can simply copy the .pub file generated with ssh-keygen and rename it.
+
+== SWUpdate signing keys
+
+SEAPATH update packages (`.swu`) are signed with CMS. The signing key material
+and the trust anchors used to build the images live in this folder, under
+`keys/swupdate-keys/`:
+
+[options="header"]
+|=======================
+|Path |Role
+|`keys/swupdate-keys/ca/*.crt` |Trust anchors (root and intermediate CA certificates). All of them are assembled into `/etc/swupdate/ca-chain.pem` on the target.
+|`keys/swupdate-keys/signer.crt` |Signing (leaf) certificate, with `EKU=codeSigning`. It is embedded in the CMS signature of each update package.
+|`keys/swupdate-keys/signer.key` |Unencrypted private key matching `signer.crt`. It signs `sw-description` at build time.
+|=======================
+
+A throwaway PKI can be generated with:
+
+  $ scripts/generate-swupdate-keys.sh -o keys/swupdate-keys
+
+The script creates a root CA, an intermediate CA, and a signing certificate, and
+verifies the whole chain and a CMS signature round trip before exiting.
+
+`keys/*` is git-ignored (except this file, see `.gitignore`), so generated and
+production keys never enter the repository. The build reads the key material
+from `keys/swupdate-keys/` by default; the location can be overridden with the
+`SEAPATH_SWUPDATE_*` variables documented in `seapath.conf.sample`.
+
+WARNING: the private key currently has to be stored unencrypted on the build
+host because the Yocto SWUpdate class does not support encrypted private keys.
+Restrict its file permissions and CI secret access, and prefer a dedicated
+build host. Moving the signature to a hardware security module (HSM) is planned
+but not implemented yet.
