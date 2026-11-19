@@ -120,7 +120,9 @@ jobs:
             # Skip the non-timestamped symlink so each package is checked once.
             [ -L "$swu" ] && continue
             echo "== Checking $swu =="
-            (cd "$tmp" && cpio -idm --no-absolute-filenames -H crc < "$(realpath "$swu")" 2>/dev/null)
+            # Resolve the path before cd: the redirection is expanded after it.
+            swu_abs="$(realpath "$swu")"
+            (cd "$tmp" && cpio -idm --no-absolute-filenames -H crc < "$swu_abs")
             test -f "$tmp/sw-description.sig"
             openssl cms -verify -binary -inform DER \
               -in "$tmp/sw-description.sig" \
